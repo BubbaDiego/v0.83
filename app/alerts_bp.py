@@ -213,9 +213,24 @@ def alert_status_page():
 
             a["wallet_image"] = wallet_img
             a["wallet_name"] = wallet_name
+            start = a.get("starting_value")
+            trigger = a.get("trigger_value", 0)
+            current = a.get("evaluated_value", 0)
+
+            if start is None:
+                start = current
+
+            if trigger != start:
+                progress = ((current - start) / (trigger - start)) * 100
+                progress = max(min(progress, 100), -100)
+            else:
+                denom = abs(trigger) if trigger else 1
+                progress = 100 - (abs(current - trigger) / denom * 100)
+
+            a["threshold_progress"] = progress
 
             enriched.append(a)
-        alerts = enriched
+        alerts = sorted(enriched, key=lambda x: abs(100 - x.get("threshold_progress", 0)))
     except Exception as e:
         logger.error(f"Failed to load alerts for status page: {e}", exc_info=True)
 
