@@ -66,32 +66,9 @@ th.sorted-desc .sort-indicator { color: var(--primary); }
   font-style: italic;
 }
 
-/* Container for both tables so they sit flush */
-.dual-table-wrapper {
-  display: flex;
-  width: 100%;
-  gap: 0;
-}
-
-.dual-table-wrapper .positions-table-wrapper {
-  flex: 1 1 0;
-  width: auto;
-}
-
-/* Make the first table wider to prevent crowding */
-.dual-table-wrapper .positions-table-wrapper:first-child {
-  flex-basis: 60%;
-}
-
-.dual-table-wrapper .positions-table-wrapper:last-child {
-  flex-basis: 40%;
-}
-
-/* Expand the main panel to use the full section width */
-.hedge-report-panel {
-  max-width: none;
-  width: 100%;
-}
+/* Previously used container for both tables */
+/* .dual-table-wrapper and .hedge-report-panel were removed in favor of */
+/* individual content panels matching the dashboard layout. */
 
 /* Outer borders for tables */
 #short-table {
