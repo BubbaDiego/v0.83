@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}ChatGPT{% endblock %}
+
+{% block extra_styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/title_bar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/sonic_themes.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/sonic_titles.css') }}">
+{% endblock %}
+
+{% block content %}
+{% set title_text = 'ChatGPT' %}
+{% include "title_bar.html" %}
+<div class="container py-4">
+  <div class="mb-3">
+    <label for="messageInput" class="form-label">Message</label>
+    <input type="text" id="messageInput" class="form-control">
+  </div>
+  <button id="sendBtn" class="btn btn-primary">Send</button>
+  <pre id="responseDisplay" class="mt-3"></pre>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/title_bar.js') }}" defer></script>
+<script>
+  document.getElementById('sendBtn').addEventListener('click', async () => {
+    const msg = document.getElementById('messageInput').value.trim();
+    if (!msg) return;
+    const res = await fetch('{{ url_for('chat_gpt_bp.chat_post') }}', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg })
+    });
+    const data = await res.json();
+    document.getElementById('responseDisplay').textContent = data.reply;
+  });
+</script>
+{% endblock %}
+
