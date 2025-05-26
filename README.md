@@ -64,6 +64,21 @@ The script loads credentials from the `.env` file (or environment variables) and
 uses `scripts/twilio_test.py` to perform the authentication and optional flow
 execution.
 
+## ChatGPT API Test
+
+To verify your OpenAI credentials, copy `.env.example` to `.env`, fill in your
+`OPENAI_API_KEY`, and run:
+
+```bash
+python scripts/openai_test.py
+```
+
+The script automatically loads environment variables from `.env` (with
+`.env.example` as a fallback).
+
+The script sends a simple prompt to ChatGPT and prints the response. It exits
+with status code `0` on success and `1` on failure.
+
 ## Required Environment Variables
 
 The application expects several environment variables for email and Twilio
