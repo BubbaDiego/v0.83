@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 def configure_console_log():
     """🧠 Cyclone Logging Configuration"""
     log.hijack_logger("werkzeug")
-    # log.silence_module("werkzeug")
+    log.silence_module("werkzeug")
     # log.silence_module("fuzzy_wuzzy")
     # log.silence_module("flask")
     log.silence_module("calc_services")
