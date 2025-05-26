@@ -67,13 +67,19 @@ th.sorted-desc .sort-indicator { color: var(--primary); }
 }
 
 /* Container when short and long tables share a single panel */
+/* Expand the panel so the tables get the full available width */
 .hedge-report-panel {
-  max-width: 100%;
+  max-width: none;
+  width: 100%;
+  margin: 0;           /* remove default horizontal margin */
+  padding-left: 2rem;  /* retain standard inner spacing */
+  padding-right: 2rem;
 }
 
 /* Wider container for the top section of the hedge report */
 .hedge-top-section {
-  max-width: 1600px;
+  width: 100%;         /* allow container to span the full screen width */
+  max-width: none;
 }
 
 .dual-table-wrapper {
