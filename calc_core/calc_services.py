@@ -70,14 +70,24 @@ class CalcServices:
     def calculate_value(self, position: dict) -> float:
         """Return the current value of a position.
 
-        The value is calculated as ``size * current_price`` which matches
-        how values are derived during enrichment.  This maintains a
-        consistent definition across the codebase.
+        The value is defined as ``collateral + PnL`` where PnL is computed
+        from the entry price, current price and position direction.
         """
         try:
+            entry = float(position.get("entry_price") or 0.0)
+            current = float(position.get("current_price") or 0.0)
+            collateral = float(position.get("collateral") or 0.0)
             size = float(position.get("size") or 0.0)
-            price = float(position.get("current_price") or 0.0)
-            value = round(size * price, 2)
+            ptype = (position.get("position_type") or "LONG").upper()
+
+            tokens = size / entry if entry else 0.0
+            if ptype == "LONG":
+                pnl = (current - entry) * tokens
+            else:
+                pnl = (entry - current) * tokens
+
+            value = collateral + pnl
+            value = round(value, 2)
             log.debug("Calculated value", "calculate_value", {"value": value})
             return value
         except Exception as e:
@@ -194,8 +204,18 @@ class CalcServices:
     # ------------------------------------------------------------------
     def value_at_price(self, position: dict, price: float) -> float:
         """Return the position value using ``price`` as the current price."""
+        entry = float(position.get("entry_price", 0.0))
+        collateral = float(position.get("collateral", 0.0))
         size = float(position.get("size", 0.0))
-        return round(size * price, 2)
+        ptype = (position.get("position_type") or "LONG").upper()
+
+        tokens = size / entry if entry else 0.0
+        if ptype == "LONG":
+            pnl = (price - entry) * tokens
+        else:
+            pnl = (entry - price) * tokens
+
+        return round(collateral + pnl, 2)
 
     def travel_percent_at_price(self, position: dict, price: float) -> float:
         """Calculate travel percent at a given ``price``."""
