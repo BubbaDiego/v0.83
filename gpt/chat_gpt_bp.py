@@ -17,7 +17,7 @@ chat_gpt_bp = Blueprint(
     "chat_gpt_bp",
     __name__,
     url_prefix="/GPT",
-    template_folder="templates",
+    template_folder="../templates",
 )
 
 @chat_gpt_bp.route("/chat", methods=["GET"])
