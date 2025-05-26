@@ -1,23 +1,84 @@
 {% extends "base.html" %}
-{% block title %}ChatGPT{% endblock %}
+{% block title %}ChatGPT Interface{% endblock %}
 
 {% block extra_styles %}
 {{ super() }}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/title_bar.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/sonic_themes.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/sonic_titles.css') }}">
+<style>
+  .chat-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .chat-window {
+    height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 1rem;
+    border-radius: 5px;
+    background-color: #fafafa;
+    margin-bottom: 1rem;
+  }
+  .message {
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    border-radius: 5px;
+    max-width: 70%;
+    word-wrap: break-word;
+  }
+  .user-message {
+    background-color: #dcf8c6;
+    text-align: right;
+    margin-left: auto;
+  }
+  .bot-message {
+    background-color: #eee;
+    text-align: left;
+    margin-right: auto;
+  }
+  .input-area {
+    display: flex;
+  }
+  .input-area input[type="text"] {
+    flex: 1;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  .input-area button {
+    padding: 0.5rem 1rem;
+    margin-left: 0.5rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+  }
+  .input-area button:hover {
+    background-color: #0056b3;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
 {% set title_text = 'ChatGPT' %}
 {% include "title_bar.html" %}
-<div class="container py-4">
-  <div class="mb-3">
-    <label for="messageInput" class="form-label">Message</label>
-    <input type="text" id="messageInput" class="form-control">
+<div class="chat-container">
+  <div class="chat-window" id="chatWindow">
+    <!-- Chat messages will appear here -->
   </div>
-  <button id="sendBtn" class="btn btn-primary">Send</button>
-  <pre id="responseDisplay" class="mt-3"></pre>
+  <div class="input-area">
+    <input type="text" id="userInput" placeholder="Type your message here...">
+    <button id="sendBtn">Send</button>
+  </div>
 </div>
 {% endblock %}
 
@@ -25,17 +86,42 @@
 {{ super() }}
 <script src="{{ url_for('static', filename='js/title_bar.js') }}" defer></script>
 <script>
-  document.getElementById('sendBtn').addEventListener('click', async () => {
-    const msg = document.getElementById('messageInput').value.trim();
-    if (!msg) return;
+const sendBtn = document.getElementById('sendBtn');
+const userInput = document.getElementById('userInput');
+const chatWindow = document.getElementById('chatWindow');
+
+function addMessage(content, sender) {
+  const div = document.createElement('div');
+  div.classList.add('message', sender === 'user' ? 'user-message' : 'bot-message');
+  div.textContent = content;
+  chatWindow.appendChild(div);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+sendBtn.addEventListener('click', async () => {
+  const message = userInput.value.trim();
+  if (!message) return;
+  addMessage(message, 'user');
+  userInput.value = '';
+
+  try {
     const res = await fetch('{{ url_for('chat_gpt_bp.chat_post') }}', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: msg })
+      body: JSON.stringify({ message })
     });
+    if (!res.ok) throw new Error('Network response was not ok');
     const data = await res.json();
-    document.getElementById('responseDisplay').textContent = data.reply;
-  });
+    addMessage(data.reply, 'bot');
+  } catch (err) {
+    console.error('Error:', err);
+    addMessage('Oops, something went wrong. Please try again.', 'bot');
+  }
+});
+
+userInput.addEventListener('keypress', e => {
+  if (e.key === 'Enter') sendBtn.click();
+});
 </script>
 {% endblock %}
 
