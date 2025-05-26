@@ -2,7 +2,30 @@
 
 For an overview of the key modules and architecture, see
 [SPECIFICATIONS.md](SPECIFICATIONS.md). This now includes the
+
 [Monitor Core specification](monitor/monitor_module_spec.md).
+
+## Quick Start
+
+Create a virtual environment and install all dependencies:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate      # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+This installs `pytest` and all other required packages. Run the app with:
+
+```bash
+python launch_app.py
+```
+
+Or execute the full test suite using:
+
+```bash
+pytest
+```
 
 ## Twilio Testing
 
