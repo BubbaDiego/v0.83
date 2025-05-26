@@ -1,5 +1,7 @@
 {% extends "base.html" %}
+
 {% block title %}ChatGPT Interface{% endblock %}
+
 
 {% block extra_styles %}
 {{ super() }}
@@ -7,6 +9,14 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/sonic_themes.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/sonic_titles.css') }}">
 <style>
+
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+  }
+
   .chat-container {
     max-width: 800px;
     margin: 2rem auto;
@@ -72,12 +82,14 @@
 {% set title_text = 'ChatGPT' %}
 {% include "title_bar.html" %}
 <div class="chat-container">
-  <div class="chat-window" id="chatWindow">
+
+  <h1>ChatGPT Interface</h1>
+  <div class="chat-window" id="chat-window">
     <!-- Chat messages will appear here -->
   </div>
   <div class="input-area">
-    <input type="text" id="userInput" placeholder="Type your message here...">
-    <button id="sendBtn">Send</button>
+    <input type="text" id="user-input" placeholder="Type your message here..." />
+    <button id="send-btn">Send</button>
   </div>
 </div>
 {% endblock %}
@@ -86,6 +98,7 @@
 {{ super() }}
 <script src="{{ url_for('static', filename='js/title_bar.js') }}" defer></script>
 <script>
+
 const sendBtn = document.getElementById('sendBtn');
 const userInput = document.getElementById('userInput');
 const chatWindow = document.getElementById('chatWindow');
@@ -122,6 +135,7 @@ sendBtn.addEventListener('click', async () => {
 userInput.addEventListener('keypress', e => {
   if (e.key === 'Enter') sendBtn.click();
 });
+
 </script>
 {% endblock %}
 
