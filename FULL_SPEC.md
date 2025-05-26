@@ -35,6 +35,9 @@ The [Wallet Core specification](wallets/wallet_core_spec.md) outlines wallet ope
 ### Auto Core
 The [Auto Core module](auto_core/auto_core_module_spec.md) automates collateral actions in the Jupiter UI using Playwright and Phantom.
 
+### GPT Input Format
+The [GPT Input specification](gpt_input_spec.md) details the JSON bundle used to send portfolio and alert context to GPT for analysis.
+
 ---
 
 Each linked specification contains more detailed design notes, functional requirements, and example workflows.
