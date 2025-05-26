@@ -5,7 +5,23 @@
 """
 
 from typing import Optional, List
-from pydantic import BaseModel, Field
+try:
+    from pydantic import BaseModel, Field
+    if not hasattr(BaseModel, "__fields__"):
+        raise ImportError("stub")
+except Exception:  # pragma: no cover - optional dependency or stub detected
+    class BaseModel:
+        """Simple drop-in fallback when pydantic is unavailable."""
+
+        def __init__(self, **data):
+            for key, value in data.items():
+                setattr(self, key, value)
+
+        def dict(self) -> dict:
+            return self.__dict__
+
+    def Field(default=None, **_):  # type: ignore
+        return default
 from enum import Enum
 
 # ♻️ Sync with wallet.py to ensure matching enum values
