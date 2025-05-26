@@ -74,7 +74,11 @@ class PositionEnrichmentService:
                     position[field] = 0.0
 
             # Step 5: Derived field enrichment (through CalculationCore)
-            position['value'] = position['size'] * position['current_price']
+            # NOTE: Jupiter already provides an accurate value field.
+            # Historically we recomputed value from size * current_price,
+            # but that overwrote the API-provided figure.  We keep the
+            # original value now for correctness.
+            # position['value'] = position['size'] * position['current_price']
             position['leverage'] = self.calc_core.calc_services.calculate_leverage(position['size'],
                                                                                    position['collateral']) if position[
                                                                                                                   'collateral'] > 0 else 0.0
