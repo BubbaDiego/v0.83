@@ -11,7 +11,14 @@ success or 1 on failure.
 import argparse
 import os
 import sys
+from pathlib import Path
 from typing import Optional
+
+try:
+    from dotenv import load_dotenv
+except Exception:  # pragma: no cover - optional dependency
+    def load_dotenv(*_a, **_k):
+        return False
 
 __test__ = False
 
@@ -55,6 +62,13 @@ def main(argv: Optional[list[str]] = None) -> int:
         "--prompt", default="Say hello", help="Prompt text to send to ChatGPT"
     )
     args = parser.parse_args(argv)
+
+
+    # Load environment variables from project .env files
+    base_dir = Path(__file__).resolve().parent.parent
+    load_dotenv(base_dir / ".env")
+    load_dotenv(base_dir / ".env.example")
+
 
     api_key = args.key or os.getenv("OPENAI_API_KEY") or os.getenv("OPEN_AI_KEY")
     if not api_key:
