@@ -47,7 +47,9 @@ class WalletCore:
         self.service = WalletService()
         self.rpc_endpoint = rpc_endpoint
         self.client = Client(rpc_endpoint) if Client else None
-        self.balance_service = BlockchainBalanceService() if Client else None
+        # Instantiate BlockchainBalanceService regardless of solana availability
+        # so ``load_wallets`` can gracefully attempt balance lookups.
+        self.balance_service = BlockchainBalanceService()
         self.jupiter = JupiterService() if Client else None
         log.debug(
             f"WalletCore initialized with RPC {rpc_endpoint}" + (" (stubbed)" if Client is None else ""),
@@ -62,9 +64,10 @@ class WalletCore:
         wallets_out = self.service.list_wallets()
         wallets = [Wallet(**w.dict()) for w in wallets_out]
         for w in wallets:
-            bal = self.balance_service.get_balance(w.public_address)
-            if bal is not None:
-                w.balance = bal
+            if self.balance_service:
+                bal = self.balance_service.get_balance(w.public_address)
+                if bal is not None:
+                    w.balance = bal
         return wallets
 
     def set_rpc_endpoint(self, endpoint: str) -> None:

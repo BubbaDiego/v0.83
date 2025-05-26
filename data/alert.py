@@ -1,4 +1,17 @@
-from pydantic import BaseModel
+try:
+    from pydantic import BaseModel
+    if not hasattr(BaseModel, "__fields__"):
+        raise ImportError("stub")
+except Exception:  # pragma: no cover - optional dependency or stub detected
+    class BaseModel:
+        """Simplistic fallback when pydantic is not installed."""
+
+        def __init__(self, **data):
+            for key, value in data.items():
+                setattr(self, key, value)
+
+        def dict(self) -> dict:
+            return self.__dict__
 from typing import Optional
 from datetime import datetime
 from enum import Enum
