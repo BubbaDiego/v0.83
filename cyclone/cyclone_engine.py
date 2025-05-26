@@ -27,7 +27,6 @@ from hedge_core.hedge_core import HedgeCore
 
 
 global_data_locker = DataLocker(str(DB_PATH))  # There can be only one
-logging.basicConfig(level=logging.DEBUG)
 
 def configure_cyclone_console_log():
     """
@@ -67,6 +66,7 @@ def configure_cyclone_console_log():
 
 class Cyclone:
     def __init__(self, monitor_core=None, poll_interval=60):
+        configure_cyclone_console_log()
         self.logger = logging.getLogger("Cyclone")
         self.poll_interval = poll_interval
         self.logger.setLevel(logging.DEBUG)
