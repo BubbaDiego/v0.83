@@ -4,7 +4,21 @@ Selectors and workflow steps follow the collateral automation white paper
 located at ``sonic_labs/collateral_management_playwright_white_paper.md``.
 """
 
-from playwright.sync_api import Page
+from playwright.sync_api import Page, BrowserContext
+from typing import Optional
+
+
+def open_extension_popup(context: BrowserContext, extension_id: Optional[str]) -> Optional[Page]:
+    """Open the Phantom popup page explicitly.
+
+    This is useful in headless mode where the Phantom window is not
+    automatically displayed.
+    """
+    if not extension_id:
+        return None
+    popup_page = context.new_page()
+    popup_page.goto(f"chrome-extension://{extension_id}/popup.html")
+    return popup_page
 
 
 def connect_wallet(page: Page) -> None:

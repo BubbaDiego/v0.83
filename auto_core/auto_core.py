@@ -1,5 +1,7 @@
 """Automated collateral management via the Jupiter UI."""
 
+from typing import Optional
+
 from playwright.sync_api import sync_playwright
 
 from . import phantom_workflow as pwf
@@ -8,25 +10,45 @@ from . import phantom_workflow as pwf
 class AutoCore:
     """High level workflows using Playwright and Phantom."""
 
-    def __init__(self, phantom_path: str, profile_dir: str, headless: bool = False) -> None:
+    def __init__(
+        self,
+        phantom_path: str,
+        profile_dir: str,
+        headless: bool = False,
+        *,
+        extension_id: Optional[str] = None,
+        user_agent: Optional[str] = None,
+        slow_mo: Optional[int] = None,
+    ) -> None:
         self.phantom_path = phantom_path
         self.profile_dir = profile_dir
         self.headless = headless
+        self.extension_id = extension_id
+        self.user_agent = user_agent
+        self.slow_mo = slow_mo
 
     # ------------------------------------------------------------------
     def _launch_context(self):
         pw = sync_playwright().start()
+        args = [
+            f"--disable-extensions-except={self.phantom_path}",
+            f"--load-extension={self.phantom_path}",
+        ]
+        if self.headless:
+            args.insert(0, "--headless=new")
+
         context = pw.chromium.launch_persistent_context(
             self.profile_dir,
             channel="chromium",
-            headless=self.headless,
-            args=[
-                f"--disable-extensions-except={self.phantom_path}",
-                f"--load-extension={self.phantom_path}",
-            ],
+            headless=False,
+            args=args,
+            user_agent=self.user_agent,
+            slow_mo=self.slow_mo,
         )
         page = context.new_page()
         page.goto("https://jup.ag/perpetuals")
+        if self.headless:
+            pwf.open_extension_popup(context, self.extension_id)
         return pw, context, page
 
     def _close(self, pw, context):
