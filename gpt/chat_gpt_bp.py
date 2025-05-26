@@ -59,6 +59,6 @@ def chat_post():
         logger.debug(f"ChatGPT reply: '{reply}'")
         return jsonify({"reply": reply})
     except Exception as e:  # pragma: no cover - rely on OpenAI client
-        logger.exception(f"OpenAI API error: {e}")
+        logger.exception("OpenAI API error")
         return jsonify({"reply": f"An error occurred: {e}"}), 500
 
