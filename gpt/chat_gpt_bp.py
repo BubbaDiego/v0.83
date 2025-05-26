@@ -16,6 +16,9 @@ logger.setLevel(logging.DEBUG)
 api_key = (os.getenv("OPENAI_API_KEY") or os.getenv("OPEN_AI_KEY") or "").strip()
 client = OpenAI(api_key=api_key)
 
+# Default model used for chat completions.
+MODEL_NAME = "gpt-3.5-turbo"
+
 chat_gpt_bp = Blueprint(
     "chat_gpt_bp",
     __name__,
@@ -27,7 +30,7 @@ chat_gpt_bp = Blueprint(
 def chat():
     """Render the ChatGPT interface."""
     logger.debug("GET /chat - Rendering chat interface.")
-    return render_template("chat_gpt.html")
+    return render_template("chat_gpt.html", model_name=MODEL_NAME)
 
 
 @chat_gpt_bp.route("/chat", methods=["POST"])
@@ -51,13 +54,20 @@ def chat_post():
 
     try:
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model=MODEL_NAME,
             messages=messages,
         )
         logger.debug("Received response from OpenAI API.")
         reply = response.choices[0].message.content.strip()
         logger.debug(f"ChatGPT reply: '{reply}'")
-        return jsonify({"reply": reply})
+
+        usage = {}
+        try:
+            usage = response.usage.model_dump() if response.usage else {}
+        except Exception as ex:  # pragma: no cover - defensive
+            logger.debug(f"Usage parsing failed: {ex}")
+
+        return jsonify({"reply": reply, "model": response.model, "usage": usage})
     except Exception as e:  # pragma: no cover - rely on OpenAI client
         logger.exception("OpenAI API error")
         return jsonify({"reply": f"An error occurred: {e}"}), 500
