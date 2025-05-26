@@ -148,3 +148,35 @@ git push origin :codex/fix-->=-not-supported--error-in-apply_color codex/fix-not
 ```
 
 After renaming, Windows users can fetch the branch normally.
+
+## auto_core Module
+
+The `auto_core` package handles automated browser workflows for Jupiter's perpetuals trading UI. It builds on the ideas in the [automation white paper](sonic_labs/order_automation_white_paper.md), using Playwright to load a Chromium profile with the Phantom wallet extension. `auto_core` exposes helpers for launching a persistent context, navigating the site and approving Phantom pop‑ups so strategies can focus on trading logic.
+
+### Playwright Setup with Phantom
+Install Playwright and its browsers:
+```bash
+pip install playwright
+playwright install
+```
+To load Phantom, specify the extension path and a profile directory when launching the browser:
+```python
+from playwright.sync_api import sync_playwright
+
+phantom_path = "/path/to/phantom"
+profile_dir = "/tmp/playwright/phantom-profile"
+
+with sync_playwright() as pw:
+    context = pw.chromium.launch_persistent_context(
+        profile_dir,
+        channel="chromium",
+        headless=False,
+        args=[
+            f"--disable-extensions-except={phantom_path}",
+            f"--load-extension={phantom_path}"
+        ]
+    )
+    page = context.new_page()
+    page.goto("https://jup.ag/perpetuals")
+```
+The persistent profile keeps Phantom unlocked between runs. Adjust `headless` and add `--headless=new` for server environments.
