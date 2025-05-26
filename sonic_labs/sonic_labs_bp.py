@@ -8,7 +8,6 @@ from positions.position_core_service import PositionCoreService  # noqa: F401
 from core.core_imports import retry_on_locked
 from calc_core.calc_services import CalcServices
 from app.system_bp import hedge_calculator_page, hedge_report_page
-from auto_core import AutoCore
 
 # Mapping tables for simple icon lookups used on the UI
 ASSET_IMAGE_MAP = {
@@ -317,6 +316,14 @@ def api_run_playwright_test():
     profile_dir = current_app.config.get("PW_PROFILE_DIR", "/tmp/playwright-profile")
     if not phantom_path:
         return jsonify({"error": "Phantom path not configured"}), 400
+
+    try:
+        from auto_core import AutoCore
+    except Exception as e:  # ModuleNotFoundError for missing playwright
+        current_app.logger.error(
+            f"Playwright dependencies missing: {e}", exc_info=True
+        )
+        return jsonify({"error": "Playwright is not installed"}), 500
 
     try:
         core = AutoCore(phantom_path, profile_dir, headless=True)
