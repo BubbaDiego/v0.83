@@ -203,3 +203,9 @@ with sync_playwright() as pw:
     page.goto("https://jup.ag/perpetuals")
 ```
 The persistent profile keeps Phantom unlocked between runs. Adjust `headless` and add `--headless=new` for server environments.
+
+The collateral management process is documented in
+[sonic_labs/collateral_management_playwright_white_paper.md](sonic_labs/collateral_management_playwright_white_paper.md).
+`AutoCore` includes helpers for headless execution with optional user agent and
+slow motion settings. Provide the Phantom extension ID to open the popup page
+when running headless.
