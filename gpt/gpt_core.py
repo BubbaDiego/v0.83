@@ -1,6 +1,7 @@
 
 import json
 import logging
+import os
 from datetime import datetime
 from typing import Any, Dict, Optional
 
@@ -85,5 +86,24 @@ class GPTCore:
             return reply
         except Exception as e:  # pragma: no cover - depends on OpenAI API
             self.logger.exception(f"GPT analysis failed: {e}")
+            return f"Error: {e}"
+
+    def ask_gpt_about_portfolio(self) -> str:
+        """Use standard JSON context files to query GPT about the portfolio."""
+        from .context_loader import get_context_messages
+
+        self.logger.debug("Sending standard context files to GPT")
+        messages = [{"role": "system", "content": "You are a portfolio analysis assistant."}]
+        messages.extend(get_context_messages())
+        messages.append({"role": "user", "content": "Provide a portfolio analysis summary."})
+        try:
+            response = self.client.chat.completions.create(
+                model="gpt-3.5-turbo", messages=messages
+            )
+            reply = response.choices[0].message.content.strip()
+            self.logger.debug("Received portfolio reply from GPT")
+            return reply
+        except Exception as e:  # pragma: no cover - depends on OpenAI API
+            self.logger.exception(f"GPT portfolio query failed: {e}")
             return f"Error: {e}"
 
