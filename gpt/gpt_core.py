@@ -1,4 +1,4 @@
-import os
+
 import json
 import logging
 from datetime import datetime
@@ -86,3 +86,4 @@ class GPTCore:
         except Exception as e:  # pragma: no cover - depends on OpenAI API
             self.logger.exception(f"GPT analysis failed: {e}")
             return f"Error: {e}"
+

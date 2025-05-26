@@ -76,6 +76,7 @@ from routes.theme_routes import theme_bp
 from app.system_bp import system_bp
 from settings.settings_bp import settings_bp
 from gpt.chat_gpt_bp import chat_gpt_bp
+from gpt.gpt_bp import gpt_bp
 
 log.info("Registering blueprints...", source="Startup")
 app.register_blueprint(positions_bp, url_prefix="/positions")
@@ -89,6 +90,7 @@ app.register_blueprint(theme_bp)
 app.register_blueprint(system_bp)
 app.register_blueprint(settings_bp)
 app.register_blueprint(chat_gpt_bp)
+app.register_blueprint(gpt_bp)
 
 # --- Set Default Email Provider for XCom ---
 with app.app_context():
