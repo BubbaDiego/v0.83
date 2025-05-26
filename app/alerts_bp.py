@@ -214,15 +214,25 @@ def alert_status_page():
             a["wallet_image"] = wallet_img
             a["wallet_name"] = wallet_name
             start = a.get("starting_value")
+            # If no explicit start value exists, fall back to the first
+            # evaluated value. Using the trigger value caused all progress
+            # bars to show 100%.
             if start is None:
-                start = a.get("trigger_value", 0)
+                start = a.get("evaluated_value", 0)
+
             trigger = a.get("trigger_value", 0)
             current = a.get("evaluated_value", 0)
+
             if trigger != start:
                 progress = ((current - start) / (trigger - start)) * 100
-                progress = max(min(progress, 100), -100)
+            elif trigger != 0:
+                # Handle cases where start equals trigger by comparing the
+                # current value directly against the trigger.
+                progress = (current / trigger) * 100
             else:
-                progress = 100
+                progress = 0
+
+            progress = max(min(progress, 100), -100)
             a["threshold_progress"] = progress
 
             enriched.append(a)
