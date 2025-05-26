@@ -10,8 +10,12 @@ load_dotenv()
 logger = logging.getLogger("ChatGPTBP")
 logger.setLevel(logging.DEBUG)
 
-# Instantiate the OpenAI client using API key from env
-client = OpenAI(api_key=os.getenv("OPEN_AI_KEY"))
+# Instantiate the OpenAI client using API key from env.
+# Prefer the new ``OPENAI_API_KEY`` variable but fall back to ``OPEN_AI_KEY``
+# for backward compatibility.
+client = OpenAI(
+    api_key=os.getenv("OPENAI_API_KEY") or os.getenv("OPEN_AI_KEY")
+)
 
 chat_gpt_bp = Blueprint(
     "chat_gpt_bp",
