@@ -168,7 +168,7 @@ If the SQLite file becomes corrupted, you can rebuild it directly from the
 Launch Pad utility:
 
 ```bash
-python launch_app.py
+python launch_pad.py
 ```
 
 Open the **Operations** menu and choose **Recover Database**. This deletes the

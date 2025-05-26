@@ -15,7 +15,7 @@ Automating a dApp-like website with wallet authentication presents unique challe
 
 1. **No Official API** – All interactions must be done through the web UI, mimicking a real user. This means clicking buttons, reading dynamic page data, and waiting for confirmation dialogs.
 2. **Wallet Extension Interaction** – The automation must handle browser extension pop-ups for Phantom/MetaMask, including unlocking the wallet and approving transactions.
-3. **Headless vs Headed Mode** – For server deployments, headless mode is desired. Newer Chrome allows extensions in headless mode using `--headless=new`.
+3. **Headless vs Headed Mode** – For server de[collateral_management_playwright_white_paper.md](collateral_management_playwright_white_paper.md)ployments, headless mode is desired. Newer Chrome allows extensions in headless mode using `--headless=new`.
 4. **Bot Detection and Stealth** – Trading platforms may detect automated browsers. Stealth modes or plugins help avoid detection by modifying browser fingerprints.
 5. **Session Persistence** – Reusing a persistent browser profile lets the wallet stay logged in, reducing friction.
 6. **Reliability** – Because real funds are involved, the automation must be robust and handle timing issues gracefully.
@@ -47,7 +47,7 @@ Selenium is the long-standing tool for browser automation.
 
 ## Comparison of Tools
 | Tool                     | Ease of Use | Python Support | Wallet Extension Integration | Stealth Capabilities | Reliability |
-|--------------------------|-------------|----------------|------------------------------|----------------------|-------------|
+|--------------------------|--------[test_db_portfolio_alert_toggle.py](../tests/test_db_portfolio_alert_toggle.py)-----|----------------|------------------------------|----------------------|-------------|
 | **Playwright**           | High        | Excellent      | Good – persistent context with extensions; headless support | Moderate with plugins | Very high |
 | **Puppeteer/Pyppeteer**  | Moderate    | Limited        | Fair – extensions supported but headless is experimental | High via puppeteer-extra (Node) | High (Node) / Medium (Python) |
 | **Selenium**             | Moderate    | Great          | Fair – extensions load but pop-ups need manual handling | Low by default; use undetected-chromedriver | High |
