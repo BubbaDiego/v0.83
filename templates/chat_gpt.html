@@ -84,6 +84,17 @@
 <div class="chat-container">
 
   <h1>ChatGPT Interface</h1>
+
+  <div id="infoPanel" style="margin-bottom: 1rem;">
+    <label for="modelSelect">Model:</label>
+    <select id="modelSelect">
+      {% for m in models %}
+      <option value="{{ m }}" {% if m == model_name %}selected{% endif %}>{{ m }}</option>
+      {% endfor %}
+    </select>
+    <p id="tokenInfo" style="margin-top: 0.5rem;"></p>
+  </div>
+
   <div class="chat-window" id="chatWindow">
     <!-- Chat messages will appear here -->
   </div>
@@ -102,6 +113,8 @@
 const sendBtn = document.getElementById('sendBtn');
 const userInput = document.getElementById('userInput');
 const chatWindow = document.getElementById('chatWindow');
+const tokenInfo = document.getElementById('tokenInfo');
+const modelSelect = document.getElementById('modelSelect');
 
 function addMessage(content, sender) {
   const div = document.createElement('div');
@@ -121,11 +134,14 @@ sendBtn.addEventListener('click', async () => {
     const res = await fetch('{{ url_for('chat_gpt_bp.chat_post') }}', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message })
+      body: JSON.stringify({ message, model: modelSelect.value })
     });
     if (!res.ok) throw new Error('Network response was not ok');
     const data = await res.json();
     addMessage(data.reply, 'bot');
+    if (data.usage) {
+      tokenInfo.textContent = `Prompt tokens: ${data.usage.prompt_tokens}, Completion tokens: ${data.usage.completion_tokens}, Total: ${data.usage.total_tokens}`;
+    }
   } catch (err) {
     console.error('Error:', err);
     addMessage('Oops, something went wrong. Please try again.', 'bot');
