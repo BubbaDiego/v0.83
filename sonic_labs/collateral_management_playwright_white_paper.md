@@ -12,18 +12,18 @@ This white paper outlines how to use Playwright in Python to automate collateral
 - **Stealth**: Use realistic user agents and human‑like delays to avoid detection.
 - **Reliability**: Wait for page events and confirmations to prevent flaky behavior.
 - **Security**: Keep the private key within Phantom; the script only interacts via the extension.
-
+[cyclone_app.py](../cyclone_app.py)
 ## Playwright Setup with Phantom Wallet Extension
 Use a persistent Chromium context with the Phantom extension loaded:
 ```python
 from playwright.sync_api import sync_playwright
-
-phantom_path = "/path/to/phantom"
+[launch_app.py](../launch_app.py)
+phantom_path = "/path/to/p[launch_app.py](../launch_app.py)hantom"
 profile_dir = "/tmp/playwright/phantom-profile"
 
 with sync_playwright() as pw:
     context = pw.chromium.launch_persistent_context(
-        profile_dir,
+        profile_dir,[launch_app.py](../launch_app.py)
         channel="chromium",
         headless=False,
         args=[
