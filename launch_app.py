@@ -119,6 +119,45 @@ def test_core_menu():
     input("Press ENTER to return...")
 
 
+def check_api_status():
+    """Check ChatGPT and Twilio API connectivity."""
+    clear_screen()
+    console.print("[bold magenta]API Status Check[/bold magenta]")
+
+    # --- ChatGPT ---
+    api_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPEN_AI_KEY")
+    if not api_key:
+        console.print("[yellow]⚠️ OPENAI_API_KEY not configured.[/yellow]")
+    else:
+        try:
+            from openai import OpenAI
+
+            client = OpenAI(api_key=api_key)
+            client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": "ping"}],
+            )
+            console.print("[green]✅ ChatGPT API reachable.[/green]")
+        except Exception as exc:  # pragma: no cover - network dependent
+            console.print(f"[red]❌ ChatGPT check failed: {exc}[/red]")
+
+    # --- Twilio ---
+    try:
+        from xcom.check_twilio_heartbeart_service import CheckTwilioHeartbeartService
+
+        result = CheckTwilioHeartbeartService({}).check(dry_run=True)
+        if result.get("success"):
+            console.print("[green]✅ Twilio credentials valid.[/green]")
+        else:
+            console.print(
+                f"[red]❌ Twilio check failed: {result.get('error', 'unknown error')}[/red]"
+            )
+    except Exception as exc:  # pragma: no cover - network dependent
+        console.print(f"[red]❌ Twilio check failed: {exc}[/red]")
+
+    input("Press ENTER to return...")
+
+
 def main_menu():
     while True:
         clear_screen()
@@ -129,7 +168,8 @@ def main_menu():
         console.print("4) 🌅 Startup Service")
         console.print("5) ⚙️ Operations")
         console.print("6) 🧪 Test Core")
-        console.print("7) Exit")
+        console.print("7) 🔌 API Status")
+        console.print("8) Exit")
         choice = input("→ ").strip()
         if choice == "1":
             launch_web_and_monitor()
@@ -145,6 +185,8 @@ def main_menu():
         elif choice == "6":
             test_core_menu()
         elif choice == "7":
+            check_api_status()
+        elif choice == "8":
             console.print("Goodbye!", style="green")
             break
         else:
