@@ -128,7 +128,8 @@ class Cyclone:
         await asyncio.to_thread(self.position_core.update_positions_from_jupiter)
 
     async def run_create_market_alerts(self):
-        await self.alert_service.create_market_alerts()
+        """Create global market alerts via AlertCore."""
+        await asyncio.to_thread(self.alert_core.create_global_alerts)
 
     async def run_clear_all_data(self):
         log.warning("⚠️ Starting Clear All Data", source="Cyclone")
@@ -152,6 +153,7 @@ class Cyclone:
             "enrich_positions": self.run_enrich_positions,
             "enrich_alerts": self.run_alert_enrichment,
             "update_evaluated_value": self.run_update_evaluated_value,
+            "create_market_alerts": self.run_create_market_alerts,
             "create_portfolio_alerts": self.run_create_portfolio_alerts,
             "create_position_alerts": self.run_create_position_alerts,
             "create_global_alerts": self.run_create_global_alerts,
@@ -187,11 +189,6 @@ class Cyclone:
         log.warning("⚠️ Deletion requested via legacy method (run_delete_all_data)", source="Cyclone")
         asyncio.run(self.run_clear_all_data())
 
-    async def run_create_position_alerts(self):
-        await self.position_core.create_position_alerts()
-
-    async def run_create_portfolio_alerts(self):
-        await self.portfolio_runner.create_portfolio_alerts()
 
     async def run_link_hedges(self):
         self.hedge_core.link_hedges()
@@ -209,8 +206,8 @@ class Cyclone:
         self.alert_core.create_portfolio_alerts()
 
     async def run_create_global_alerts(self):
-        #await self.alert_core.create_global_alerts()
-        log.success("Global Alerts PlLace Holder", source="Cyclone")
+        """Generate default global market alerts."""
+        await asyncio.to_thread(self.alert_core.create_global_alerts)
 
     def clear_alerts_backend(self):
         self.data_locker.alerts.clear_all_alerts()
@@ -232,21 +229,6 @@ class Cyclone:
     async def run_update_evaluated_value(self):
         await self.alert_core.update_evaluated_values()
         log.success("✅ Evaluated alert values updated", source="Cyclone")
-
-    def clear_prices_backend(self):
-        self.sys.clear_prices()
-
-    def clear_wallets_backend(self):
-        self.sys.clear_wallets()
-
-    def clear_alerts_backend(self):
-        self.sys.clear_alerts()
-
-    def clear_positions_backend(self):
-        self.sys.clear_positions()
-
-    def _clear_all_data_core(self):
-        self.sys.clear_all_tables()
 
     # ⚙️ Corrected clear helpers
     def clear_prices_backend(self):
