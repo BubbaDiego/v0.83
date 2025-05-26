@@ -200,14 +200,19 @@ def get_latest_xcom_monitor_history(dl):
         return []
 
 def get_profit_badge_value(data_locker, system_core=None):
-    """Return the highest profit that meets the Profit threshold."""
+    """Return the highest profit across active positions.
+
+    If a Profit threshold exists, its ``low`` value is used as the minimum
+    qualifying profit.  When no threshold is found, ``0`` is used so the badge
+    still appears when any position is in profit.
+    """
     try:
         threshold_service = ThresholdService(data_locker.db)
-        profit_threshold = threshold_service.get_thresholds("Profit", "Position", "ABOVE")
-        if not profit_threshold:
-            return None
+        profit_threshold = threshold_service.get_thresholds(
+            "Profit", "Position", "ABOVE"
+        )
+        low_limit = profit_threshold.low if profit_threshold else 0
 
-        low_limit = profit_threshold.low
         positions = PositionCore(data_locker).get_active_positions() or []
         profits = [float(p.get("pnl_after_fees_usd") or 0.0) for p in positions]
         above = [p for p in profits if p >= low_limit]
