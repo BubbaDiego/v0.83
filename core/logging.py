@@ -2,6 +2,7 @@
 
 import sys
 import os
+import logging
 from utils.rich_logger import RichLogger
 
 log = RichLogger()
@@ -9,8 +10,15 @@ log = RichLogger()
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 
-def configure_console_log():
-    """🧠 Cyclone Logging Configuration"""
+def configure_console_log(debug: bool = False):
+    """🧠 Cyclone Logging Configuration
+
+    Parameters
+    ----------
+    debug : bool, optional
+        If ``True`` the root logger level is set to ``logging.DEBUG`` to
+        output verbose diagnostic information. Defaults to ``False``.
+    """
     log.hijack_logger("werkzeug")
     log.silence_module("werkzeug")
     # log.silence_module("fuzzy_wuzzy")
@@ -46,3 +54,7 @@ def configure_console_log():
     ]:
         log.silence_module(module)
     log.init_status()
+
+    if debug:
+        log.logger.setLevel(logging.DEBUG)
+
