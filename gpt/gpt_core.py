@@ -10,6 +10,7 @@ from openai import OpenAI
 
 from data.data_locker import DataLocker
 from core.constants import DB_PATH
+from .create_gpt_context_service import create_gpt_context_service
 
 
 class GPTCore:
@@ -71,12 +72,8 @@ class GPTCore:
         return payload
 
     def analyze(self, instructions: str = "") -> str:
-        payload = self.build_payload(instructions)
-        self.logger.debug("Sending payload to GPT")
-        messages = [
-            {"role": "system", "content": "You are a portfolio analysis assistant."},
-            {"role": "user", "content": json.dumps(payload)},
-        ]
+        self.logger.debug("Preparing analysis context for GPT")
+        messages = create_gpt_context_service(self, "analysis", instructions)
         try:
             response = self.client.chat.completions.create(
                 model="gpt-3.5-turbo", messages=messages
@@ -90,12 +87,8 @@ class GPTCore:
 
     def ask_gpt_about_portfolio(self) -> str:
         """Use standard JSON context files to query GPT about the portfolio."""
-        from .context_loader import get_context_messages
-
-        self.logger.debug("Sending standard context files to GPT")
-        messages = [{"role": "system", "content": "You are a portfolio analysis assistant."}]
-        messages.extend(get_context_messages())
-        messages.append({"role": "user", "content": "Provide a portfolio analysis summary."})
+        self.logger.debug("Preparing portfolio context for GPT")
+        messages = create_gpt_context_service(self, "portfolio", "Provide a portfolio analysis summary.")
         try:
             response = self.client.chat.completions.create(
                 model="gpt-3.5-turbo", messages=messages
