@@ -34,6 +34,17 @@ if "jsonschema" not in sys.modules:
     jsonschema_stub.IS_STUB = True
     sys.modules["jsonschema"] = jsonschema_stub
 
+# Stub pydantic if not installed
+if "pydantic" not in sys.modules:
+    pydantic_stub = types.ModuleType("pydantic")
+    class BaseModel:
+        pass
+    def Field(*a, **k):
+        return None
+    pydantic_stub.BaseModel = BaseModel
+    pydantic_stub.Field = Field
+    sys.modules["pydantic"] = pydantic_stub
+
 # Stub positions.hedge_manager to avoid circular import during DataLocker init
 hedge_stub = types.ModuleType("positions.hedge_manager")
 class HedgeManager:
