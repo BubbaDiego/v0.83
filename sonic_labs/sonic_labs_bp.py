@@ -8,6 +8,7 @@ from positions.position_core_service import PositionCoreService  # noqa: F401
 from core.core_imports import retry_on_locked
 from calc_core.calc_services import CalcServices
 from app.system_bp import hedge_calculator_page, hedge_report_page
+from auto_core import AutoCore
 
 # Mapping tables for simple icon lookups used on the UI
 ASSET_IMAGE_MAP = {
@@ -297,3 +298,30 @@ def api_evaluate_hedge():
     totals = calc.calculate_totals(eval_positions)
 
     return jsonify({"long": results.get("long"), "short": results.get("short"), "totals": totals})
+
+
+# -----------------------------------------------------------
+# Playwright Test Page and API
+# -----------------------------------------------------------
+
+@sonic_labs_bp.route("/playwright_test", methods=["GET"])
+def playwright_test_page():
+    """Render the Phantom/Playwright test page."""
+    return render_template("playwright_test.html")
+
+
+@sonic_labs_bp.route("/api/run_playwright_test", methods=["POST"])
+def api_run_playwright_test():
+    """Execute a simple Playwright workflow using Phantom."""
+    phantom_path = current_app.config.get("PHANTOM_PATH")
+    profile_dir = current_app.config.get("PW_PROFILE_DIR", "/tmp/playwright-profile")
+    if not phantom_path:
+        return jsonify({"error": "Phantom path not configured"}), 400
+
+    try:
+        core = AutoCore(phantom_path, profile_dir, headless=True)
+        core.deposit_collateral(0.01)
+        return jsonify({"message": "Playwright test executed"})
+    except Exception as e:
+        current_app.logger.error(f"Playwright test failed: {e}", exc_info=True)
+        return jsonify({"error": str(e)}), 500
