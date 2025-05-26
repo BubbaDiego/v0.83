@@ -105,7 +105,7 @@
         <div id="alertBars">
       {% if alerts %}
         {% for alert in alerts %}
-          {% if alert.travel_percent is defined and alert.travel_percent is not none %}
+          {% if alert.threshold_progress is defined and alert.threshold_progress is not none %}
             <div class="liq-row level-{{ alert.level|lower }}" data-alert-id="{{ alert.id }}">
               {% set wallet_img = alert.wallet_image %}
               {% if wallet_img and (wallet_img.startswith('http://') or wallet_img.startswith('https://') or wallet_img.startswith('/static/')) %}
@@ -116,7 +116,7 @@
             <div class="liq-progress-bar">
               <div class="liq-bar-container">
                 <div class="liq-midline"></div>
-                {% set pct = alert.travel_percent|float %}
+                {% set pct = alert.threshold_progress|float %}
                 {% if pct >= 0 %}
                   <div class="liq-bar-fill positive" style="left:50%; width: {{ pct }}%;">
                     <div class="travel-text">{{ pct|round(1) }}%</div>
