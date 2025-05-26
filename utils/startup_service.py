@@ -192,9 +192,12 @@ class StartUpService:
             "TWILIO_AUTH_TOKEN",
             "TWILIO_FROM_PHONE",
             "TWILIO_TO_PHONE",
-            "OPEN_AI_KEY",
         ]
+
         missing = [var for var in required if not os.getenv(var)]
+
+        if not (os.getenv("OPENAI_API_KEY") or os.getenv("OPEN_AI_KEY")):
+            missing.append("OPENAI_API_KEY")
         if missing:
             log.critical("❌ Missing required environment variables:")
             for var in missing:
