@@ -50,7 +50,7 @@ from cyclone.cyclone_engine import Cyclone
 # --- Logging Setup ---
 log.banner("SONIC DASHBOARD STARTUP")
 log.enable_all()
-configure_console_log()
+configure_console_log(debug=True)
 
 # --- Flask Setup ---
 app = Flask(__name__)
@@ -62,7 +62,7 @@ socketio = SocketIO(app)
 app.data_locker = DataLocker(str(DB_PATH))
 app.system_core = SystemCore(app.data_locker)
 app.monitor_core = MonitorCore()
-app.cyclone = Cyclone(monitor_core=app.monitor_core)
+app.cyclone = Cyclone(monitor_core=app.monitor_core, debug=True)
 
 # --- Blueprints ---
 from app.positions_bp import positions_bp

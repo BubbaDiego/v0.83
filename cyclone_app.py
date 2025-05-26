@@ -10,10 +10,10 @@ from core.core_imports import configure_console_log, DB_PATH
 from data.data_locker import DataLocker
 
 console = Console()
-configure_console_log()
+configure_console_log(debug=True)
 dl = DataLocker(str(DB_PATH))
 monitor_core = MonitorCore()
-cyclone = Cyclone(monitor_core)
+cyclone = Cyclone(monitor_core, debug=True)
 
 
 def get_counts_banner():

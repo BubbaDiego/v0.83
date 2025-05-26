@@ -27,6 +27,18 @@ Or execute the full test suite using:
 pytest
 ```
 
+### Debug Logging
+
+To see verbose output from the console logger, pass `debug=True` when
+configuring logging:
+
+```python
+from core.logging import configure_console_log
+configure_console_log(debug=True)
+```
+
+Classes like `Cyclone` propagate this flag via their own `debug` parameter.
+
 ## Twilio Testing
 
 To verify your Twilio credentials or trigger a Studio Flow, copy `.env.example` to

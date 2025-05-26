@@ -10,7 +10,7 @@ import traceback  # PATCH: for full stack info
 from alert_core.alert_core import AlertCore #alert_service_manager import AlertServiceManager
 from data.data_locker import DataLocker
 from core.constants import DB_PATH, ALERT_LIMITS_PATH
-from core.logging import log
+from core.logging import log, configure_console_log
 
 # PATCH: Import SystemCore for death screams
 from system.system_core import SystemCore
@@ -28,11 +28,15 @@ from hedge_core.hedge_core import HedgeCore
 
 global_data_locker = DataLocker(str(DB_PATH))  # There can be only one
 
-def configure_cyclone_console_log():
+def configure_cyclone_console_log(debug: bool = False):
+    """Centralized Cyclone Console Log Config
+
+    Parameters
+    ----------
+    debug : bool, optional
+        When ``True`` the underlying logger is configured for verbose output.
     """
-    🧠 Centralized Cyclone Console Log Config
-    Enables all core modules for debugging.
-    """
+    configure_console_log(debug=debug)
     log.silence_module("werkzeug")
     log.silence_module("fuzzy_wuzzy")
 
@@ -65,11 +69,14 @@ def configure_cyclone_console_log():
 
 
 class Cyclone:
-    def __init__(self, monitor_core=None, poll_interval=60):
-        configure_cyclone_console_log()
+    def __init__(self, monitor_core=None, poll_interval=60, debug: bool = False):
+        configure_cyclone_console_log(debug=debug)
         self.logger = logging.getLogger("Cyclone")
         self.poll_interval = poll_interval
-        self.logger.setLevel(logging.DEBUG)
+        if debug:
+            self.logger.setLevel(logging.DEBUG)
+        else:
+            self.logger.setLevel(logging.INFO)
         self.monitor_core = monitor_core or MonitorCore()
 
         self.data_locker = global_data_locker
