@@ -84,6 +84,12 @@
 <div class="chat-container">
 
   <h1>ChatGPT Interface</h1>
+
+  <div id="infoPanel" style="margin-bottom: 1rem;">
+    <p>Model: {{ model_name }}</p>
+    <p id="tokenInfo"></p>
+  </div>
+
   <div class="chat-window" id="chatWindow">
     <!-- Chat messages will appear here -->
   </div>
@@ -102,6 +108,7 @@
 const sendBtn = document.getElementById('sendBtn');
 const userInput = document.getElementById('userInput');
 const chatWindow = document.getElementById('chatWindow');
+const tokenInfo = document.getElementById('tokenInfo');
 
 function addMessage(content, sender) {
   const div = document.createElement('div');
@@ -126,6 +133,9 @@ sendBtn.addEventListener('click', async () => {
     if (!res.ok) throw new Error('Network response was not ok');
     const data = await res.json();
     addMessage(data.reply, 'bot');
+    if (data.usage) {
+      tokenInfo.textContent = `Prompt tokens: ${data.usage.prompt_tokens}, Completion tokens: ${data.usage.completion_tokens}, Total: ${data.usage.total_tokens}`;
+    }
   } catch (err) {
     console.error('Error:', err);
     addMessage('Oops, something went wrong. Please try again.', 'bot');
