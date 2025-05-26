@@ -192,6 +192,7 @@ class StartUpService:
             "TWILIO_AUTH_TOKEN",
             "TWILIO_FROM_PHONE",
             "TWILIO_TO_PHONE",
+            "OPEN_AI_KEY",
         ]
         missing = [var for var in required if not os.getenv(var)]
         if missing:
