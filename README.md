@@ -21,6 +21,18 @@ This installs `pytest` and all other required packages. Run the app with:
 python launch_app.py
 ```
 
+The `.flaskenv` file provides the usual Flask environment variables for
+development. `PYTHONPATH` now points to the project root:
+
+```bash
+FLASK_APP=sonic_app.py
+FLASK_ENV=development
+FLASK_DEBUG=1
+PYTHONPATH=.
+```
+If you have an older copy with an absolute `PYTHONPATH`, update or remove that
+line before running `flask` commands.
+
 Or execute the full test suite using:
 
 ```bash
