@@ -241,9 +241,23 @@ class AlertStore:
 
                 for spec in alerts:
                     metric_cfg = pos_cfg.get(spec["description"])
+                    # 🐞 DEBUG: Check whether this metric is enabled
+                    log.debug(
+                        f"Checking config for position metric '{spec['description']}': {metric_cfg}",
+                        source="AlertStore",
+                    )
                     # Skip alert creation if explicitly disabled or key is missing
                     if not metric_cfg or not metric_cfg.get("enabled", False):
+                        log.debug(
+                            f"Skipping position metric '{spec['description']}' due to disabled config",
+                            source="AlertStore",
+                        )
                         continue
+                    # 🐞 DEBUG: Metric enabled, proceeding
+                    log.debug(
+                        f"Position metric '{spec['description']}' enabled",
+                        source="AlertStore",
+                    )
 
                     trig_val = metric_cfg.get("medium", spec["trigger_value"])
 
@@ -301,9 +315,23 @@ class AlertStore:
 
         for alert_type, description, trigger_value, condition in metrics:
             metric_cfg = port_cfg.get(description)
+            # 🐞 DEBUG: Check whether this metric is enabled
+            log.debug(
+                f"Checking config for portfolio metric '{description}': {metric_cfg}",
+                source="AlertStore",
+            )
             # Skip when disabled or missing in config
             if not metric_cfg or not metric_cfg.get("enabled", False):
+                log.debug(
+                    f"Skipping portfolio metric '{description}' due to disabled config",
+                    source="AlertStore",
+                )
                 continue
+            # 🐞 DEBUG: Metric enabled, proceeding
+            log.debug(
+                f"Portfolio metric '{description}' enabled",
+                source="AlertStore",
+            )
 
             trig_val = metric_cfg.get("medium", trigger_value)
 
