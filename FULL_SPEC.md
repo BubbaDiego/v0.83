@@ -1543,7 +1543,7 @@ Logs count if needed
 
 ⚙️ CalcServices (Used by Enrichment)
 Method	Purpose
-calculate_value()	size × price
+calculate_value()       collateral + P&L
 calculate_leverage()	value ÷ collateral
 calculate_travel_percent()	price deviation vs liquidation
 calculate_liquid_distance()	dollar or % distance
