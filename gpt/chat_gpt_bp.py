@@ -4,6 +4,8 @@ from flask import Blueprint, render_template, request, jsonify
 from openai import OpenAI
 from dotenv import load_dotenv
 
+from .context_loader import get_context_messages
+
 # Load environment variables from .env if present
 load_dotenv()
 
@@ -46,10 +48,9 @@ def chat_post():
         logger.debug("No valid message provided; returning error response.")
         return jsonify({"reply": "Please provide a valid message."}), 400
 
-    messages = [
-        {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": user_message},
-    ]
+    messages = [{"role": "system", "content": "You are a helpful assistant."}]
+    messages.extend(get_context_messages())
+    messages.append({"role": "user", "content": user_message})
     logger.debug(f"Sending messages to OpenAI: {messages}")
 
     try:
