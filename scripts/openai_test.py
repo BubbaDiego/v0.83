@@ -63,10 +63,12 @@ def main(argv: Optional[list[str]] = None) -> int:
     )
     args = parser.parse_args(argv)
 
+
     # Load environment variables from project .env files
     base_dir = Path(__file__).resolve().parent.parent
     load_dotenv(base_dir / ".env")
     load_dotenv(base_dir / ".env.example")
+
 
     api_key = args.key or os.getenv("OPENAI_API_KEY") or os.getenv("OPEN_AI_KEY")
     if not api_key:

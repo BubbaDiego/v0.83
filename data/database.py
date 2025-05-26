@@ -16,7 +16,18 @@ class DatabaseManager:
                 if dir_name and dir_name.strip() != "":
                     os.makedirs(dir_name, exist_ok=True)
 
-                self.conn = sqlite3.connect(self.db_path, check_same_thread=False)
+                try:
+                    self.conn = sqlite3.connect(self.db_path, check_same_thread=False)
+                except sqlite3.DatabaseError as e:
+                    if "file is not a database" in str(e) or "database disk image is malformed" in str(e):
+                        try:
+                            os.remove(self.db_path)
+                        except OSError:
+                            pass
+                        self.conn = sqlite3.connect(self.db_path, check_same_thread=False)
+                    else:
+                        raise
+
                 self.conn.row_factory = sqlite3.Row
                 try:
                     self.conn.execute("PRAGMA journal_mode=WAL;")

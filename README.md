@@ -73,8 +73,10 @@ To verify your OpenAI credentials, copy `.env.example` to `.env`, fill in your
 python scripts/openai_test.py
 ```
 
+
 The script automatically loads environment variables from `.env` (with
 `.env.example` as a fallback).
+
 
 The script sends a simple prompt to ChatGPT and prints the response. It exits
 with status code `0` on success and `1` on failure.
