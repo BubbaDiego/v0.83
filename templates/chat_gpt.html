@@ -96,6 +96,7 @@
   <div class="input-area">
     <input type="text" id="userInput" placeholder="Type your message here..." />
     <button id="sendBtn">Send</button>
+    <button id="portfolioBtn">Ask Portfolio</button>
   </div>
 </div>
 {% endblock %}
@@ -109,6 +110,7 @@ const sendBtn = document.getElementById('sendBtn');
 const userInput = document.getElementById('userInput');
 const chatWindow = document.getElementById('chatWindow');
 const tokenInfo = document.getElementById('tokenInfo');
+const portfolioBtn = document.getElementById('portfolioBtn');
 
 function addMessage(content, sender) {
   const div = document.createElement('div');
@@ -144,6 +146,18 @@ sendBtn.addEventListener('click', async () => {
 
 userInput.addEventListener('keypress', e => {
   if (e.key === 'Enter') sendBtn.click();
+});
+
+portfolioBtn.addEventListener('click', async () => {
+  try {
+    const res = await fetch('{{ url_for('gpt_bp.ask_portfolio') }}');
+    if (!res.ok) throw new Error('Network response was not ok');
+    const data = await res.json();
+    addMessage(data.reply, 'bot');
+  } catch (err) {
+    console.error('Error:', err);
+    addMessage('Oops, something went wrong. Please try again.', 'bot');
+  }
 });
 
 </script>

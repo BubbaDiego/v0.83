@@ -16,3 +16,11 @@ def analyze():
     core = GPTCore()
     result = core.analyze(instructions)
     return jsonify({"reply": result})
+
+
+@gpt_bp.route('/gpt/portfolio', methods=['GET'])
+def ask_portfolio():
+    """Return GPT analysis using standard context files."""
+    core = GPTCore()
+    result = core.ask_gpt_about_portfolio()
+    return jsonify({"reply": result})
