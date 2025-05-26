@@ -32,6 +32,9 @@ The [Monitor module](monitor/monitor_module_spec.md) drives periodic tasks and h
 ### Wallets
 The [Wallet Core specification](wallets/wallet_core_spec.md) outlines wallet operations and blockchain helpers. The [Jupiter API spec](wallets/jupiter_api_spec.md) from **sonic_labs** describes how wallets interact with Jupiter Perps for managing collateral.
 
+### Auto Core
+The [Auto Core module](auto_core/auto_core_module_spec.md) automates collateral actions in the Jupiter UI using Playwright and Phantom.
+
 ---
 
 Each linked specification contains more detailed design notes, functional requirements, and example workflows.
