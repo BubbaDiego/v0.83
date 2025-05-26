@@ -66,9 +66,19 @@ th.sorted-desc .sort-indicator { color: var(--primary); }
   font-style: italic;
 }
 
-/* Previously used container for both tables */
-/* .dual-table-wrapper and .hedge-report-panel were removed in favor of */
-/* individual content panels matching the dashboard layout. */
+/* Container when short and long tables share a single panel */
+.hedge-report-panel {
+  max-width: 100%;
+}
+
+.dual-table-wrapper {
+  display: flex;
+  width: 100%;
+}
+
+.dual-table-wrapper .positions-table-wrapper {
+  flex: 1 1 0;
+}
 
 /* Outer borders for tables */
 #short-table {
