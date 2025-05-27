@@ -1,6 +1,6 @@
 # 🧠 GPT Core Specification
 
-> Version: v1.0
+> Version: v1.1
 > Scope: Python modules powering GPT interaction and the chat UI
 > Author: CoreOps 🥷
 
@@ -16,6 +16,7 @@ gpt/
 ├── context_loader.py      # Loads JSON context snippets
 ├── create_gpt_context_service.py # Message builder
 ├── templates/chat_gpt.html # Front-end interface
+├── templates/oracle_gpt.html # Oracle UI interface
 ```
 
 ---
@@ -72,21 +73,26 @@ The constructor looks for `OPENAI_API_KEY` first and falls back to
 
 ### Chat helpers
 
-The core exposes multiple question methods that return a text reply from GPT:
+The core exposes multiple question methods that return a text reply from GPT.  A new `ask_oracle()` helper routes all topic specific requests through the `Oracle` wrapper:
+
+```python
+    def ask_oracle(self, topic: str, instructions: str = "") -> str:
+        oracle = Oracle(topic, self.data_locker, instructions)
+        messages = oracle.get_context()
+        response = self.client.chat.completions.create(
+            model="gpt-3.5-turbo", messages=messages
+        )
+        return response.choices[0].message.content.strip()
+```
+【F:gpt/gpt_core.py†L98-L106】
 
 ```python
     def ask_gpt_about_portfolio(self) -> str:
-        ...
-        messages = [
-            {"role": "system", "content": "You are a portfolio analysis assistant."},
-            ...
-        ]
-        response = self.client.chat.completions.create(model="gpt-3.5-turbo", messages=messages)
-        return response.choices[0].message.content.strip()
+        return self.ask_oracle("portfolio")
 ```
-【F:gpt/gpt_core.py†L88-L107】
+【F:gpt/gpt_core.py†L111-L113】
 
-Other helper methods `ask_gpt_about_alerts`, `ask_gpt_about_prices`, and `ask_gpt_about_system` follow the same pattern to provide summaries from their respective datasets.【F:gpt/gpt_core.py†L111-L160】
+Other helper methods `ask_gpt_about_alerts`, `ask_gpt_about_prices`, and `ask_gpt_about_system` call `ask_oracle` with their respective topics.【F:gpt/gpt_core.py†L115-L125】
 
 ## 🔮 Oracle
 
@@ -147,7 +153,15 @@ Provides JSON API endpoints.
 
 - `POST /gpt/analyze` → build a payload and ask GPT for analysis.
 - `GET /gpt/portfolio` → use static context files for a portfolio summary.
- - `GET /gpt/oracle/<topic>` → call `Oracle` for a quick summary of `portfolio`, `alerts`, `prices`, or `system`.
+- `GET /gpt/oracle/<topic>` → call `Oracle` for a quick summary of `portfolio`, `alerts`, `prices`, or `system`.
+- `GET /GPT/oracle` → render the Oracle web interface.
+
+```python
+@chat_gpt_bp.route("/oracle", methods=["GET"])
+def oracle_ui():
+    return render_template("oracle_gpt.html", model_name=MODEL_NAME)
+```
+【F:gpt/chat_gpt_bp.py†L42-L46】
 
 Implementation excerpt:
 ```python
@@ -179,7 +193,7 @@ The `GET /GPT/chat` route renders `chat_gpt.html` while `POST /GPT/chat` forward
 
 ## 🖥️ Chat UI
 
-`templates/chat_gpt.html` provides a two‑panel interface: an oracle panel with preset buttons and a chat panel. Styles and behavior are embedded in the template.
+`templates/chat_gpt.html` provides a two‑panel interface: an oracle panel with preset buttons and a chat panel. Styles and behavior are embedded in the template. `templates/oracle_gpt.html` offers a themed variant focused on the Oracle experience.
 
 ```html
 <div class="oracle-btns d-flex justify-content-around mb-3">
@@ -191,6 +205,25 @@ The `GET /GPT/chat` route renders `chat_gpt.html` while `POST /GPT/chat` forward
 <div id="oracleOutput" class="oracle-output"></div>
 ```
 【F:templates/chat_gpt.html†L112-L121】
+
+An excerpt from `oracle_gpt.html` shows the same structure with a gothic theme:
+
+```html
+<h2 class="text-center mb-4" style="color: #c7bfff;">🔮 Speak to the Oracle</h2>
+<div class="row g-4">
+  <div class="col-md-6">
+    <div class="panel d-flex flex-column h-100">
+      <div class="oracle-btns">
+        <button class="oracle-btn" data-topic="portfolio">📂</button>
+        <button class="oracle-btn" data-topic="alerts">🚨</button>
+        <button class="oracle-btn" data-topic="prices">💲</button>
+        <button class="oracle-btn" data-topic="system">🖥️</button>
+      </div>
+      <div id="oracleOutput" class="oracle-output">Ask a question to receive wisdom from the stars.</div>
+    </div>
+  </div>
+```
+【F:templates/oracle_gpt.html†L152-L162】
 
 The chat panel contains a scrollable message window and input box.
 
@@ -232,7 +265,7 @@ sendBtn.addEventListener('click', async () => {
 ## 📈 Usage
 
 1. Mount `gpt_bp` and `chat_gpt_bp` in the Flask app.
-2. Navigate to `/GPT/chat` for the web interface or POST to `/gpt/analyze` to receive a JSON response.
+2. Navigate to `/GPT/chat` for the chat interface or `/GPT/oracle` for the themed oracle page. POST to `/gpt/analyze` to receive a JSON response programmatically.
 3. Context files under `gpt/data` provide default prompts and limits; update them as needed to tune results.
 
 This specification captures the GPT integration and UI components so that another GPT model can reason about the codebase or generate enhancements.
