@@ -127,6 +127,6 @@ def test_check_api_status_logs_to_xcom(monkeypatch):
     result = monitor.check_api_status()
 
     assert result["chatgpt_success"] is True
-    assert result["twilio_success"] is True
+    assert result["api_success"] is True
     assert captured["monitor_name"] == "xcom_monitor"
     assert captured["status"] == "Success"

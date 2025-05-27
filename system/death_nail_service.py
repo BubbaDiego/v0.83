@@ -59,9 +59,9 @@ class DeathNailService:
             # 📡 4. Optional escalation
             if self.xcom and hasattr(self.xcom, "send_notification"):
                 try:
-                    twilio = self.xcom.config_service.get_provider("twilio") or {}
-                    if not twilio.get("account_sid"):
-                        raise Exception("Twilio config missing or incomplete")
+                    api_cfg = self.xcom.config_service.get_provider("api") or {}
+                    if not api_cfg.get("account_sid"):
+                        raise Exception("API config missing or incomplete")
 
                     self.xcom.send_notification(
                         level=level,

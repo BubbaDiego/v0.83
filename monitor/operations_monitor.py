@@ -78,7 +78,7 @@ class OperationsMonitor(BaseMonitor):
             startup.get("config_success")
             and startup.get("post_success")
             and api_status.get("chatgpt_success")
-            and api_status.get("twilio_success")
+            and api_status.get("api_success")
         )
 
         payload = {"startup": startup, "api_status": api_status, "success": overall_success}
@@ -160,7 +160,7 @@ class OperationsMonitor(BaseMonitor):
         }
 
     def check_api_status(self) -> dict:
-        """Check ChatGPT and Twilio API connectivity and log to XCom ledger."""
+        """Check ChatGPT and API (Twilio) connectivity and log to XCom ledger."""
         log.info("🔌 Checking API status", source=self.name)
 
         chatgpt_success = False
@@ -184,31 +184,31 @@ class OperationsMonitor(BaseMonitor):
                 chatgpt_error = str(exc)
                 log.error(f"ChatGPT check failed: {exc}", source=self.name)
 
-        twilio_success = False
-        twilio_error = None
+        api_success = False
+        api_error = None
         try:
             from xcom.check_twilio_heartbeart_service import CheckTwilioHeartbeartService
 
             result = CheckTwilioHeartbeartService({}).check(dry_run=True)
-            twilio_success = bool(result.get("success"))
-            if twilio_success:
+            api_success = bool(result.get("success"))
+            if api_success:
                 log.success("Twilio credentials valid", source=self.name)
             else:
-                twilio_error = result.get("error")
-                log.error(f"Twilio check failed: {twilio_error}", source=self.name)
+                api_error = result.get("error")
+                log.error(f"Twilio check failed: {api_error}", source=self.name)
         except Exception as exc:  # pragma: no cover - network dependent
-            twilio_error = str(exc)
+            api_error = str(exc)
             log.error(f"Twilio check failed: {exc}", source=self.name)
 
-        status = "Success" if chatgpt_success and twilio_success else "Failed"
+        status = "Success" if chatgpt_success and api_success else "Failed"
         metadata = {
             "chatgpt_success": chatgpt_success,
-            "twilio_success": twilio_success,
+            "api_success": api_success,
         }
         if chatgpt_error:
             metadata["chatgpt_error"] = chatgpt_error
-        if twilio_error:
-            metadata["twilio_error"] = twilio_error
+        if api_error:
+            metadata["api_error"] = api_error
 
         # Update xcom ledger for dashboard
         self.data_locker.ledger.insert_ledger_entry(
