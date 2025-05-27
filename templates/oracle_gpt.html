@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}GPT Oracle{% endblock %}
+{% block title %}The Oracle{% endblock %}
 
 {% block extra_styles %}
 {{ super() }}
@@ -27,7 +27,7 @@
 
   .oracle-container {
     margin-top: 6rem;
-    width: 90%;
+    width: 100%;
     max-width: 1200px;
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 12px;
@@ -145,10 +145,10 @@
 {% endblock %}
 
 {% block content %}
-{% set title_text = 'GPT Oracle Interface' %}
+{% set title_text = 'The Oracle' %}
 {% include "title_bar.html" %}
 
-<div class="oracle-container container mt-3 mb-4 p-3 rounded shadow">
+<div class="oracle-container mt-3 mb-4 p-3 rounded shadow">
   <h2 class="text-center mb-4" style="color: #c7bfff;">🔮 Speak to the Oracle</h2>
   <div class="row g-4">
     <div class="col-md-6">
