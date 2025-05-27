@@ -1,23 +1,16 @@
 import importlib.util
 from pathlib import Path
-import types
 import sys
+import types
 
 
 def load_module():
-    base = Path(__file__).resolve().parents[1] / "gpt"
+    base = Path(__file__).resolve().parents[1]
+    gpt_base = base / "gpt"
     pkg = types.ModuleType("gpt")
     sys.modules.setdefault("gpt", pkg)
 
-    ctx_path = base / "context_loader.py"
-    ctx_spec = importlib.util.spec_from_file_location("gpt.context_loader", ctx_path)
-    ctx_mod = importlib.util.module_from_spec(ctx_spec)
-    assert ctx_spec and ctx_spec.loader
-    ctx_spec.loader.exec_module(ctx_mod)
-    sys.modules["gpt.context_loader"] = ctx_mod
-    setattr(pkg, "context_loader", ctx_mod)
-
-    ods_path = base / "oracle_data_service.py"
+    ods_path = gpt_base / "oracle_data_service.py"
     ods_spec = importlib.util.spec_from_file_location("gpt.oracle_data_service", ods_path)
     ods_mod = importlib.util.module_from_spec(ods_spec)
     assert ods_spec and ods_spec.loader
@@ -25,29 +18,29 @@ def load_module():
     sys.modules["gpt.oracle_data_service"] = ods_mod
     setattr(pkg, "oracle_data_service", ods_mod)
 
-    path = base / "oracle.py"
-    spec = importlib.util.spec_from_file_location("gpt.oracle", path)
+    path = base / "oracle_core" / "oracle_core.py"
+    spec = importlib.util.spec_from_file_location("oracle_core.oracle_core", path)
     module = importlib.util.module_from_spec(spec)
     assert spec and spec.loader
     spec.loader.exec_module(module)
-    sys.modules["gpt.oracle"] = module
+    sys.modules["oracle_core.oracle_core"] = module
     return module
 
 
-def test_oracle_get_context(monkeypatch):
+def test_oracle_core_build_prompt(monkeypatch):
     mod = load_module()
 
     class DummyAlerts:
         def get_all_alerts(self):
-            return ["a1", "a2"]
+            return ["a1"]
 
     class DummyPrices:
         def get_all_prices(self):
-            return [1, 2, 3]
+            return [1]
 
     class DummyPortfolio:
         def get_latest_snapshot(self):
-            return {"id": "snap1"}
+            return {"id": "snap"}
 
     class DummyLocker:
         def __init__(self):
@@ -58,11 +51,9 @@ def test_oracle_get_context(monkeypatch):
         def get_last_update_times(self):
             return {"x": 1}
 
-    def fake_ctx():
-        return [{"role": "system", "content": "ctx"}]
-
-    monkeypatch.setattr(mod, "get_context_messages", fake_ctx)
-    oracle = mod.Oracle("portfolio", DummyLocker())
-    msgs = oracle.get_context()
-    assert msgs[0]["role"] == "system"
-    assert msgs[-1]["content"] == oracle.instructions
+    oc = mod.OracleCore(DummyLocker())
+    oc.strategy_manager.register({"name": "test", "instructions": "do"})
+    monkeypatch.setattr(oc, "query_gpt", lambda messages: messages)
+    messages = oc.ask("portfolio", "test")
+    assert messages[0]["role"] == "system"
+    assert messages[-1]["content"] == "do"
