@@ -2,6 +2,7 @@ import json
 from typing import List
 
 from gpt.context_loader import get_context_messages
+from gpt.oracle_data_service import OracleDataService
 
 
 class Oracle:
@@ -10,6 +11,7 @@ class Oracle:
     def __init__(self, topic: str, data_locker, instructions: str = ""):
         self.topic = topic
         self.data_locker = data_locker
+        self.data_service = OracleDataService(data_locker)
         self.instructions = instructions or self.default_instructions()
 
     def default_instructions(self) -> str:
@@ -25,14 +27,16 @@ class Oracle:
         static_context = get_context_messages()
 
         if self.topic == "portfolio":
+            snapshot = self.data_service.fetch_portfolio()
             return [
                 {"role": "system", "content": "You are a portfolio analysis assistant."},
+                {"role": "system", "content": json.dumps({"portfolio": snapshot})},
                 *static_context,
                 {"role": "user", "content": self.instructions},
             ]
 
         if self.topic == "alerts":
-            alerts = self.data_locker.alerts.get_all_alerts()[:20]
+            alerts = self.data_service.fetch_alerts()
             return [
                 {"role": "system", "content": "You summarize alert information."},
                 {"role": "system", "content": json.dumps({"alerts": alerts})},
@@ -40,7 +44,7 @@ class Oracle:
             ]
 
         if self.topic == "prices":
-            prices = self.data_locker.prices.get_all_prices()[:20]
+            prices = self.data_service.fetch_prices()
             return [
                 {"role": "system", "content": "You summarize price information."},
                 {"role": "system", "content": json.dumps({"prices": prices})},
@@ -48,7 +52,7 @@ class Oracle:
             ]
 
         if self.topic == "system":
-            system = self.data_locker.get_last_update_times()
+            system = self.data_service.fetch_system()
             return [
                 {"role": "system", "content": "You report system status."},
                 {"role": "system", "content": json.dumps(system)},

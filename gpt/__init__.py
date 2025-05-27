@@ -5,6 +5,7 @@ from .gpt_bp import gpt_bp
 from .gpt_core import GPTCore
 from .create_gpt_context_service import create_gpt_context_service
 from .oracle import Oracle
+from .oracle_data_service import OracleDataService
 
 __all__ = [
     "chat_gpt_bp",
@@ -12,5 +13,6 @@ __all__ = [
     "GPTCore",
     "create_gpt_context_service",
     "Oracle",
+    "OracleDataService",
 ]
 
