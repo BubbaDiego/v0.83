@@ -217,8 +217,8 @@ class Cyclone:
         await asyncio.to_thread(self.alert_core.create_global_alerts)
 
     def clear_alerts_backend(self):
-        self.data_locker.alerts.clear_all_alerts()
-        log.success("🧹 All alerts cleared from backend", source="Cyclone")
+        """Clear all alerts using :class:`CycloneMaintenanceService`."""
+        self.maintenance_service.clear_alerts()
 
     async def run_cleanse_ids(self):
         log.info("🧹 Running cleanse_ids: clearing stale alerts", source="Cyclone")
@@ -244,18 +244,11 @@ class Cyclone:
     def clear_wallets_backend(self):
         self.maintenance_service.clear_wallets()
 
-    def clear_alerts_backend(self):
-        self.maintenance_service.clear_alerts()
-
     def clear_positions_backend(self):
         self.maintenance_service.clear_positions()
 
     def _clear_all_data_core(self):
         self.maintenance_service.clear_all_tables()
-
-    async def run_market_updates(self):
-        log.info("Starting Market Updates via MonitorCore", source="Cyclone")
-        await asyncio.to_thread(self.monitor_core.run_by_name, "price_monitor")
 
     async def run_check_jupiter_for_updates(self):
         log.info("Checking Jupiter/Positions via MonitorCore", source="Cyclone")
