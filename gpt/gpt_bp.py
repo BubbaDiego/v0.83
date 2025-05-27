@@ -30,8 +30,9 @@ def ask_portfolio():
 def oracle(topic: str):
     """Handle oracle queries for various topics."""
     core = GPTCore()
+    strategy = request.args.get("strategy")
     try:
-        result = core.ask_oracle(topic)
+        result = core.ask_oracle(topic, strategy)
         return jsonify({"reply": result})
     except ValueError:
         return jsonify({"error": "Unknown topic"}), 400
