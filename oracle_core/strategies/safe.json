@@ -1,0 +1,8 @@
+{
+  "name": "safe",
+  "description": "Risk-averse strategy focusing on capital preservation.",
+  "modifiers": {
+    "risk_tolerance": "low"
+  },
+  "instructions": "Offer conservative guidance that minimizes risk and favors stable returns."
+}
