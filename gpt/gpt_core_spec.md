@@ -33,7 +33,8 @@ class GPTCore:
         load_dotenv()
         self.logger = logging.getLogger(__name__)
         self.data_locker = DataLocker(str(db_path))
-        self.client = OpenAI(api_key=os.getenv("OPEN_AI_KEY"))
+        api_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPEN_AI_KEY")
+        self.client = OpenAI(api_key=api_key)
 ```
 【F:gpt/gpt_core.py†L16-L23】
 
