@@ -84,6 +84,20 @@ The script automatically loads environment variables from `.env` (with
 The script sends a simple prompt to ChatGPT and prints the response. It exits
 with status code `0` on success and `1` on failure.
 
+## GPT Oracle
+
+Run `python sonic_app.py` and navigate to `/GPT/chat` to open the oracle front end.
+The page shows four buttons—`portfolio`, `alerts`, `prices`, and `system`—that
+query the `/gpt/oracle/<topic>` API and display the reply.
+
+The API can be called directly as well:
+
+```bash
+curl http://localhost:5000/gpt/oracle/portfolio
+```
+
+Replace `portfolio` with any other topic to receive a short summary.
+
 ## Required Environment Variables
 
 The application expects several environment variables for email and Twilio
