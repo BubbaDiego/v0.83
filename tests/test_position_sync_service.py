@@ -86,3 +86,22 @@ def test_update_jupiter_positions_inserts_and_retries(monkeypatch, tmp_path):
     assert positions[0]["asset_type"] == "BTC"
 
     dl.db.close()
+
+
+def test_update_jupiter_positions_handles_failure(monkeypatch, tmp_path):
+    """API failures should increment the error count without raising."""
+
+    def mock_get(url, headers=None, timeout=None):
+        raise Exception("fail")
+
+    svc_module = load_service(monkeypatch, mock_get)
+    monkeypatch.setattr(svc_module.time, "sleep", lambda *a, **k: None)
+    monkeypatch.setattr(svc_module.PositionEnrichmentService, "enrich", lambda self, p: p)
+
+    dl = setup_datalocker(tmp_path, monkeypatch)
+    service = svc_module.PositionSyncService(dl)
+    result = service.update_jupiter_positions()
+
+    assert result["imported"] == 0
+    assert result["errors"] >= 1
+    dl.db.close()
