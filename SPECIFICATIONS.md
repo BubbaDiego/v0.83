@@ -36,6 +36,9 @@ The [Wallet Core specification](wallets/wallet_core_spec.md) outlines wallet ope
 ### GPT Input Format
 The [GPT Input specification](gpt_input_spec.md) details the JSON bundle used to send portfolio and alert context to GPT for analysis.
 
+### GPT Core
+The [GPT Core specification](gpt/gpt_core_spec.md) describes the Python modules and chat UI for interacting with OpenAI's API.
+
 ---
 
 Each linked specification contains more detailed design notes, functional requirements, and example workflows.
