@@ -10,7 +10,9 @@
 <style>
   body {
     margin: 0;
-    background: radial-gradient(ellipse at center, #1c1c2b 0%, #0d0d17 100%);
+    background: url('{{ url_for('static', filename='images/oracle_wall.jpg') }}')
+                no-repeat center center fixed;
+    background-size: cover;
     font-family: 'IM Fell English SC', serif;
     color: #e0e0ff;
     display: flex;
