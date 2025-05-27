@@ -97,6 +97,8 @@ class GPTCore:
 
     def ask_oracle(self, topic: str, strategy_name: str | None = None) -> str:
         """Query GPT for a specific topic using :class:`OracleCore`."""
+        if strategy_name in (None, "", "none"):
+            strategy_name = None
         oracle = OracleCore(self.data_locker)
         oracle.client = self.client
         try:

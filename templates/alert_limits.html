@@ -50,6 +50,11 @@
 
   <p>This page will hold alert configuration options.</p>
 
+  <div class="d-flex justify-content-end mb-3 gap-2">
+    <button id="importConfig" class="btn btn-secondary">Import</button>
+    <button id="exportConfig" class="btn btn-secondary">Export</button>
+  </div>
+
   <form id="alertForm" method="POST" action="{{ url_for('alerts_bp.update_config') }}">
 
     <ul class="nav nav-tabs" id="alertTabNav" role="tablist">
@@ -156,4 +161,5 @@
   <script src="{{ url_for('static', filename='js/title_bar.js') }}" defer></script>
   <script src="{{ url_for('static', filename='js/sonic_theme_toggle.js') }}"></script>
   <script src="{{ url_for('static', filename='js/layout_mode.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/alert_limits.js') }}"></script>
 {% endblock %}

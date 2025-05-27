@@ -29,6 +29,7 @@ def ask_portfolio():
 @gpt_bp.route('/gpt/oracle/<topic>', methods=['GET'])
 def oracle(topic: str):
     """Handle oracle queries for various topics."""
+    strategy = request.args.get("strategy", "none")
     core = GPTCore()
     strategy = request.args.get("strategy")
     try:

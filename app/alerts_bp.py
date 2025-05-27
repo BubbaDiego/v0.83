@@ -285,6 +285,31 @@ def update_config():
         logger.error(f"Failed to update alert config: {e}", exc_info=True)
         return jsonify({"success": False, "error": str(e)}), 500
 
+
+@alerts_bp.route('/export_config', methods=['GET'])
+def export_config():
+    """Export alert limits configuration as JSON."""
+    try:
+        cfg = current_app.data_locker.system.get_var("alert_limits") or {}
+        return jsonify(cfg)
+    except Exception as e:
+        logger.error(f"Failed to export alert config: {e}", exc_info=True)
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@alerts_bp.route('/import_config', methods=['POST'])
+def import_config():
+    """Import alert limits configuration from JSON payload."""
+    try:
+        payload = request.get_json(force=True)
+        if not isinstance(payload, dict):
+            return jsonify({"success": False, "error": "Expected JSON object"}), 400
+        current_app.data_locker.system.set_var("alert_limits", payload)
+        return jsonify({"success": True, "message": "Configuration imported"})
+    except Exception as e:
+        logger.error(f"Failed to import alert config: {e}", exc_info=True)
+        return jsonify({"success": False, "error": str(e)}), 500
+
 # --- Internal helpers ---
 
 def _parse_nested_form(form: dict) -> dict:

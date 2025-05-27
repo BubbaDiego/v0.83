@@ -1,5 +1,6 @@
 {
   "name": "safe",
+
   "description": "Prefer conservative actions",
   "modifiers": {"risk_level": "low"},
   "instructions": "Answer briefly and focus on risk mitigation."

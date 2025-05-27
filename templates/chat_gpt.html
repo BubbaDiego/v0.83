@@ -164,6 +164,11 @@
   <h1>🔮 Speak to the Oracle</h1>
   <div class="container">
     <div class="panel">
+      <select id="strategySelect" class="form-select mb-2">
+        <option value="">Default</option>
+        <option value="cautious">Cautious</option>
+        <option value="aggressive">Aggressive</option>
+      </select>
       <div class="oracle-btns">
         <button class="oracle-btn" data-topic="portfolio">📂</button>
         <button class="oracle-btn" data-topic="alerts">🚨</button>
@@ -197,6 +202,7 @@
   const sendBtn = document.getElementById('sendBtn');
   const tokenInfo = document.getElementById('tokenInfo');
   const oracleBtns = document.querySelectorAll('.oracle-btn');
+  const strategySelect = document.getElementById('strategySelect');
   const oracleOutput = document.getElementById('oracleOutput');
   const typingIndicator = document.getElementById('typingIndicator');
   const oracleUrlTemplate = "{{ url_for('gpt_bp.oracle', topic='TOPIC_PLACEHOLDER') }}";
@@ -236,7 +242,11 @@
     btn.addEventListener('click', async () => {
       const topic = btn.getAttribute('data-topic');
       oracleOutput.textContent = "Consulting the spirits...";
-      const url = oracleUrlTemplate.replace('TOPIC_PLACEHOLDER', encodeURIComponent(topic));
+      let url = oracleUrlTemplate.replace('TOPIC_PLACEHOLDER', encodeURIComponent(topic));
+      const strategy = strategySelect.value;
+      if (strategy) {
+        url += `?strategy=${encodeURIComponent(strategy)}`;
+      }
       const res = await fetch(url);
       const data = await res.json();
       oracleOutput.textContent = data.reply;
