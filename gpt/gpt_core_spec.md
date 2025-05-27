@@ -90,7 +90,8 @@ Other helper methods `ask_gpt_about_alerts`, `ask_gpt_about_prices`, and `ask_gp
 
 ## 🔮 Oracle
 
-`oracle.py` defines a small helper that bundles context for quick queries.
+`oracle.py` defines a small helper that bundles context for quick queries. It
+delegates data retrieval to ``OracleDataService``.
 
 ```python
 class Oracle:
@@ -98,6 +99,7 @@ class Oracle:
     def __init__(self, topic: str, data_locker, instructions: str = ""):
         self.topic = topic
         self.data_locker = data_locker
+        self.data_service = OracleDataService(data_locker)
         self.instructions = instructions or self.default_instructions()
 
     def default_instructions(self) -> str:
@@ -108,11 +110,11 @@ class Oracle:
             "system": "Summarize the system health status.",
         }.get(self.topic, "Assist the user.")
 ```
-【F:gpt/oracle.py†L7-L21】
+【F:gpt/oracle.py†L8-L23】
 
 `get_context()` returns a list of chat messages based on the topic, pulling data
 from `DataLocker` when required.
-【F:gpt/oracle.py†L23-L56】
+【F:gpt/oracle.py†L25-L60】
 
 ---
 
