@@ -16,7 +16,11 @@ logger.setLevel(logging.DEBUG)
 # Prefer the new ``OPENAI_API_KEY`` variable but fall back to ``OPEN_AI_KEY``
 # for backward compatibility.
 api_key = (os.getenv("OPENAI_API_KEY") or os.getenv("OPEN_AI_KEY") or "").strip()
-client = OpenAI(api_key=api_key)
+if not api_key:
+    logger.warning("OPENAI_API_KEY not configured; ChatGPT features disabled")
+    client = None
+else:
+    client = OpenAI(api_key=api_key)
 
 # Default model used for chat completions.
 MODEL_NAME = "gpt-3.5-turbo"
@@ -46,6 +50,9 @@ def oracle_ui():
 def chat_post():
     """Handle ChatGPT messages and return the response."""
     logger.debug("POST /chat - Received request.")
+    if client is None:
+        logger.debug("OpenAI client not configured; service unavailable.")
+        return jsonify({"error": "OpenAI API key not configured"}), 503
     data = request.get_json() or {}
     logger.debug(f"Request JSON: {data}")
     user_message = (data.get("message") or "").strip()

@@ -34,10 +34,12 @@ class GPTCore:
         self.logger = logging.getLogger(__name__)
         self.data_locker = DataLocker(str(db_path))
         api_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPEN_AI_KEY")
+
         if not api_key:
             raise EnvironmentError(
                 "Missing OpenAI API key. Set OPENAI_API_KEY or OPEN_AI_KEY."
             )
+
         self.client = OpenAI(api_key=api_key)
 ```
 【F:gpt/gpt_core.py†L16-L31】

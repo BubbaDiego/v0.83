@@ -207,6 +207,24 @@ class AlertStore:
         log.info(f"✅ Loaded {len(active_alerts)} active alerts", source="AlertStore")
         return active_alerts
 
+    def _alert_exists(self, alert_type, alert_class, position_reference_id):
+        alert_type = normalize_alert_type(alert_type).value if alert_type is not None else alert_type
+        if isinstance(alert_class, AlertClass):
+            alert_class_val = alert_class.value
+        else:
+            alert_class_val = alert_class
+        try:
+            cursor = self.data_locker.db.get_cursor()
+            if position_reference_id is None:
+                cursor.execute("SELECT 1 FROM alerts WHERE alert_type=? AND alert_class=? AND position_reference_id IS NULL", (alert_type, alert_class_val))
+            else:
+                cursor.execute("SELECT 1 FROM alerts WHERE alert_type=? AND alert_class=? AND position_reference_id=?", (alert_type, alert_class_val, position_reference_id))
+            return cursor.fetchone() is not None
+        except Exception as e:
+            log.error(f"Failed to check alert existence: {e}", source="AlertStore")
+            return False
+
+
     def create_position_alerts(self):
         log.banner("📊 AlertStore: Creating Position Alerts")
         positions = self.data_locker.positions.get_all_positions()
@@ -240,6 +258,10 @@ class AlertStore:
                 ]
 
                 for spec in alerts:
+                    # Skip duplicates
+                    if self._alert_exists(spec["alert_type"], AlertClass.POSITION.value, pos_id):
+                        log.info(f"Skipping existing position alert {spec["description"]} for {pos_id}", source="AlertStore")
+                        continue
                     metric_cfg = pos_cfg.get(spec["description"])
                     # 🐞 DEBUG: Check whether this metric is enabled
                     log.debug(
@@ -314,6 +336,9 @@ class AlertStore:
         ]
 
         for alert_type, description, trigger_value, condition in metrics:
+            if self._alert_exists(alert_type.value, AlertClass.PORTFOLIO.value, PORTFOLIO_POSITION_ID):
+                log.info(f"Skipping existing portfolio alert {description}", source="AlertStore")
+                continue
             metric_cfg = port_cfg.get(description)
             # 🐞 DEBUG: Check whether this metric is enabled
             log.debug(
@@ -371,6 +396,9 @@ class AlertStore:
 
     def create_global_alerts(self):
         log.banner("🌐 AlertStore: Creating Global Market Alerts")
+        if self._alert_exists(AlertType.PRICE_THRESHOLD.value, "Market", None):
+            log.info("Skipping existing global price alert", source="AlertStore")
+            return
         try:
             alert = {
                 "id": str(uuid4()),

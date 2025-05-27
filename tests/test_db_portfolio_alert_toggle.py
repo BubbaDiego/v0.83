@@ -87,5 +87,5 @@ def test_db_portfolio_alert_toggle(tmp_path, monkeypatch):
     alerts3 = dl.db.fetch_all("alerts")
     portfolio_alerts3 = [a for a in alerts3 if a["alert_class"] == "Portfolio"]
     print(f"Portfolio alerts after re-enable run: {len(portfolio_alerts3)}")
-    assert len(portfolio_alerts3) == 12
+    assert len(portfolio_alerts3) == 6
 

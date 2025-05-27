@@ -21,6 +21,7 @@ class GPTCore:
         self.logger = logging.getLogger(__name__)
         self.data_locker = DataLocker(str(db_path))
         api_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPEN_AI_KEY")
+
         if not api_key:
             self.logger.error(
                 "OpenAI API key not found in 'OPENAI_API_KEY' or 'OPEN_AI_KEY'"
@@ -28,6 +29,7 @@ class GPTCore:
             raise EnvironmentError(
                 "Missing OpenAI API key. Set OPENAI_API_KEY or OPEN_AI_KEY."
             )
+
         self.client = OpenAI(api_key=api_key)
 
     def _fetch_snapshots(self) -> Dict[str, Optional[dict]]:
