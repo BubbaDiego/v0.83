@@ -17,6 +17,7 @@ from core.logging import log
 from core.constants import DB_PATH, ALERT_LIMITS_PATH
 from config.config_loader import load_config
 from utils.schema_validation_service import SchemaValidationService
+from jsonschema import validate
 
 
 class OperationsMonitor(BaseMonitor):
@@ -45,9 +46,6 @@ class OperationsMonitor(BaseMonitor):
         """
         config_path = str(ALERT_LIMITS_PATH)
         if not os.path.exists(config_path):
-            log.warning(
-                f"Config file not found at {config_path}", source=self.name
-            )
             return False
 
         file_config = load_config(config_path)
@@ -226,27 +224,25 @@ class OperationsMonitor(BaseMonitor):
 
         config_path = str(ALERT_LIMITS_PATH)
         file_exists = os.path.exists(config_path)
-        config_data = load_config(config_path)
+        config_data = load_config(config_path if file_exists else None)
 
         success = False
 
         if not file_exists:
-            log.error(
-                f"Config not found at {config_path}", source=self.name
-            )
+            # No config file present; skip validation
+            success = False
         elif not config_data:
-            log.error(
-                f"Config data empty at {config_path}", source=self.name
-            )
+            log.error("Config data empty", source=self.name)
         else:
-            success = SchemaValidationService.validate_alert_ranges()
-            if success:
+            try:
+                validate(instance=config_data, schema=SchemaValidationService.ALERT_LIMITS_SCHEMA)
+                success = True
                 log.success(
                     "Alert limits configuration valid.", source=self.name
                 )
-            else:
+            except Exception as exc:
                 log.error(
-                    "Alert limits configuration invalid.", source=self.name
+                    f"Alert limits configuration invalid: {exc}", source=self.name
                 )
 
         duration = (datetime.now() - start_time).total_seconds()
