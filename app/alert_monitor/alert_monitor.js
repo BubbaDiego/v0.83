@@ -3,14 +3,19 @@ const listEl = document.getElementById('alertList');
 function renderAlerts(alerts) {
   listEl.innerHTML = '';
   alerts.forEach(alert => {
-    const start = alert.starting_value ?? 0;
     const trigger = alert.trigger_value ?? 0;
+    let start = alert.starting_value;
     const current = alert.evaluated_value ?? 0;
+    if (start == null) {
+      start = trigger || 0;
+    }
     let travelPercent = 0;
     if (trigger !== start) {
       travelPercent = ((current - start) / (trigger - start)) * 100;
-      travelPercent = Math.min(Math.max(travelPercent, -100), 100);
+    } else if (start !== 0) {
+      travelPercent = (current / start) * 100;
     }
+    travelPercent = Math.min(Math.max(travelPercent, -100), 100);
 
     const flip = document.createElement('div');
     flip.className = 'alert-flip';
