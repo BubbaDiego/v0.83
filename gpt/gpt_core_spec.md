@@ -15,6 +15,7 @@ gpt/
 ├── chat_gpt_bp.py         # Web UI blueprint
 ├── context_loader.py      # Loads JSON context snippets
 ├── create_gpt_context_service.py # Message builder
+├── oracle_core/           # Strategy-aware oracle package
 ├── templates/chat_gpt.html # Front-end interface
 ├── templates/oracle_gpt.html # Oracle UI interface
 ```
@@ -73,16 +74,13 @@ The constructor looks for `OPENAI_API_KEY` first and falls back to
 
 ### Chat helpers
 
-The core exposes multiple question methods that return a text reply from GPT.  A new `ask_oracle()` helper routes all topic specific requests through the `Oracle` wrapper:
+The core exposes multiple question methods that return a text reply from GPT.  A new `ask_oracle()` helper routes all topic specific requests through the `OracleCore` orchestrator:
 
 ```python
-    def ask_oracle(self, topic: str, instructions: str = "") -> str:
-        oracle = Oracle(topic, self.data_locker, instructions)
-        messages = oracle.get_context()
-        response = self.client.chat.completions.create(
-            model="gpt-3.5-turbo", messages=messages
-        )
-        return response.choices[0].message.content.strip()
+    def ask_oracle(self, topic: str, strategy_name: str | None = None) -> str:
+        oracle = OracleCore(self.data_locker)
+        oracle.client = self.client
+        return oracle.ask(topic, strategy_name)
 ```
 【F:gpt/gpt_core.py†L98-L106】
 
@@ -94,33 +92,29 @@ The core exposes multiple question methods that return a text reply from GPT.  A
 
 Other helper methods `ask_gpt_about_alerts`, `ask_gpt_about_prices`, and `ask_gpt_about_system` call `ask_oracle` with their respective topics.【F:gpt/gpt_core.py†L115-L125】
 
-## 🔮 Oracle
+## 🔮 OracleCore
 
-`oracle.py` defines a small helper that bundles context for quick queries. It
-delegates data retrieval to ``OracleDataService``.
+The ``oracle_core`` package provides a strategy-aware orchestrator for GPT
+queries. ``OracleCore`` aggregates context via topic handlers, applies optional
+strategies, and builds prompts for the OpenAI API.
 
 ```python
-class Oracle:
-    """Bundle context and instructions for GPT queries."""
-    def __init__(self, topic: str, data_locker, instructions: str = ""):
-        self.topic = topic
+class OracleCore:
+    def __init__(self, data_locker):
         self.data_locker = data_locker
-        self.data_service = OracleDataService(data_locker)
-        self.instructions = instructions or self.default_instructions()
-
-    def default_instructions(self) -> str:
-        return {
-            "portfolio": "Provide a portfolio analysis summary.",
-            "alerts": "Summarize the current alert state.",
-            "prices": "Summarize the market trends.",
-            "system": "Summarize the system health status.",
-        }.get(self.topic, "Assist the user.")
+        self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        self.strategy_manager = StrategyManager()
+        self.handlers = {
+            "portfolio": PortfolioTopicHandler(data_locker),
+            "alerts": AlertsTopicHandler(data_locker),
+            "prices": PricesTopicHandler(data_locker),
+            "system": SystemTopicHandler(data_locker),
+        }
 ```
-【F:gpt/oracle.py†L8-L23】
+【F:oracle_core/oracle_core.py†L16-L38】
 
-`get_context()` returns a list of chat messages based on the topic, pulling data
-from `DataLocker` when required.
-【F:gpt/oracle.py†L25-L60】
+Each handler implements ``get_context()`` and returns a dictionary with the
+relevant data. Strategies modify the context before building the prompt.
 
 ---
 
@@ -153,7 +147,7 @@ Provides JSON API endpoints.
 
 - `POST /gpt/analyze` → build a payload and ask GPT for analysis.
 - `GET /gpt/portfolio` → use static context files for a portfolio summary.
-- `GET /gpt/oracle/<topic>` → call `Oracle` for a quick summary of `portfolio`, `alerts`, `prices`, or `system`.
+- `GET /gpt/oracle/<topic>` → call `OracleCore` via `GPTCore.ask_oracle` for a quick summary of `portfolio`, `alerts`, `prices`, or `system`.
 - `GET /GPT/oracle` → render the Oracle web interface.
 
 ```python

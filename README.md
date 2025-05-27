@@ -88,7 +88,9 @@ with status code `0` on success and `1` on failure.
 
 Run `python sonic_app.py` and navigate to `/GPT/chat` to open the oracle front end.
 The page shows four buttons—`portfolio`, `alerts`, `prices`, and `system`—that
-query the `/gpt/oracle/<topic>` API and display the reply.
+query the `/gpt/oracle/<topic>` API and display the reply using **OracleCore**.
+OracleCore aggregates context, applies optional strategies, and sends the prompt
+to GPT.
 
 The API can be called directly as well:
 
