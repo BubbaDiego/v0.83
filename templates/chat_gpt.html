@@ -75,6 +75,21 @@
   .input-area button:hover {
     background-color: #0056b3;
   }
+
+  .oracle-panel {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+  }
+
+  .oracle-output {
+    min-height: 120px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 0.5rem;
+    background: #fafafa;
+    white-space: pre-wrap;
+  }
 </style>
 {% endblock %}
 
@@ -99,6 +114,17 @@
     <button id="portfolioBtn">Ask Portfolio</button>
   </div>
 </div>
+
+<div class="oracle-panel sonic-content-panel mt-4">
+  <div class="section-title icon-inline"><span>🧙</span><span>The Oracle</span></div>
+  <div class="oracle-btns d-flex justify-content-around mb-3">
+    <button class="oracle-btn btn btn-outline-primary" data-topic="portfolio" title="Ask about portfolio">📂</button>
+    <button class="oracle-btn btn btn-outline-secondary" data-topic="alerts" title="Ask about alerts">🚨</button>
+    <button class="oracle-btn btn btn-outline-secondary" data-topic="prices" title="Ask about prices">💲</button>
+    <button class="oracle-btn btn btn-outline-secondary" data-topic="system" title="Ask about system">🖥️</button>
+  </div>
+  <div id="oracleOutput" class="oracle-output"></div>
+</div>
 {% endblock %}
 
 {% block extra_scripts %}
@@ -110,7 +136,27 @@ const sendBtn = document.getElementById('sendBtn');
 const userInput = document.getElementById('userInput');
 const chatWindow = document.getElementById('chatWindow');
 const tokenInfo = document.getElementById('tokenInfo');
-const portfolioBtn = document.getElementById('portfolioBtn');
+const oracleOutput = document.getElementById('oracleOutput');
+document.querySelectorAll('.oracle-btn').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const topic = btn.dataset.topic;
+    if (topic !== 'portfolio') {
+      oracleOutput.textContent = 'Coming soon...';
+      return;
+    }
+    try {
+      const res = await fetch('{{ url_for('gpt_bp.ask_portfolio') }}');
+      if (!res.ok) throw new Error('Network response was not ok');
+      const data = await res.json();
+      oracleOutput.textContent = data.reply;
+    } catch (err) {
+      console.error('Error:', err);
+      oracleOutput.textContent = 'Oops, something went wrong. Please try again.';
+    }
+  });
+});
+
+#const portfolioBtn = document.getElementById('portfolioBtn');
 
 function addMessage(content, sender) {
   const div = document.createElement('div');

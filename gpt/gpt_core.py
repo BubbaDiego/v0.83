@@ -87,8 +87,16 @@ class GPTCore:
 
     def ask_gpt_about_portfolio(self) -> str:
         """Use standard JSON context files to query GPT about the portfolio."""
+
+        from .context_loader import get_context_messages
+
+        self.logger.debug("Sending standard context files to GPT")
+        messages = [{"role": "system", "content": "You are a portfolio analysis assistant."}]
+        messages.extend(get_context_messages())
+        messages.append({"role": "user", "content": "Provide a portfolio analysis summary."})
         self.logger.debug("Preparing portfolio context for GPT")
-        messages = create_gpt_context_service(self, "portfolio", "Provide a portfolio analysis summary.")
+ #       messages = create_gpt_context_service(self, "portfolio", "Provide a portfolio analysis summary.")
+
         try:
             response = self.client.chat.completions.create(
                 model="gpt-3.5-turbo", messages=messages
