@@ -52,8 +52,8 @@ class XComConfigService:
                     },
                 }
 
-            # Fallback for Twilio if missing/empty
-            if name == "twilio" and not provider:
+            # Fallback for API (Twilio) if missing/empty
+            if name == "api" and not provider:
                 provider = {
                     "enabled": True,
                     "account_sid": os.getenv("TWILIO_ACCOUNT_SID"),
@@ -74,7 +74,7 @@ class XComConfigService:
                 smtp["default_recipient"] = _resolve_env(smtp.get("default_recipient"), "SMTP_DEFAULT_RECIPIENT")
                 provider["smtp"] = smtp
 
-            if name == "twilio":
+            if name == "api":
                 provider["account_sid"] = _resolve_env(provider.get("account_sid"), "TWILIO_ACCOUNT_SID")
                 provider["auth_token"] = _resolve_env(provider.get("auth_token"), "TWILIO_AUTH_TOKEN")
                 provider["flow_sid"] = _resolve_env(provider.get("flow_sid"), "TWILIO_FLOW_SID")

@@ -22,34 +22,34 @@
     <div class="col-md-6">
       <form method="POST" action="{{ url_for('system.save_xcom_config') }}">
 
-        <!-- TWILIO CONFIG -->
-        <div class="accordion mb-4" id="twilioAccordion">
+        <!-- API CONFIG -->
+        <div class="accordion mb-4" id="apiAccordion">
           <div class="accordion-item">
             <h2 class="accordion-header">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#twilioCollapse">
-                <i class="fab fa-twilio me-2 text-danger"></i>Twilio Settings
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#apiCollapse">
+                <i class="fab fa-twilio me-2 text-danger"></i>API Settings
               </button>
             </h2>
-            <div id="twilioCollapse" class="accordion-collapse collapse">
+            <div id="apiCollapse" class="accordion-collapse collapse">
               <div class="accordion-body row g-3">
-                {% set twilio = xcom_config.get("twilio", {}) %}
+                {% set api = xcom_config.get("api", {}) %}
                 <div class="col-md-6"><label class="form-label">Account SID</label>
-                  <input type="text" name="twilio[account_sid]" value="{{ twilio.account_sid or '' }}" class="form-control">
+                  <input type="text" name="api[account_sid]" value="{{ api.account_sid or '' }}" class="form-control">
                 </div>
                 <div class="col-md-6"><label class="form-label">Auth Token</label>
                   <div class="input-group">
-                    <input type="password" id="authTokenField" name="twilio[auth_token]" value="{{ twilio.auth_token or '' }}" class="form-control">
+                    <input type="password" id="authTokenField" name="api[auth_token]" value="{{ api.auth_token or '' }}" class="form-control">
                     <button type="button" class="btn btn-outline-secondary" onclick="toggleToken()">👁️</button>
                   </div>
                 </div>
                 <div class="col-md-6"><label class="form-label">Flow SID</label>
-                  <input type="text" name="twilio[flow_sid]" value="{{ twilio.flow_sid or '' }}" class="form-control">
+                  <input type="text" name="api[flow_sid]" value="{{ api.flow_sid or '' }}" class="form-control">
                 </div>
                 <div class="col-md-6"><label class="form-label">From Phone</label>
-                  <input type="text" name="twilio[default_from_phone]" value="{{ twilio.default_from_phone or '' }}" class="form-control">
+                  <input type="text" name="api[default_from_phone]" value="{{ api.default_from_phone or '' }}" class="form-control">
                 </div>
                 <div class="col-md-6"><label class="form-label">To Phone</label>
-                  <input type="text" name="twilio[default_to_phone]" value="{{ twilio.default_to_phone or '' }}" class="form-control">
+                  <input type="text" name="api[default_to_phone]" value="{{ api.default_to_phone or '' }}" class="form-control">
                 </div>
 
                 <div class="col-md-12">
@@ -58,12 +58,12 @@
 
                 <!-- 🔍 DISPLAY VALUES -->
                 <div class="col-md-12 mt-2">
-                  <label class="form-label text-muted">🔍 Loaded Twilio Config (read-only)</label>
+                  <label class="form-label text-muted">🔍 Loaded API Config (read-only)</label>
                   <div class="p-2 border bg-light text-monospace small rounded">
-                    <div>Account SID: <strong>{{ twilio.account_sid or "—" }}</strong></div>
-                    <div>Flow SID: <strong>{{ twilio.flow_sid or "—" }}</strong></div>
-                    <div>From Phone: <strong>{{ twilio.default_from_phone or "—" }}</strong></div>
-                    <div>To Phone: <strong>{{ twilio.default_to_phone or "—" }}</strong></div>
+                    <div>Account SID: <strong>{{ api.account_sid or "—" }}</strong></div>
+                    <div>Flow SID: <strong>{{ api.flow_sid or "—" }}</strong></div>
+                    <div>From Phone: <strong>{{ api.default_from_phone or "—" }}</strong></div>
+                    <div>To Phone: <strong>{{ api.default_to_phone or "—" }}</strong></div>
                   </div>
                 </div>
               </div>
@@ -195,10 +195,10 @@ function checkApiStatus(btn) {
       } else {
         out.push("❌ ChatGPT: " + data.chatgpt);
       }
-      if (data.twilio === "ok") {
-        out.push("✅ Twilio reachable");
+      if (data.api === "ok") {
+        out.push("✅ API reachable");
       } else {
-        out.push("❌ Twilio: " + data.twilio);
+        out.push("❌ API: " + data.api);
       }
       document.getElementById("apiStatusResult").textContent = out.join("\n");
     })

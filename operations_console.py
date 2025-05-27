@@ -108,9 +108,9 @@ def menu_xcom():
         elif choice == "3":
             xcom.send_notification("HIGH", subj, msg)
         elif choice == "4":
-            twilio_cfg = xcom.config_service.get_provider("twilio")
-            masked = {k: ("****" if "token" in k or "sid" in k else v) for k, v in twilio_cfg.items()}
-            log.info("Twilio Config", payload=masked)
+            api_cfg = xcom.config_service.get_provider("api")
+            masked = {k: ("****" if "token" in k or "sid" in k else v) for k, v in api_cfg.items()}
+            log.info("API Config", payload=masked)
         elif choice.lower() == "b":
             break
         pause()

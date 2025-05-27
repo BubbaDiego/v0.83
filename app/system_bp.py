@@ -60,8 +60,8 @@ def test_xcom():
         elif mode == "voice":
             from xcom.check_twilio_heartbeart_service import CheckTwilioHeartbeartService
 
-            twilio_cfg = xcom.config_service.get_provider("twilio") or {}
-            CheckTwilioHeartbeartService(twilio_cfg).check(dry_run=False)
+            api_cfg = xcom.config_service.get_provider("api") or {}
+            CheckTwilioHeartbeartService(api_cfg).check(dry_run=False)
         elif mode == "system":
             SoundService().play()
 
@@ -572,12 +572,12 @@ def save_xcom_config():
         new_config = {
             "communication": {
                 "providers": {
-                    "twilio": {
-                        "account_sid": extract("twilio[account_sid]"),
-                        "auth_token": extract("twilio[auth_token]"),
-                        "flow_sid": extract("twilio[flow_sid]"),
-                        "default_to_phone": extract("twilio[default_to_phone]"),
-                        "default_from_phone": extract("twilio[default_from_phone]"),
+                    "api": {
+                        "account_sid": extract("api[account_sid]"),
+                        "auth_token": extract("api[auth_token]"),
+                        "flow_sid": extract("api[flow_sid]"),
+                        "default_to_phone": extract("api[default_to_phone]"),
+                        "default_from_phone": extract("api[default_from_phone]"),
                     },
                     "email": {
                         "enabled": True,
@@ -752,17 +752,17 @@ def import_xcom_config():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
-@system_bp.route("/xcom_config/validate_twilio", methods=["POST"])
-def validate_twilio():
+@system_bp.route("/xcom_config/validate_api", methods=["POST"])
+def validate_api():
     try:
         from flask import current_app
         import requests
 
         dl = current_app.data_locker
-        twilio = dl.system.get_var("xcom_providers").get("twilio", {})
+        api_cfg = dl.system.get_var("xcom_providers").get("api", {})
 
-        sid = twilio.get("account_sid")
-        token = twilio.get("auth_token")
+        sid = api_cfg.get("account_sid")
+        token = api_cfg.get("auth_token")
 
         if not sid or not token:
             return jsonify({"status": "fail", "reason": "Missing SID or token"}), 400
@@ -772,7 +772,7 @@ def validate_twilio():
 
         if response.status_code == 200:
             return jsonify(
-                {"status": "ok", "message": "✅ Twilio credentials are valid."}
+                {"status": "ok", "message": "✅ API credentials are valid."}
             )
         elif response.status_code == 401:
             return (
@@ -803,7 +803,7 @@ def validate_twilio():
 
 @system_bp.route("/xcom_api_status", methods=["GET"])
 def xcom_api_status():
-    """Return ChatGPT and Twilio API connectivity status as JSON."""
+    """Return ChatGPT and API (Twilio) connectivity status as JSON."""
     status = {}
 
     api_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPEN_AI_KEY")
@@ -827,11 +827,11 @@ def xcom_api_status():
 
         result = CheckTwilioHeartbeartService({}).check(dry_run=True)
         if result.get("success"):
-            status["twilio"] = "ok"
+            status["api"] = "ok"
         else:
-            status["twilio"] = f"error: {result.get('error', 'unknown error')}"
+            status["api"] = f"error: {result.get('error', 'unknown error')}"
     except Exception as exc:  # pragma: no cover - network dependent
-        status["twilio"] = f"error: {exc}"
+        status["api"] = f"error: {exc}"
 
     return jsonify(status)
 

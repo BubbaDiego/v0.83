@@ -27,7 +27,7 @@ class XComCore:
         """
         email_cfg = self.config_service.get_provider("email") or {}
         sms_cfg = self.config_service.get_provider("sms") or {}
-        voice_cfg = self.config_service.get_provider("twilio") or {}
+        voice_cfg = self.config_service.get_provider("api") or {}
 
         results = {"email": False, "sms": False, "voice": False, "sound": None}
         error_msg = None

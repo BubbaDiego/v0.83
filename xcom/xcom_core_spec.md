@@ -31,7 +31,7 @@ XComCore(dl_sys_data_manager)
 ```python
 send_notification(level, subject, body, recipient="", initiator="system") -> dict
 ```
-- Retrieves provider configs (`email`, `sms`, `twilio`).
+- Retrieves provider configs (`email`, `sms`, `api`).
 - Based on `level` dispatches to `SMSService`, `VoiceService`, `EmailService` and
   optionally plays a sound.
 - Results and errors are logged and written to the `xcom_monitor` ledger.

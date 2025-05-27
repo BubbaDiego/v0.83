@@ -18,7 +18,7 @@ class TwilioMonitor(BaseMonitor):
         self.config_service = XComConfigService(self.dl.system)
 
     def _do_work(self):
-        cfg = self.config_service.get_provider("twilio") or {}
+        cfg = self.config_service.get_provider("api") or {}
         service = CheckTwilioHeartbeartService(cfg)
         result = service.check(dry_run=True)
         return result
