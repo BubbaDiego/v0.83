@@ -11,9 +11,18 @@ class BaseMonitor:
 
         log.banner(f"🚀 Running {self.name}")
         result = {}
+        status = "Success"
         try:
             result = self._do_work()
-            status = "Success" if result.get("errors", 0) == 0 else "Error"
+
+            if isinstance(result, dict):
+                if "status" in result:
+                    status = "Success" if str(result.get("status")).lower() == "success" else "Error"
+                elif "success" in result:
+                    status = "Success" if result.get("success") else "Error"
+                elif "errors" in result:
+                    status = "Success" if result.get("errors", 0) == 0 else "Error"
+            
 
             # 🧾 Log to DB-backed ledger
             locker = DataLocker(DB_PATH)
