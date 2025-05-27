@@ -36,6 +36,13 @@
     gap: 2rem;
   }
 
+  .oracle-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
   .panel {
     flex: 1;
     background: rgba(25, 25, 50, 0.9);
@@ -170,27 +177,29 @@
   <button id="fontDown">A-</button>
 </div>
 
-<h1>🔮 Speak to the Oracle</h1>
-<div class="container">
-  <div class="panel">
-    <div class="oracle-btns">
-      <button class="oracle-btn" data-topic="portfolio">📂</button>
-      <button class="oracle-btn" data-topic="alerts">🚨</button>
-      <button class="oracle-btn" data-topic="prices">💲</button>
-      <button class="oracle-btn" data-topic="system">🖥️</button>
+<div class="oracle-wrapper">
+  <h1>🔮 Speak to the Oracle</h1>
+  <div class="container">
+    <div class="panel">
+      <div class="oracle-btns">
+        <button class="oracle-btn" data-topic="portfolio">📂</button>
+        <button class="oracle-btn" data-topic="alerts">🚨</button>
+        <button class="oracle-btn" data-topic="prices">💲</button>
+        <button class="oracle-btn" data-topic="system">🖥️</button>
+      </div>
+      <div id="oracleOutput" class="oracle-output">Ask a question to receive wisdom from the stars.</div>
     </div>
-    <div id="oracleOutput" class="oracle-output">Ask a question to receive wisdom from the stars.</div>
-  </div>
 
-  <div class="panel">
-    <div id="chatWindow" class="chat-window"></div>
-    <div class="typing-indicator" id="typingIndicator" style="display:none;">The spirits are whispering...</div>
-    <div class="input-area">
-      <input type="text" id="userInput" placeholder="Speak your query...">
-      <button id="sendBtn">Send</button>
+    <div class="panel">
+      <div id="chatWindow" class="chat-window"></div>
+      <div class="typing-indicator" id="typingIndicator" style="display:none;">The spirits are whispering...</div>
+      <div class="input-area">
+        <input type="text" id="userInput" placeholder="Speak your query...">
+        <button id="sendBtn">Send</button>
+      </div>
+      <div id="tokenInfo"></div>
     </div>
-    <div id="tokenInfo"></div>
-  </div>
+</div>
 </div>
 {% endblock %}
 
