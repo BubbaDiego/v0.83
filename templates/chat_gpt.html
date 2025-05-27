@@ -199,6 +199,7 @@
   const oracleBtns = document.querySelectorAll('.oracle-btn');
   const oracleOutput = document.getElementById('oracleOutput');
   const typingIndicator = document.getElementById('typingIndicator');
+  const oracleUrlTemplate = "{{ url_for('gpt_bp.oracle', topic='TOPIC_PLACEHOLDER') }}";
 
 
   function addMessage(content, role) {
@@ -235,7 +236,8 @@
     btn.addEventListener('click', async () => {
       const topic = btn.getAttribute('data-topic');
       oracleOutput.textContent = "Consulting the spirits...";
-      const res = await fetch(`/gpt/oracle/${topic}`);
+      const url = oracleUrlTemplate.replace('TOPIC_PLACEHOLDER', encodeURIComponent(topic));
+      const res = await fetch(url);
       const data = await res.json();
       oracleOutput.textContent = data.reply;
     });
