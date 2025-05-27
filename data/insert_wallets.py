@@ -6,6 +6,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 from core.core_imports import DB_PATH, configure_console_log
 from data.data_locker import DataLocker
+from wallets.wallet_service import WalletService
+from wallets.wallet_schema import WalletIn
 
 def ensure_wallets_table(db):
     cursor = db.get_cursor()
@@ -29,6 +31,9 @@ configure_console_log()
 dl = DataLocker(str(DB_PATH))
 ensure_wallets_table(dl.db)
 
+# Use higher-level service which validates duplicates
+service = WalletService()
+
 wallets_to_add = [
     {
         "name": "R2Vault",
@@ -48,7 +53,13 @@ wallets_to_add = [
 
 for w in wallets_to_add:
     try:
-        dl.wallets.create_wallet(w)
-        print(f"✅ Inserted wallet: {w['name']}")
+        if service.repo.get_wallet_by_name(w["name"]):
+            service.update_wallet(w["name"], WalletIn(**w))
+            print(f"🔄 Updated wallet: {w['name']}")
+        else:
+            service.create_wallet(WalletIn(**w))
+            print(f"✅ Inserted wallet: {w['name']}")
     except Exception as e:
-        print(f"❌ Failed to insert {w['name']}: {e}")
+        print(f"❌ Failed to upsert {w['name']}: {e}")
+
+dl.close()
