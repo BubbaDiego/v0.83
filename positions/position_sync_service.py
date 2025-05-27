@@ -158,6 +158,9 @@ class PositionSyncService:
             log.info(f"🔍 Loaded {len(wallets)} wallets for sync", source="PositionSyncService")
 
             new_positions = []
+            errors = 0
+            imported = 0
+            skipped = 0
 
             for wallet in wallets:
                 pub = wallet.get("public_address", "").strip()
@@ -206,10 +209,8 @@ class PositionSyncService:
                 except requests.RequestException as e:
                     log.error(f"❌ [{name}] API Request Error: {e}", source="JupiterAPI")
                     log.debug(f"📝 Raw body:\n{res.text if 'res' in locals() else 'no response'}", source="JupiterAPI")
+                    errors += 1
 
-            imported = 0
-            errors = 0
-            skipped = 0
             enricher = PositionEnrichmentService(self.dl)
 
             # ✅ Fetch DB schema for safe field filtering
