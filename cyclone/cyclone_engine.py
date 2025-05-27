@@ -244,6 +244,14 @@ class Cyclone:
     def clear_wallets_backend(self):
         self.maintenance_service.clear_wallets()
 
+    def add_wallet_backend(self):
+        """Interactively add a wallet via :class:`CycloneWalletService`."""
+        self.wallet_service.add_wallet_interactive()
+
+    def view_wallets_backend(self):
+        """Display all wallets using :class:`CycloneWalletService`."""
+        self.wallet_service.view_wallets()
+
     def clear_positions_backend(self):
         self.maintenance_service.clear_positions()
 

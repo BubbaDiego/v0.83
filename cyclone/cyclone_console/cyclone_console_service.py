@@ -137,7 +137,7 @@ class CycloneConsoleService:
             choice = input("Enter your choice (1-4): ").strip()
             if choice == "1":
                 print("Running Market Update...")
-                asyncio.run(self.cyclone.run_cycle(steps=["market"]))
+                asyncio.run(self.cyclone.run_cycle(steps=["market_updates"]))
                 print("Market Update completed.")
             elif choice == "2":
                 print("Viewing Prices...")
@@ -164,16 +164,11 @@ class CycloneConsoleService:
                 self.view_positions_backend()
             elif choice == "2":
                 print("Running Position Updates...")
-                # Replace this:
-                asyncio.run(self.cyclone.run_cycle(steps=["position"]))
-
-                # With:
-                #asyncio.run(self.cyclone.run_debug_position_update())
+                asyncio.run(self.cyclone.run_position_updates())
                 print("Position Updates completed.")
             elif choice == "3":
                 print("Running Enrich Positions...")
-                # Updated step key from "enrichment" to "enrich positions"
-                asyncio.run(self.cyclone.run_cycle(steps=["enrich positions"]))
+                asyncio.run(self.cyclone.run_cycle(steps=["enrich_positions"]))
                 print("Enrich Positions completed.")
             elif choice == "4":
                 print("Clearing Positions...")
@@ -194,15 +189,14 @@ class CycloneConsoleService:
             print("2) 💵 Create Market Alerts")
             print("3) 📊 Create Portfolio Alerts")
             print("4) 📌 Create Position Alerts")
-            print("5) 🖥 Create System Alerts")
+            print("5) 🖥 Create Global Alerts")
             print("6) ✨ Enrich Alerts")
             print("7) 🔄 Update Evaluated Value")
             print("8) 🔍 Alert Evaluations")
             print("9) 🧹 Clear Alerts")
             print("10) ♻️ Refresh Alerts")
-            print("11) 🧹 Clear Alert Ledger")
-            print("12) ↩️ Back to Main Menu")
-            choice = input("Enter your choice (1-12): ").strip()
+            print("11) ↩️ Back to Main Menu")
+            choice = input("Enter your choice (1-11): ").strip()
             if choice == "1":
                 print("Viewing Alerts...")
                 self.view_alerts_backend()
@@ -216,8 +210,8 @@ class CycloneConsoleService:
                 print("Creating Position Alerts...")
                 asyncio.run(self.cyclone.run_cycle(steps=["create_position_alerts"]))
             elif choice == "5":
-                print("Creating System Alerts...")
-                asyncio.run(self.cyclone.run_cycle(steps=["create_system_alerts"]))
+                print("Creating Global Alerts...")
+                asyncio.run(self.cyclone.run_cycle(steps=["create_global_alerts"]))
             elif choice == "6":
                 print("Running Enrich Alerts...")
                 asyncio.run(self.cyclone.run_alert_enrichment())
@@ -227,7 +221,7 @@ class CycloneConsoleService:
                 asyncio.run(self.cyclone.run_cycle(steps=["update_evaluated_value"]))
             elif choice == "8":
                 print("Running Alert Evaluations...")
-                asyncio.run(self.cyclone.run_cycle(steps=["alert"]))
+                asyncio.run(self.cyclone.run_cycle(steps=["evaluate_alerts"]))
                 print("Alert Evaluations completed.")
             elif choice == "9":
                 print("Clearing Alerts...")
@@ -237,9 +231,6 @@ class CycloneConsoleService:
                 asyncio.run(self.cyclone.run_alert_updates())
                 print("Alerts refreshed.")
             elif choice == "11":
-                print("Clearing Alert Ledger...")
-                self.cyclone.clear_alert_ledger_backend()
-            elif choice == "12":
                 break
             else:
                 print("Invalid choice, please try again.")
@@ -450,7 +441,7 @@ class CycloneConsoleService:
 if __name__ == "__main__":
     from cyclone_engine import Cyclone
 
-    from core.core_imports import get_locker
+    from core.locker_factory import get_locker
     cyclone = Cyclone(poll_interval=60)
     helper = CycloneConsoleService(cyclone)
     helper.run()
