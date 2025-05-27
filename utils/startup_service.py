@@ -103,6 +103,7 @@ class StartUpService:
             StartUpService.ensure_alert_limits,
             StartUpService.check_env_vars,
             StartUpService.initialize_database,
+            StartUpService.ensure_wallet_exists,
             StartUpService.ensure_required_directories,
             StartUpService.run_path_audit,
             StartUpService.run_operations_tests,
@@ -231,6 +232,23 @@ class StartUpService:
         except Exception as exc:
             log.critical(f"❌ Database initialization failed: {exc}", source="StartUpService")
             raise SystemExit("Startup failed during database initialization.")
+
+    @staticmethod
+    def ensure_wallet_exists():
+        """Verify at least one wallet record is present."""
+        try:
+            dl = DataLocker(str(DB_PATH))
+            wallets = dl.read_wallets()
+            dl.close()
+            if not wallets:
+                log.critical("❌ No wallets found in the database.", source="StartUpService")
+                raise SystemExit("Startup failed: at least one wallet is required.")
+            log.info(f"✅ {len(wallets)} wallet(s) found.", source="StartUpService")
+        except SystemExit:
+            raise
+        except Exception as exc:
+            log.critical(f"❌ Wallet check failed: {exc}", source="StartUpService")
+            raise SystemExit("Startup failed during wallet check.")
 
     @staticmethod
     def run_operations_tests():
