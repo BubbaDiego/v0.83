@@ -100,9 +100,15 @@ class ConsoleLogger:
             print(f"[🧠 LOGGING DEBUG] caller='{caller_module}' source='{source}' → effective='{effective_source}'")
             print(f"                └─ FINAL DECISION: ✅ allowed")
 
-        color = cls.COLORS.get(level, cls.COLORS["info"])
         icon = cls.ICONS.get(level, cls.ICONS.get("info", ""))
-        endc = cls.COLORS["endc"]
+        start_reset = cls.COLORS["endc"]
+        # Only render messages in red when actually logging an error.
+        if level == "error":
+            color = cls.COLORS["error"]
+            endc = cls.COLORS["endc"]
+        else:
+            color = ""
+            endc = ""
         timestamp = cls._timestamp()
         label = f"{icon} {message} :: [{effective_source}] @ {timestamp}"
 
@@ -120,9 +126,9 @@ class ConsoleLogger:
             except Exception as e:
                 inline_payload = f" [payload processing error: {e}]"
 
-        # Reset any prior color codes before applying our own to ensure
-        # messages are not inadvertently tinted from earlier output.
-        print(f"{endc}{color}{label}{inline_payload}{endc}")
+        # Always start with a reset code so any previous colored output doesn't
+        # bleed into the new log line.
+        print(f"{start_reset}{color}{label}{inline_payload}{endc}")
 
     @classmethod
     def info(cls, message: str, source: str = None, payload: dict = None):
