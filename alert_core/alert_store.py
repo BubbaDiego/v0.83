@@ -375,7 +375,7 @@ class AlertStore:
             alert = {
                 "id": str(uuid4()),
                 "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "alert_type": AlertType.PriceThreshold.value,
+                "alert_type": AlertType.PRICE_THRESHOLD.value,
                 "alert_class": "Market",
                 "asset": "BTC",
                 "asset_type": "Crypto",
