@@ -75,20 +75,24 @@
 
 /* Slightly smaller card sizing within the portfolio panel */
 .portfolio-panel .flip-card {
+
   /* Cards trimmed to roughly 70% width for a taller layout */
   flex-basis: 80px;   /* tweak values below as needed */
   max-width: 88px;
   min-width: 73px;
+
   /* Slightly taller cards for more vertical room */
   aspect-ratio: 3/4;
 }
 
 /* Monitor panel cards widened slightly to balance height */
 .monitor-panel .flip-card {
+
   /* Still compact but slightly wider */
   flex-basis: 88px;
   max-width: 95px;
   min-width: 80px;
+
   /* Extra height for readability */
   aspect-ratio: 3/4;
 }

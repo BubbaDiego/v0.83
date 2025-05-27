@@ -17,6 +17,14 @@ def load_module():
     sys.modules["gpt.context_loader"] = ctx_mod
     setattr(pkg, "context_loader", ctx_mod)
 
+    ods_path = base / "oracle_data_service.py"
+    ods_spec = importlib.util.spec_from_file_location("gpt.oracle_data_service", ods_path)
+    ods_mod = importlib.util.module_from_spec(ods_spec)
+    assert ods_spec and ods_spec.loader
+    ods_spec.loader.exec_module(ods_mod)
+    sys.modules["gpt.oracle_data_service"] = ods_mod
+    setattr(pkg, "oracle_data_service", ods_mod)
+
     path = base / "oracle.py"
     spec = importlib.util.spec_from_file_location("gpt.oracle", path)
     module = importlib.util.module_from_spec(spec)
@@ -37,10 +45,15 @@ def test_oracle_get_context(monkeypatch):
         def get_all_prices(self):
             return [1, 2, 3]
 
+    class DummyPortfolio:
+        def get_latest_snapshot(self):
+            return {"id": "snap1"}
+
     class DummyLocker:
         def __init__(self):
             self.alerts = DummyAlerts()
             self.prices = DummyPrices()
+            self.portfolio = DummyPortfolio()
 
         def get_last_update_times(self):
             return {"x": 1}
