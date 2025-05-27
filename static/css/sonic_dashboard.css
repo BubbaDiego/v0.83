@@ -79,6 +79,8 @@
   flex-basis: 75px;   /* tweak values below as needed */
   max-width: 83px;
   min-width: 68px;
+  /* Slightly taller cards for more vertical room */
+  aspect-ratio: 3/4;
 }
 
 /* Monitor panel card sizing also reduced by 25% */
@@ -86,6 +88,8 @@
   flex-basis: 83px;
   max-width: 90px;
   min-width: 75px;
+  /* Extra height for readability */
+  aspect-ratio: 3/4;
 }
 
 /* Inner container to enable 3D flip */
