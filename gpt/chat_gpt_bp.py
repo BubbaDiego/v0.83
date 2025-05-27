@@ -35,6 +35,13 @@ def chat():
     return render_template("chat_gpt.html", model_name=MODEL_NAME)
 
 
+@chat_gpt_bp.route("/oracle", methods=["GET"])
+def oracle_ui():
+    """Render the GPT Oracle interface."""
+    logger.debug("GET /oracle - Rendering oracle interface.")
+    return render_template("oracle_gpt.html", model_name=MODEL_NAME)
+
+
 @chat_gpt_bp.route("/chat", methods=["POST"])
 def chat_post():
     """Handle ChatGPT messages and return the response."""
