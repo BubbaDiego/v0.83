@@ -11,6 +11,7 @@ from openai import OpenAI
 from data.data_locker import DataLocker
 from core.constants import DB_PATH
 from .create_gpt_context_service import create_gpt_context_service
+from .oracle import Oracle
 
 
 class GPTCore:
@@ -85,77 +86,32 @@ class GPTCore:
             self.logger.exception(f"GPT analysis failed: {e}")
             return f"Error: {e}"
 
-    def ask_gpt_about_portfolio(self) -> str:
-        """Use standard JSON context files to query GPT about the portfolio."""
-
-        from .context_loader import get_context_messages
-
-        self.logger.debug("Sending standard context files to GPT")
-        messages = [{"role": "system", "content": "You are a portfolio analysis assistant."}]
-        messages.extend(get_context_messages())
-        messages.append({"role": "user", "content": "Provide a portfolio analysis summary."})
-        self.logger.debug("Preparing portfolio context for GPT")
- #       messages = create_gpt_context_service(self, "portfolio", "Provide a portfolio analysis summary.")
-
+    def ask_oracle(self, topic: str, instructions: str = "") -> str:
+        """Query GPT for a specific topic using the Oracle wrapper."""
+        oracle = Oracle(topic, self.data_locker, instructions)
+        messages = oracle.get_context()
         try:
             response = self.client.chat.completions.create(
                 model="gpt-3.5-turbo", messages=messages
             )
-            reply = response.choices[0].message.content.strip()
-            self.logger.debug("Received portfolio reply from GPT")
-            return reply
+            return response.choices[0].message.content.strip()
         except Exception as e:  # pragma: no cover - depends on OpenAI API
-            self.logger.exception(f"GPT portfolio query failed: {e}")
+            self.logger.exception(f"GPT oracle query failed: {e}")
             return f"Error: {e}"
+
+    def ask_gpt_about_portfolio(self) -> str:
+        """Backward-compatible wrapper around :meth:`ask_oracle`."""
+        return self.ask_oracle("portfolio")
 
     def ask_gpt_about_alerts(self) -> str:
-        """Summarize alert data using GPT."""
-        alerts = self.data_locker.alerts.get_all_alerts()[:20]
-        messages = [
-            {"role": "system", "content": "You summarize alert information."},
-            {"role": "system", "content": json.dumps({"alerts": alerts})},
-            {"role": "user", "content": "Provide a short summary of current alerts."},
-        ]
-        try:
-            response = self.client.chat.completions.create(
-                model="gpt-3.5-turbo", messages=messages
-            )
-            return response.choices[0].message.content.strip()
-        except Exception as e:  # pragma: no cover - depends on OpenAI API
-            self.logger.exception(f"GPT alerts query failed: {e}")
-            return f"Error: {e}"
+        """Backward-compatible wrapper around :meth:`ask_oracle`."""
+        return self.ask_oracle("alerts")
 
     def ask_gpt_about_prices(self) -> str:
-        """Summarize price data using GPT."""
-        prices = self.data_locker.prices.get_all_prices()[:20]
-        messages = [
-            {"role": "system", "content": "You summarize price information."},
-            {"role": "system", "content": json.dumps({"prices": prices})},
-            {"role": "user", "content": "Give a brief market overview."},
-        ]
-        try:
-            response = self.client.chat.completions.create(
-                model="gpt-3.5-turbo", messages=messages
-            )
-            return response.choices[0].message.content.strip()
-        except Exception as e:  # pragma: no cover - depends on OpenAI API
-            self.logger.exception(f"GPT prices query failed: {e}")
-            return f"Error: {e}"
+        """Backward-compatible wrapper around :meth:`ask_oracle`."""
+        return self.ask_oracle("prices")
 
     def ask_gpt_about_system(self) -> str:
-        """Summarize system status using GPT."""
-        system = self.data_locker.get_last_update_times()
-        messages = [
-            {"role": "system", "content": "You report system status."},
-            {"role": "system", "content": json.dumps(system)},
-            {"role": "user", "content": "Summarize the system health."},
-        ]
-        try:
-            response = self.client.chat.completions.create(
-                model="gpt-3.5-turbo", messages=messages
-            )
-            return response.choices[0].message.content.strip()
-        except Exception as e:  # pragma: no cover - depends on OpenAI API
-            self.logger.exception(f"GPT system query failed: {e}")
-            return f"Error: {e}"
+        """Backward-compatible wrapper around :meth:`ask_oracle`."""
+        return self.ask_oracle("system")
 

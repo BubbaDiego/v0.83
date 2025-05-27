@@ -30,14 +30,8 @@ def ask_portfolio():
 def oracle(topic: str):
     """Handle oracle queries for various topics."""
     core = GPTCore()
-    if topic == 'portfolio':
-        result = core.ask_gpt_about_portfolio()
-    elif topic == 'alerts':
-        result = core.ask_gpt_about_alerts()
-    elif topic == 'prices':
-        result = core.ask_gpt_about_prices()
-    elif topic == 'system':
-        result = core.ask_gpt_about_system()
-    else:
+    try:
+        result = core.ask_oracle(topic)
+        return jsonify({"reply": result})
+    except ValueError:
         return jsonify({"error": "Unknown topic"}), 400
-    return jsonify({"reply": result})
