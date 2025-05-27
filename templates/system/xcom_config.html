@@ -161,6 +161,18 @@
           </div>
         </div>
       </div>
+      <!-- 🔌 API STATUS CARD -->
+      <div class="card shadow-sm mt-4">
+        <div class="card-header bg-secondary text-white">
+          <i class="fas fa-plug me-2"></i>API Status
+        </div>
+        <div class="card-body">
+          <p id="apiStatusResult" class="text-muted">Click below to check connectivity.</p>
+          <button id="checkApiBtn" class="btn btn-outline-secondary" type="button" onclick="checkApiStatus(this)">
+            <i class="fas fa-sync me-2"></i>Check APIs
+          </button>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -170,6 +182,32 @@
 function toggleToken() {
   const field = document.getElementById("authTokenField");
   field.type = field.type === "password" ? "text" : "password";
+}
+
+function checkApiStatus(btn) {
+  btn.disabled = true;
+  fetch("{{ url_for('system.xcom_api_status') }}")
+    .then(res => res.json())
+    .then(data => {
+      const out = [];
+      if (data.chatgpt === "ok") {
+        out.push("✅ ChatGPT reachable");
+      } else {
+        out.push("❌ ChatGPT: " + data.chatgpt);
+      }
+      if (data.twilio === "ok") {
+        out.push("✅ Twilio reachable");
+      } else {
+        out.push("❌ Twilio: " + data.twilio);
+      }
+      document.getElementById("apiStatusResult").textContent = out.join("\n");
+    })
+    .catch(err => {
+      document.getElementById("apiStatusResult").textContent = "Error: " + err;
+    })
+    .finally(() => {
+      btn.disabled = false;
+    });
 }
 </script>
 {% block extra_scripts %}

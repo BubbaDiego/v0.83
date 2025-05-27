@@ -1,6 +1,7 @@
 import json
 import types
 import os
+import sys
 import pytest
 
 import monitor.operations_monitor as om
@@ -80,3 +81,52 @@ def test_check_for_config_updates(tmp_path, monkeypatch):
 
     assert updated is True
     assert monitor.data_locker.system.get_var("alert_limits") == data
+
+
+def test_check_api_status_logs_to_xcom(monkeypatch):
+    captured = {}
+
+    class CaptureLedger:
+        def insert_ledger_entry(self, monitor_name, status, metadata=None):
+            captured["monitor_name"] = monitor_name
+            captured["status"] = status
+            captured["metadata"] = metadata
+
+    class CaptureLocker(DummyLocker):
+        def __init__(self, *a, **k):
+            self.ledger = CaptureLedger()
+            self.system = DummySystem()
+
+    monkeypatch.setattr(om, "DataLocker", CaptureLocker)
+
+    # Stub OpenAI
+    class DummyClient:
+        def __init__(self, api_key=None):
+            self.chat = types.SimpleNamespace(
+                completions=types.SimpleNamespace(create=lambda *a, **k: None)
+            )
+
+    monkeypatch.setitem(sys.modules, "openai", types.SimpleNamespace(OpenAI=DummyClient))
+
+    # Stub Twilio heartbeat
+    import importlib
+    cts = importlib.import_module("xcom.check_twilio_heartbeart_service")
+
+    class DummyService:
+        def __init__(self, *a, **k):
+            pass
+
+        def check(self, dry_run=True):
+            return {"success": True}
+
+    monkeypatch.setattr(cts, "CheckTwilioHeartbeartService", DummyService)
+
+    monkeypatch.setenv("OPENAI_API_KEY", "test")
+
+    monitor = om.OperationsMonitor()
+    result = monitor.check_api_status()
+
+    assert result["chatgpt_success"] is True
+    assert result["twilio_success"] is True
+    assert captured["monitor_name"] == "xcom_monitor"
+    assert captured["status"] == "Success"
