@@ -1,22 +1,18 @@
 import importlib.util
 from pathlib import Path
 import sys
-import types
 
 
 def load_module():
     base = Path(__file__).resolve().parents[1]
-    gpt_base = base / "gpt"
-    pkg = types.ModuleType("gpt")
-    sys.modules.setdefault("gpt", pkg)
+    oc_base = base / "oracle_core"
 
-    ods_path = gpt_base / "oracle_data_service.py"
-    ods_spec = importlib.util.spec_from_file_location("gpt.oracle_data_service", ods_path)
+    ods_path = oc_base / "oracle_data_service.py"
+    ods_spec = importlib.util.spec_from_file_location("oracle_core.oracle_data_service", ods_path)
     ods_mod = importlib.util.module_from_spec(ods_spec)
     assert ods_spec and ods_spec.loader
     ods_spec.loader.exec_module(ods_mod)
-    sys.modules["gpt.oracle_data_service"] = ods_mod
-    setattr(pkg, "oracle_data_service", ods_mod)
+    sys.modules["oracle_core.oracle_data_service"] = ods_mod
 
     path = base / "oracle_core" / "oracle_core.py"
     spec = importlib.util.spec_from_file_location("oracle_core.oracle_core", path)
