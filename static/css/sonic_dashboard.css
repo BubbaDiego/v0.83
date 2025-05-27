@@ -82,6 +82,7 @@
   min-width: 73px;
 
   /* Slightly taller cards for more vertical room */
+  /* To tweak card height, change the aspect-ratio value below */
   aspect-ratio: 3/4;
 }
 
@@ -94,6 +95,7 @@
   min-width: 80px;
 
   /* Extra height for readability */
+  /* To tweak card height, change the aspect-ratio value below */
   aspect-ratio: 3/4;
 }
 
