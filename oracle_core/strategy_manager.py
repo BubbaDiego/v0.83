@@ -43,7 +43,7 @@ class StrategyManager:
                 except Exception:
                     continue
 
-                    strategies_dir = Path(__file__).with_name("strategies")
+        strategies_dir = Path(__file__).with_name("strategies")
         if strategies_dir.is_dir():
             for path in strategies_dir.glob("*.json"):
                 self.load_from_file(path)
