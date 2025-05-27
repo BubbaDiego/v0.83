@@ -41,6 +41,7 @@ def launch_sonic_web():
     console.print("[bold green]Launching Sonic Web...[/bold green]")
     proc = subprocess.Popen([sys.executable, "sonic_app.py"])
     time.sleep(2)
+    log.print_dashboard_link(host="127.0.0.1", port=5000, route="/")
     webbrowser.open("http://127.0.0.1:5000")
     try:
         proc.wait()
@@ -64,6 +65,7 @@ def launch_web_and_monitor():
     web_proc = subprocess.Popen([sys.executable, "sonic_app.py"])
     monitor_proc = subprocess.Popen([sys.executable, os.path.join("monitor", "sonic_monitor.py")])
     time.sleep(2)
+    log.print_dashboard_link(host="127.0.0.1", port=5000, route="/")
     webbrowser.open("http://127.0.0.1:5000")
     try:
         web_proc.wait()
