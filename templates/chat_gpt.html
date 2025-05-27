@@ -1,320 +1,257 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🔮 GPT Oracle</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap">
-  <style>
-    :root {
-      --bg-color: radial-gradient(ellipse at center, #1c1c2b 0%, #0d0d17 100%);
-      --text-color: #e0e0ff;
-      --accent-color: #5f00ff;
-      --panel-bg: rgba(25, 25, 50, 0.9);
-      --input-bg: #2a2a40;
-    }
+{% extends "base.html" %}
 
-    [data-theme="light"] {
-      --bg-color: linear-gradient(to bottom right, #ffffff, #e0e0ff);
-      --text-color: #1a1a1a;
-      --accent-color: #7f00ff;
-      --panel-bg: rgba(255, 255, 255, 0.9);
-      --input-bg: #f0f0f0;
-    }
+{% block title %}GPT Oracle{% endblock %}
 
-    @import url('https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap');
+{% block extra_styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/title_bar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/sonic_themes.css') }}">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap">
+<style>
+  body {
+    margin: 0;
+    background: radial-gradient(ellipse at center, #1c1c2b 0%, #0d0d17 100%);
+    font-family: 'IM Fell English SC', serif;
+    color: #e0e0ff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+  }
 
-    body {
-      margin: 0;
-      background: var(--bg-color);
-      font-family: 'IM Fell English SC', serif;
-      color: var(--text-color);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
-      transition: background 0.3s, color 0.3s;
-    }
+  h1 {
+    text-align: center;
+    margin: 1rem;
+    font-size: 2.5rem;
+    color: #c7bfff;
+    text-shadow: 0 0 15px #7f00ff, 0 0 10px #7f00ff;
+  }
 
-    .title-bar {
-      width: 100%;
-      background-color: var(--accent-color);
-      padding: 0.5rem 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: #fff;
-    }
+  .container {
+    display: flex;
+    width: 90%;
+    max-width: 1200px;
+    height: 85vh;
+    gap: 2rem;
+  }
 
-    .title-bar .title {
-      font-size: 1.4rem;
-      font-weight: bold;
-    }
+  .panel {
+    flex: 1;
+    background: rgba(25, 25, 50, 0.9);
+    border: 1px solid #5f00ff;
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 20px #5f00ff88;
+    overflow: hidden;
+    position: relative;
+  }
 
-    .title-bar .controls {
-      display: flex;
-      gap: 0.5rem;
-    }
+  .oracle-btns {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 1rem;
+  }
 
-    .title-bar button {
-      background: transparent;
-      border: 1px solid #fff;
-      color: #fff;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.9rem;
-    }
+  .oracle-btn {
+    background: transparent;
+    border: 1px solid #b4a0ff;
+    color: #e0e0ff;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.3s ease-in-out;
+  }
 
-    h1 {
-      text-align: center;
-      margin: 1rem;
-      font-size: 2.5rem;
-      color: #c7bfff;
-      text-shadow: 0 0 15px var(--accent-color), 0 0 10px var(--accent-color);
-    }
+  .oracle-btn:hover {
+    background-color: #5f00ff33;
+    border-color: #fff;
+  }
 
-    .panel-wrapper {
-      width: 100%;
-      height: 90vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+  .oracle-output,
+  .chat-window {
+    flex-grow: 1;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 1rem;
+    border-radius: 10px;
+    font-family: monospace;
+    position: relative;
+  }
 
-    .container {
-      display: flex;
-      width: 90%;
-      max-width: 1200px;
-      height: 85vh;
-      gap: 2rem;
-    }
+  .chat-message {
+    margin: 0.5rem 0;
+  }
 
-      .panel {
-        flex: 1;
-        background: var(--panel-bg);
-        border: 1px solid var(--accent-color);
-        border-radius: 12px;
-        padding: 1rem;
-        display: flex;
-        flex-direction: column;
-        box-shadow: 0 0 20px var(--accent-color);
-        overflow: hidden;
-        position: relative;
-      }
+  .chat-message.user {
+    color: #b0ffb0;
+  }
 
-    .panel::before {
-      content: "\2728";
-      position: absolute;
-      top: -20px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 3rem;
-      color: #b4a0ff;
-      animation: pulse 2s infinite;
-    }
+  .chat-message.bot {
+    color: #a0c4ff;
+  }
 
-    @keyframes pulse {
-      0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.8; }
-      50% { transform: translateX(-50%) scale(1.2); opacity: 1; }
-    }
+  .typing-indicator {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    font-size: 0.85rem;
+    color: #aaa;
+    font-style: italic;
+  }
 
-    .oracle-btns {
-      display: flex;
-      justify-content: space-around;
-      margin-bottom: 1rem;
-    }
+  .input-area {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+  }
 
-      .oracle-btn {
-        background: transparent;
-        border: 1px solid #b4a0ff;
-        color: var(--text-color);
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 1.2rem;
-        transition: all 0.3s ease-in-out;
-      }
+  .input-area input {
+    flex: 1;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+  }
 
-    .oracle-btn:hover {
-      background-color: #5f00ff33;
-      border-color: #fff;
-    }
+  .input-area button {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: none;
+    background: #5f00ff;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
 
-    .oracle-output, .chat-window {
-      flex-grow: 1;
-      overflow-y: auto;
-      background: rgba(0, 0, 0, 0.3);
-      padding: 1rem;
-      border-radius: 10px;
-      font-family: monospace;
-      position: relative;
-    }
+  .input-area button:hover {
+    background: #7f00ff;
+  }
 
-    .chat-message {
-      margin: 0.5rem 0;
-    }
+  #tokenInfo {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    text-align: right;
+    margin-top: 0.3rem;
+  }
 
-    .chat-message.user {
-      color: #b0ffb0;
-    }
+  .toggle-bar {
+    margin: 0.5rem 0 1rem;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+  }
 
-    .chat-message.bot {
-      color: #a0c4ff;
-    }
+  .toggle-bar button {
+    background: transparent;
+    border: 1px solid #b4a0ff;
+    color: #e0e0ff;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+</style>
+{% endblock %}
 
-    .typing-indicator {
-      position: absolute;
-      bottom: 1rem;
-      left: 1rem;
-      font-size: 0.85rem;
-      color: #aaa;
-      font-style: italic;
-    }
+{% block content %}
+{% set title_text = 'GPT Oracle Interface' %}
+{% include "title_bar.html" %}
 
-    .input-area {
-      margin-top: 1rem;
-      display: flex;
-      gap: 0.5rem;
-    }
+<div class="toggle-bar">
+  <button id="lightBtn">Light</button>
+  <button id="darkBtn">Dark</button>
+  <button id="fontUp">A+</button>
+  <button id="fontDown">A-</button>
+</div>
 
-      .input-area input {
-        flex: 1;
-        padding: 0.75rem;
-        font-size: 1rem;
-        border-radius: 8px;
-        border: none;
-        outline: none;
-        background: var(--input-bg);
-        color: var(--text-color);
-      }
-
-      .input-area button {
-        padding: 0.75rem 1rem;
-        font-size: 1rem;
-        border-radius: 8px;
-        border: none;
-        background: var(--accent-color);
-        color: #fff;
-        cursor: pointer;
-        transition: background 0.3s;
-      }
-
-    .input-area button:hover {
-      background: #7f00ff;
-    }
-
-    #tokenInfo {
-      font-size: 0.8rem;
-      opacity: 0.7;
-      text-align: right;
-      margin-top: 0.3rem;
-    }
-
-    .tooltip {
-      position: absolute;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.75rem;
-      color: #ccc;
-      background: #222;
-      padding: 0.25rem 0.5rem;
-      border-radius: 5px;
-      opacity: 0;
-      transition: opacity 0.3s ease-in-out;
-    }
-
-    .oracle-btn:hover + .tooltip {
-      opacity: 1;
-    }
-  </style>
-</head>
-<body>
-  <div class="title-bar">
-    <div class="title">🧙 GPT Oracle Interface</div>
-    <div class="controls">
-      <button onclick="document.body.setAttribute('data-theme', 'light')">Light</button>
-      <button onclick="document.body.setAttribute('data-theme', 'dark')">Dark</button>
-      <button onclick="document.body.style.fontSize = 'larger'">A+</button>
-      <button onclick="document.body.style.fontSize = 'smaller'">A-</button>
+<h1>🔮 Speak to the Oracle</h1>
+<div class="container">
+  <div class="panel">
+    <div class="oracle-btns">
+      <button class="oracle-btn" data-topic="portfolio">📂</button>
+      <button class="oracle-btn" data-topic="alerts">🚨</button>
+      <button class="oracle-btn" data-topic="prices">💲</button>
+      <button class="oracle-btn" data-topic="system">🖥️</button>
     </div>
-  </div>
-  <div class="panel-wrapper">
-    <div class="container">
-    <!-- Oracle Panel -->
-    <div class="panel">
-      <div class="oracle-btns">
-        <button class="oracle-btn" data-topic="portfolio">📂</button>
-        <button class="oracle-btn" data-topic="alerts">🚨</button>
-        <button class="oracle-btn" data-topic="prices">💲</button>
-        <button class="oracle-btn" data-topic="system">🖥️</button>
-      </div>
-      <div id="oracleOutput" class="oracle-output">Ask a question to receive wisdom from the stars.</div>
-    </div>
-
-    <!-- Chat Panel -->
-    <div class="panel">
-      <div id="chatWindow" class="chat-window"></div>
-      <div class="typing-indicator" id="typingIndicator" style="display:none;">The spirits are whispering...</div>
-      <div class="input-area">
-        <input type="text" id="userInput" placeholder="Speak your query...">
-        <button id="sendBtn">Send</button>
-      </div>
-      <div id="tokenInfo"></div>
-    </div>
-  </div>
+    <div id="oracleOutput" class="oracle-output">Ask a question to receive wisdom from the stars.</div>
   </div>
 
-  <script>
-    const chatWindow = document.getElementById('chatWindow');
-    const userInput = document.getElementById('userInput');
-    const sendBtn = document.getElementById('sendBtn');
-    const tokenInfo = document.getElementById('tokenInfo');
-    const oracleBtns = document.querySelectorAll('.oracle-btn');
-    const oracleOutput = document.getElementById('oracleOutput');
-    const typingIndicator = document.getElementById('typingIndicator');
+  <div class="panel">
+    <div id="chatWindow" class="chat-window"></div>
+    <div class="typing-indicator" id="typingIndicator" style="display:none;">The spirits are whispering...</div>
+    <div class="input-area">
+      <input type="text" id="userInput" placeholder="Speak your query...">
+      <button id="sendBtn">Send</button>
+    </div>
+    <div id="tokenInfo"></div>
+  </div>
+</div>
+{% endblock %}
 
-    function addMessage(content, role) {
-      const div = document.createElement('div');
-      div.className = `chat-message ${role}`;
-      div.textContent = content;
-      chatWindow.appendChild(div);
-      chatWindow.scrollTop = chatWindow.scrollHeight;
+{% block extra_scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/title_bar.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/sonic_theme_toggle.js') }}"></script>
+<script src="{{ url_for('static', filename='js/layout_mode.js') }}"></script>
+<script>
+  const chatWindow = document.getElementById('chatWindow');
+  const userInput = document.getElementById('userInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const tokenInfo = document.getElementById('tokenInfo');
+  const oracleBtns = document.querySelectorAll('.oracle-btn');
+  const oracleOutput = document.getElementById('oracleOutput');
+  const typingIndicator = document.getElementById('typingIndicator');
+
+  document.getElementById('lightBtn').onclick = () => document.body.setAttribute('data-theme', 'light');
+  document.getElementById('darkBtn').onclick = () => document.body.setAttribute('data-theme', 'dark');
+  document.getElementById('fontUp').onclick = () => document.body.style.fontSize = 'larger';
+  document.getElementById('fontDown').onclick = () => document.body.style.fontSize = 'smaller';
+
+  function addMessage(content, role) {
+    const div = document.createElement('div');
+    div.className = `chat-message ${role}`;
+    div.textContent = content;
+    chatWindow.appendChild(div);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+  }
+
+  sendBtn.addEventListener('click', async () => {
+    const message = userInput.value.trim();
+    if (!message) return;
+    addMessage(message, 'user');
+    userInput.value = '';
+    typingIndicator.style.display = 'block';
+
+    const res = await fetch('{{ url_for("chat_gpt_bp.chat_post") }}', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message })
+    });
+
+    const data = await res.json();
+    addMessage(data.reply, 'bot');
+    typingIndicator.style.display = 'none';
+
+    if (data.usage) {
+      tokenInfo.textContent = `Prompt: ${data.usage.prompt_tokens}, Completion: ${data.usage.completion_tokens}, Total: ${data.usage.total_tokens}`;
     }
+  });
 
-    sendBtn.addEventListener('click', async () => {
-      const message = userInput.value.trim();
-      if (!message) return;
-      addMessage(message, 'user');
-      userInput.value = '';
-      typingIndicator.style.display = 'block';
-
-      const res = await fetch('{{ url_for("chat_gpt_bp.chat_post") }}', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message })
-      });
-
+  oracleBtns.forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const topic = btn.getAttribute('data-topic');
+      oracleOutput.textContent = "Consulting the spirits...";
+      const res = await fetch(`/gpt/oracle/${topic}`);
       const data = await res.json();
-      addMessage(data.reply, 'bot');
-      typingIndicator.style.display = 'none';
-
-      if (data.usage) {
-        tokenInfo.textContent = `Prompt: ${data.usage.prompt_tokens}, Completion: ${data.usage.completion_tokens}, Total: ${data.usage.total_tokens}`;
-      }
+      oracleOutput.textContent = data.reply;
     });
+  });
+</script>
+{% endblock %}
 
-    oracleBtns.forEach((btn) => {
-      btn.addEventListener('click', async () => {
-        const topic = btn.getAttribute('data-topic');
-        oracleOutput.textContent = "Consulting the spirits...";
-        const res = await fetch(`/gpt/oracle/${topic}`);
-        const data = await res.json();
-        oracleOutput.textContent = data.reply;
-      });
-    });
-  </script>
-</body>
-</html>
