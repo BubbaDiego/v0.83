@@ -801,6 +801,41 @@ def validate_twilio():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
+@system_bp.route("/xcom_api_status", methods=["GET"])
+def xcom_api_status():
+    """Return ChatGPT and Twilio API connectivity status as JSON."""
+    status = {}
+
+    api_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPEN_AI_KEY")
+    if not api_key:
+        status["chatgpt"] = "missing_api_key"
+    else:
+        try:
+            from openai import OpenAI
+
+            client = OpenAI(api_key=api_key)
+            client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": "ping"}],
+            )
+            status["chatgpt"] = "ok"
+        except Exception as exc:  # pragma: no cover - network dependent
+            status["chatgpt"] = f"error: {exc}"
+
+    try:
+        from xcom.check_twilio_heartbeart_service import CheckTwilioHeartbeartService
+
+        result = CheckTwilioHeartbeartService({}).check(dry_run=True)
+        if result.get("success"):
+            status["twilio"] = "ok"
+        else:
+            status["twilio"] = f"error: {result.get('error', 'unknown error')}"
+    except Exception as exc:  # pragma: no cover - network dependent
+        status["twilio"] = f"error: {exc}"
+
+    return jsonify(status)
+
+
 @classmethod
 def death(cls, message: str, source: str = None, payload: dict = None):
     cls._print("death", message, source, payload)
