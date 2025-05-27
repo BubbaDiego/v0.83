@@ -251,3 +251,9 @@ The collateral management process is documented in
 `AutoCore` includes helpers for headless execution with optional user agent and
 slow motion settings. Provide the Phantom extension ID to open the popup page
 when running headless.
+
+For quick experimentation, use `scripts/auto_core_e2e.py`. The script loads
+environment variables from `.env` (falling back to `.env.example`) and runs a
+simple deposit or withdrawal workflow. Configure variables such as
+`PHANTOM_PATH`, `PW_PROFILE_DIR`, and `AUTOCORE_AMOUNT` in your `.env` to
+automate collateral management without additional arguments.
