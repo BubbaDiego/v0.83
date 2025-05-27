@@ -35,8 +35,14 @@ import threading
 
 # Automatically load environment variables
 dotenv_file = BASE_DIR / ".env"
-if not load_dotenv(dotenv_file):
-    load_dotenv(BASE_DIR / ".env.example")
+_loaded_env: str | None = None
+if load_dotenv(dotenv_file):
+    _loaded_env = ".env"
+else:
+    example_file = BASE_DIR / ".env.example"
+    if load_dotenv(example_file):
+        _loaded_env = ".env.example"
+
 
 
 class DotSpinner:
@@ -66,6 +72,14 @@ class DotSpinner:
 
 from utils.config_loader import save_config
 from core.core_imports import log
+
+if _loaded_env:
+    log.info(f"Loaded environment from {_loaded_env}", source="StartUpService")
+else:
+    log.warning(
+        "No .env or .env.example file found; proceeding with system env only",
+        source="StartUpService",
+    )
 
 
 def maybe_create_mother_brain(db_path: str) -> None:
