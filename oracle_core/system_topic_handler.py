@@ -1,6 +1,6 @@
 from typing import Dict
 
-from gpt.oracle_data_service import OracleDataService
+from .oracle_data_service import OracleDataService
 
 
 class SystemTopicHandler:
