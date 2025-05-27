@@ -6,13 +6,13 @@ ensures the database exists and all tables are created.
 
 Examples:
     # Create tables only
-    python scripts/init_db.py
+    python scripts/initialize_database.py
 
     # Reset the database then seed thresholds and wallets
-    python scripts/init_db.py --reset --seed-wallets --seed-thresholds
+    python scripts/initialize_database.py --reset --seed-wallets --seed-thresholds
 
     # Run every initialization task
-    python scripts/init_db.py --all
+    python scripts/initialize_database.py --all
 """
 from __future__ import annotations
 

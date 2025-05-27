@@ -155,7 +155,7 @@ By default the server listens on `0.0.0.0:5000`. The startup message prints a cl
 To create the SQLite database and all required tables, run:
 
 ```bash
-python scripts/init_db.py
+python scripts/initialize_database.py
 ```
 
 The script creates `mother_brain.db` in the `data` directory (or the path set via
@@ -164,10 +164,10 @@ flags allow optional seeding and resets:
 
 ```bash
 # wipe the DB and seed thresholds and wallets
-python scripts/init_db.py --reset --seed-thresholds --seed-wallets
+python scripts/initialize_database.py --reset --seed-thresholds --seed-wallets
 
 # run every available seeder
-python scripts/init_db.py --all
+python scripts/initialize_database.py --all
 ```
 
 **Existing Installations**

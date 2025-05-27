@@ -74,6 +74,7 @@ class DataLocker:
         Creates all required tables in the database if they do not exist.
         This method can be run safely and repeatedly.
         """
+        log.info("🔧 Initializing database schema...", source="DataLocker")
         cursor = self.db.get_cursor()
         if cursor is None:
             log.error("❌ Unable to obtain DB cursor during init", source="DataLocker")
@@ -246,16 +247,21 @@ class DataLocker:
                 )
 
         for name, ddl in table_defs.items():
+            log.debug(f"Ensuring table: {name}", source="DataLocker")
             try:
                 cursor.execute(ddl)
                 log.debug(f"Table ensured: {name}", source="DataLocker")
             except Exception as e:
                 log.error(f"❌ Failed creating table {name}: {e}", source="DataLocker")
 
+        log.info("✅ Table creation complete.", source="DataLocker")
+
         # --- Automatic schema migrations ---
+        log.debug("Applying schema migrations", source="DataLocker")
         _ensure_column(cursor, "positions", "status TEXT DEFAULT 'ACTIVE'")
 
         # Ensure a default row exists for system vars so lookups don't fail
+        log.debug("Ensuring system_vars default row", source="DataLocker")
         try:
             cursor.execute("INSERT OR IGNORE INTO system_vars (id) VALUES (1)")
         except Exception as e:
@@ -263,6 +269,7 @@ class DataLocker:
 
         try:
             self.db.commit()
+            log.info("✅ Database initialization finished.", source="DataLocker")
         except sqlite3.DatabaseError as e:  # pragma: no cover - rare corruption case
             if "malformed" in str(e) or "file is not a database" in str(e):
                 log.error(
