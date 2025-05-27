@@ -29,9 +29,10 @@ def ask_portfolio():
 @gpt_bp.route('/gpt/oracle/<topic>', methods=['GET'])
 def oracle(topic: str):
     """Handle oracle queries for various topics."""
+    strategy = request.args.get("strategy", "none")
     core = GPTCore()
     try:
-        result = core.ask_oracle(topic)
+        result = core.ask_oracle(topic, strategy)
         return jsonify({"reply": result})
     except ValueError:
         return jsonify({"error": "Unknown topic"}), 400

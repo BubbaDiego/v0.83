@@ -95,10 +95,11 @@ to GPT.
 The API can be called directly as well:
 
 ```bash
-curl http://localhost:5000/gpt/oracle/portfolio
+curl "http://localhost:5000/gpt/oracle/portfolio?strategy=none"
 ```
 
-Replace `portfolio` with any other topic to receive a short summary.
+Replace `portfolio` with any other topic to receive a short summary. Use the
+`strategy` query parameter to apply a named strategy (defaults to `none`).
 
 ## Required Environment Variables
 

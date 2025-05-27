@@ -20,6 +20,8 @@ def load_blueprint():
     core_mod = types.ModuleType("gpt.gpt_core")
 
     class DummyCore:
+        expected_strategy = "none"
+
         def __init__(self, *a, **k):
             pass
 
@@ -29,9 +31,10 @@ def load_blueprint():
         def ask_gpt_about_portfolio(self) -> str:
             return "portfolio"
 
-        def ask_oracle(self, topic: str, instructions: str = "") -> str:
+        def ask_oracle(self, topic: str, strategy_name: str = "none") -> str:
             if topic != "portfolio":
                 raise ValueError("Unknown topic")
+            assert strategy_name == self.expected_strategy
             return "portfolio result"
 
     core_mod.GPTCore = DummyCore
@@ -56,6 +59,8 @@ def client():
 
 
 def test_oracle_portfolio_reply(client):
+    from gpt.gpt_core import GPTCore as DummyCore
+    DummyCore.expected_strategy = "none"
     resp = client.get("/gpt/oracle/portfolio")
     assert resp.status_code == 200
     data = resp.get_json()
@@ -67,3 +72,12 @@ def test_oracle_invalid_topic(client):
     assert resp.status_code == 400
     data = resp.get_json()
     assert "error" in data
+
+
+def test_oracle_with_strategy(client):
+    from gpt.gpt_core import GPTCore as DummyCore
+    DummyCore.expected_strategy = "test"
+    resp = client.get("/gpt/oracle/portfolio?strategy=test")
+    assert resp.status_code == 200
+    data = resp.get_json()
+    assert "reply" in data

@@ -78,11 +78,13 @@ The core exposes multiple question methods that return a text reply from GPT.  A
 
 ```python
     def ask_oracle(self, topic: str, strategy_name: str | None = None) -> str:
+        if strategy_name in (None, "", "none"):
+            strategy_name = None
         oracle = OracleCore(self.data_locker)
         oracle.client = self.client
         return oracle.ask(topic, strategy_name)
 ```
-【F:gpt/gpt_core.py†L98-L106】
+【F:gpt/gpt_core.py†L98-L108】
 
 ```python
     def ask_gpt_about_portfolio(self) -> str:
