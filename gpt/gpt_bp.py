@@ -24,3 +24,20 @@ def ask_portfolio():
     core = GPTCore()
     result = core.ask_gpt_about_portfolio()
     return jsonify({"reply": result})
+
+
+@gpt_bp.route('/gpt/oracle/<topic>', methods=['GET'])
+def oracle(topic: str):
+    """Handle oracle queries for various topics."""
+    core = GPTCore()
+    if topic == 'portfolio':
+        result = core.ask_gpt_about_portfolio()
+    elif topic == 'alerts':
+        result = core.ask_gpt_about_alerts()
+    elif topic == 'prices':
+        result = core.ask_gpt_about_prices()
+    elif topic == 'system':
+        result = core.ask_gpt_about_system()
+    else:
+        return jsonify({"error": "Unknown topic"}), 400
+    return jsonify({"reply": result})

@@ -108,3 +108,54 @@ class GPTCore:
             self.logger.exception(f"GPT portfolio query failed: {e}")
             return f"Error: {e}"
 
+    def ask_gpt_about_alerts(self) -> str:
+        """Summarize alert data using GPT."""
+        alerts = self.data_locker.alerts.get_all_alerts()[:20]
+        messages = [
+            {"role": "system", "content": "You summarize alert information."},
+            {"role": "system", "content": json.dumps({"alerts": alerts})},
+            {"role": "user", "content": "Provide a short summary of current alerts."},
+        ]
+        try:
+            response = self.client.chat.completions.create(
+                model="gpt-3.5-turbo", messages=messages
+            )
+            return response.choices[0].message.content.strip()
+        except Exception as e:  # pragma: no cover - depends on OpenAI API
+            self.logger.exception(f"GPT alerts query failed: {e}")
+            return f"Error: {e}"
+
+    def ask_gpt_about_prices(self) -> str:
+        """Summarize price data using GPT."""
+        prices = self.data_locker.prices.get_all_prices()[:20]
+        messages = [
+            {"role": "system", "content": "You summarize price information."},
+            {"role": "system", "content": json.dumps({"prices": prices})},
+            {"role": "user", "content": "Give a brief market overview."},
+        ]
+        try:
+            response = self.client.chat.completions.create(
+                model="gpt-3.5-turbo", messages=messages
+            )
+            return response.choices[0].message.content.strip()
+        except Exception as e:  # pragma: no cover - depends on OpenAI API
+            self.logger.exception(f"GPT prices query failed: {e}")
+            return f"Error: {e}"
+
+    def ask_gpt_about_system(self) -> str:
+        """Summarize system status using GPT."""
+        system = self.data_locker.get_last_update_times().to_dict()
+        messages = [
+            {"role": "system", "content": "You report system status."},
+            {"role": "system", "content": json.dumps(system)},
+            {"role": "user", "content": "Summarize the system health."},
+        ]
+        try:
+            response = self.client.chat.completions.create(
+                model="gpt-3.5-turbo", messages=messages
+            )
+            return response.choices[0].message.content.strip()
+        except Exception as e:  # pragma: no cover - depends on OpenAI API
+            self.logger.exception(f"GPT system query failed: {e}")
+            return f"Error: {e}"
+
