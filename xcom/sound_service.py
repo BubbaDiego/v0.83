@@ -1,8 +1,12 @@
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from playsound import playsound
 from core.logging import log
+
+try:  # Optional external dependency
+    from playsound import playsound
+except Exception:  # pragma: no cover - optional
+    playsound = None
 
 
 class SoundService:
@@ -23,7 +27,22 @@ class SoundService:
                 raise FileNotFoundError(f"Sound file not found: {path}")
 
             log.info(f"🔊 Playing sound: {path}", source="SoundService")
-            playsound(path)
+
+            if sys.platform.startswith("win"):
+                try:
+                    os.startfile(path)  # non-blocking
+                except Exception as e:
+                    log.debug(f"os.startfile failed: {e}", source="SoundService")
+                    if playsound:
+                        playsound(path)
+                    else:
+                        raise
+            else:
+                if playsound:
+                    playsound(path)
+                else:
+                    raise RuntimeError("playsound dependency missing")
+
             log.success("✅ System sound played", source="SoundService")
 
         except Exception as e:
