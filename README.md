@@ -20,6 +20,9 @@ This installs `pytest` and all other required packages. Run the app with:
 ```bash
 python launch_app.py
 ```
+When the server starts, the console prints a clickable link to
+`http://127.0.0.1:5000/` (in terminals that support hyperlinks) so you can open
+the dashboard directly.
 
 The `.flaskenv` file provides the usual Flask environment variables for
 development. `PYTHONPATH` now points to the project root:
@@ -144,10 +147,7 @@ your shell) and then run:
 python sonic_app.py
 ```
 
-By default the server listens on `0.0.0.0:5000`. Open
-`http://127.0.0.1:5000/` in your browser to access the dashboard. Use the
-`--monitor` flag if you want to also launch the local monitor process in a
-separate console.
+By default the server listens on `0.0.0.0:5000`. The startup message prints a clickable link to `http://127.0.0.1:5000/` (when your terminal supports ANSI hyperlinks). Use the `--monitor` flag to also launch the local monitor process in a separate console.
 
 
 ## Initializing the Database
