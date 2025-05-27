@@ -10,7 +10,7 @@ from openai import OpenAI
 from data.data_locker import DataLocker
 from core.constants import DB_PATH
 from .create_gpt_context_service import create_gpt_context_service
-from .oracle import Oracle
+from oracle_core import OracleCore
 
 
 class GPTCore:
@@ -95,15 +95,12 @@ class GPTCore:
             self.logger.exception(f"GPT analysis failed: {e}")
             return f"Error: {e}"
 
-    def ask_oracle(self, topic: str, instructions: str = "") -> str:
-        """Query GPT for a specific topic using the Oracle wrapper."""
-        oracle = Oracle(topic, self.data_locker, instructions)
-        messages = oracle.get_context()
+    def ask_oracle(self, topic: str, strategy_name: str | None = None) -> str:
+        """Query GPT for a specific topic using :class:`OracleCore`."""
+        oracle = OracleCore(self.data_locker)
+        oracle.client = self.client
         try:
-            response = self.client.chat.completions.create(
-                model="gpt-3.5-turbo", messages=messages
-            )
-            return response.choices[0].message.content.strip()
+            return oracle.ask(topic, strategy_name)
         except Exception as e:  # pragma: no cover - depends on OpenAI API
             self.logger.exception(f"GPT oracle query failed: {e}")
             return f"Error: {e}"
