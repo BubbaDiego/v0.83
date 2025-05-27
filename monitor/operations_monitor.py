@@ -71,15 +71,24 @@ class OperationsMonitor(BaseMonitor):
         """
 
         self.check_for_config_updates()
-        result = self.run_startup_post()
+        startup = self.run_startup_post()
+        api_status = self.check_api_status()
 
-        overall_success = result.get("config_success") and result.get("post_success")
+        overall_success = (
+            startup.get("config_success")
+            and startup.get("post_success")
+            and api_status.get("chatgpt_success")
+            and api_status.get("twilio_success")
+        )
+
+        payload = {"startup": startup, "api_status": api_status}
+
         self.data_locker.ledger.insert_ledger_entry(
             monitor_name=self.name,
             status="Success" if overall_success else "Failed",
-            metadata=result,
+            metadata=payload,
         )
-        return result
+        return payload
 
     def run_startup_post(self) -> dict:
         """Run configuration validation and POST tests."""
@@ -149,6 +158,66 @@ class OperationsMonitor(BaseMonitor):
             "post_success": success,
             "post_duration_seconds": duration,
         }
+
+    def check_api_status(self) -> dict:
+        """Check ChatGPT and Twilio API connectivity and log to XCom ledger."""
+        log.info("🔌 Checking API status", source=self.name)
+
+        chatgpt_success = False
+        chatgpt_error = None
+        api_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPEN_AI_KEY")
+        if not api_key:
+            log.warning("OPENAI_API_KEY not configured", source=self.name)
+            chatgpt_error = "missing api key"
+        else:
+            try:  # pragma: no cover - openai optional
+                from openai import OpenAI
+
+                client = OpenAI(api_key=api_key)
+                client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[{"role": "user", "content": "ping"}],
+                )
+                chatgpt_success = True
+                log.success("ChatGPT API reachable", source=self.name)
+            except Exception as exc:  # pragma: no cover - network dependent
+                chatgpt_error = str(exc)
+                log.error(f"ChatGPT check failed: {exc}", source=self.name)
+
+        twilio_success = False
+        twilio_error = None
+        try:
+            from xcom.check_twilio_heartbeart_service import CheckTwilioHeartbeartService
+
+            result = CheckTwilioHeartbeartService({}).check(dry_run=True)
+            twilio_success = bool(result.get("success"))
+            if twilio_success:
+                log.success("Twilio credentials valid", source=self.name)
+            else:
+                twilio_error = result.get("error")
+                log.error(f"Twilio check failed: {twilio_error}", source=self.name)
+        except Exception as exc:  # pragma: no cover - network dependent
+            twilio_error = str(exc)
+            log.error(f"Twilio check failed: {exc}", source=self.name)
+
+        status = "Success" if chatgpt_success and twilio_success else "Failed"
+        metadata = {
+            "chatgpt_success": chatgpt_success,
+            "twilio_success": twilio_success,
+        }
+        if chatgpt_error:
+            metadata["chatgpt_error"] = chatgpt_error
+        if twilio_error:
+            metadata["twilio_error"] = twilio_error
+
+        # Update xcom ledger for dashboard
+        self.data_locker.ledger.insert_ledger_entry(
+            monitor_name="xcom_monitor",
+            status=status,
+            metadata=metadata,
+        )
+
+        return metadata
 
     def run_configuration_test(self) -> dict:
         """Validate alert limits configuration."""
