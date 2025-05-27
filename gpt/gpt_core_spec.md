@@ -78,6 +78,32 @@ The core exposes multiple question methods that return a text reply from GPT:
 
 Other helper methods `ask_gpt_about_alerts`, `ask_gpt_about_prices`, and `ask_gpt_about_system` follow the same pattern to provide summaries from their respective datasets.【F:gpt/gpt_core.py†L111-L160】
 
+## 🔮 Oracle
+
+`oracle.py` defines a small helper that bundles context for quick queries.
+
+```python
+class Oracle:
+    """Bundle context and instructions for GPT queries."""
+    def __init__(self, topic: str, data_locker, instructions: str = ""):
+        self.topic = topic
+        self.data_locker = data_locker
+        self.instructions = instructions or self.default_instructions()
+
+    def default_instructions(self) -> str:
+        return {
+            "portfolio": "Provide a portfolio analysis summary.",
+            "alerts": "Summarize the current alert state.",
+            "prices": "Summarize the market trends.",
+            "system": "Summarize the system health status.",
+        }.get(self.topic, "Assist the user.")
+```
+【F:gpt/oracle.py†L7-L21】
+
+`get_context()` returns a list of chat messages based on the topic, pulling data
+from `DataLocker` when required.
+【F:gpt/oracle.py†L23-L56】
+
 ---
 
 ## 🗂️ Context Loading
@@ -109,7 +135,7 @@ Provides JSON API endpoints.
 
 - `POST /gpt/analyze` → build a payload and ask GPT for analysis.
 - `GET /gpt/portfolio` → use static context files for a portfolio summary.
-- `GET /gpt/oracle/<topic>` → quick summaries for `portfolio`, `alerts`, `prices`, or `system`.
+ - `GET /gpt/oracle/<topic>` → call `Oracle` for a quick summary of `portfolio`, `alerts`, `prices`, or `system`.
 
 Implementation excerpt:
 ```python
