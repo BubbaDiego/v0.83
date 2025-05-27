@@ -112,6 +112,49 @@ def operations_menu():
             time.sleep(1)
 
 
+def database_utils_menu():
+    """Database utilities including wallet import."""
+    while True:
+        clear_screen()
+        console.print("[bold cyan]Database Utilities[/bold cyan]")
+        console.print("1) Initialize Database")
+        console.print("2) Recover Database")
+        console.print("3) Insert Wallets from JSON")
+        console.print("b) Back")
+        choice = input("→ ").strip().lower()
+
+        if choice == "1":
+            from scripts.initialize_database import main as init_db_main
+
+            init_db_main([])
+            input("Press ENTER to continue...")
+        elif choice == "2":
+            console.print("[yellow]Attempting database recovery...[/yellow]")
+            dl = DataLocker(str(DB_PATH))
+            dl.db.recover_database()
+            dl.initialize_database()
+            dl._seed_modifiers_if_empty()
+            dl._seed_wallets_if_empty()
+            dl._seed_thresholds_if_empty()
+            dl.close()
+            console.print("[green]Database recovery complete.[/green]")
+            input("Press ENTER to continue...")
+        elif choice == "3":
+            path = input(
+                "Wallet JSON path (leave blank for default data/wallet_backup.json): "
+            ).strip()
+            args = ["--json", path] if path else []
+            from scripts.insert_wallets import main as insert_wallets_main
+
+            insert_wallets_main(args)
+            input("Press ENTER to continue...")
+        elif choice == "b":
+            break
+        else:
+            console.print("Invalid selection.", style="red")
+            time.sleep(1)
+
+
 def core_tests_menu():
     """Run unit tests via :class:`TestCore`."""
     tester = TestCore()
@@ -167,9 +210,10 @@ def main_menu():
         console.print("3) Launch Sonic Web")
         console.print("4) 🌅 Startup Service")
         console.print("5) ⚙️ Operations")
-        console.print("6) 🧪 Test Core")
-        console.print("7) 🔌 API Status")
-        console.print("8) Exit")
+        console.print("6) 🗄️ Database Utilities")
+        console.print("7) 🧪 Test Core")
+        console.print("8) 🔌 API Status")
+        console.print("9) Exit")
         choice = input("→ ").strip()
         if choice == "1":
             launch_web_and_monitor()
@@ -183,10 +227,12 @@ def main_menu():
         elif choice == "5":
             operations_menu()
         elif choice == "6":
-            core_tests_menu()
+            database_utils_menu()
         elif choice == "7":
-            check_api_status()
+            core_tests_menu()
         elif choice == "8":
+            check_api_status()
+        elif choice == "9":
             console.print("Goodbye!", style="green")
             break
         else:
