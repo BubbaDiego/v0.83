@@ -147,22 +147,6 @@
     margin-top: 0.3rem;
   }
 
-  .toggle-bar {
-    margin: 0.5rem 0 1rem;
-    display: flex;
-    gap: 0.5rem;
-    justify-content: center;
-  }
-
-  .toggle-bar button {
-    background: transparent;
-    border: 1px solid #b4a0ff;
-    color: #e0e0ff;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9rem;
-  }
 </style>
 {% endblock %}
 
@@ -170,12 +154,6 @@
 {% set title_text = 'GPT Oracle Interface' %}
 {% include "title_bar.html" %}
 
-<div class="toggle-bar">
-  <button id="lightBtn">Light</button>
-  <button id="darkBtn">Dark</button>
-  <button id="fontUp">A+</button>
-  <button id="fontDown">A-</button>
-</div>
 
 <div class="oracle-wrapper">
   <h1>🔮 Speak to the Oracle</h1>
@@ -217,10 +195,6 @@
   const oracleOutput = document.getElementById('oracleOutput');
   const typingIndicator = document.getElementById('typingIndicator');
 
-  document.getElementById('lightBtn').onclick = () => document.body.setAttribute('data-theme', 'light');
-  document.getElementById('darkBtn').onclick = () => document.body.setAttribute('data-theme', 'dark');
-  document.getElementById('fontUp').onclick = () => document.body.style.fontSize = 'larger';
-  document.getElementById('fontDown').onclick = () => document.body.style.fontSize = 'smaller';
 
   function addMessage(content, role) {
     const div = document.createElement('div');
