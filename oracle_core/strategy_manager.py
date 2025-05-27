@@ -27,6 +27,10 @@ class StrategyManager:
 
     def __init__(self):
         self._strategies: Dict[str, Strategy] = {}
+        self.aliases = {
+            # allow older UI names to continue working
+            "aggressive": "degen",
+        }
         self._load_builtin()
 
     def _load_builtin(self):
@@ -66,9 +70,17 @@ class StrategyManager:
         self._strategies[strat.name] = strat
 
     def get(self, name: str) -> Strategy:
-        if name not in self._strategies:
+        """Retrieve a strategy by name.
+
+        Supports a small alias map so older front-ends can continue to
+        request strategies using legacy names without raising ``KeyError``.
+        """
+        key = name
+        if key not in self._strategies:
+            key = self.aliases.get(name, name)
+        if key not in self._strategies:
             raise KeyError(name)
-        return self._strategies[name]
+        return self._strategies[key]
 
     def list_strategies(self) -> Iterable[str]:
         """Return the names of all loaded strategies."""
