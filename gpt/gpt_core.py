@@ -144,7 +144,7 @@ class GPTCore:
 
     def ask_gpt_about_system(self) -> str:
         """Summarize system status using GPT."""
-        system = self.data_locker.get_last_update_times().to_dict()
+        system = self.data_locker.get_last_update_times()
         messages = [
             {"role": "system", "content": "You report system status."},
             {"role": "system", "content": json.dumps(system)},
