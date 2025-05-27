@@ -22,6 +22,12 @@ class DatabaseManager:
                     if "file is not a database" in str(e) or "database disk image is malformed" in str(e):
                         try:
                             os.remove(self.db_path)
+                            wal = f"{self.db_path}-wal"
+                            shm = f"{self.db_path}-shm"
+                            if os.path.exists(wal):
+                                os.remove(wal)
+                            if os.path.exists(shm):
+                                os.remove(shm)
                         except OSError:
                             pass
                         self.conn = sqlite3.connect(self.db_path, check_same_thread=False)
@@ -37,6 +43,12 @@ class DatabaseManager:
                         self.conn.close()
                         try:
                             os.remove(self.db_path)
+                            wal = f"{self.db_path}-wal"
+                            shm = f"{self.db_path}-shm"
+                            if os.path.exists(wal):
+                                os.remove(wal)
+                            if os.path.exists(shm):
+                                os.remove(shm)
                         except OSError:
                             pass
                         self.conn = sqlite3.connect(self.db_path, check_same_thread=False)
