@@ -38,6 +38,9 @@ The [Auto Core module](auto_core/auto_core_module_spec.md) automates collateral 
 ### GPT Input Format
 The [GPT Input specification](gpt_input_spec.md) details the JSON bundle used to send portfolio and alert context to GPT for analysis.
 
+### GPT Core
+The [GPT Core specification](gpt/gpt_core_spec.md) describes the modules and chat UI for OpenAI integration.
+
 ---
 
 Each linked specification contains more detailed design notes, functional requirements, and example workflows.
