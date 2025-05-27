@@ -28,12 +28,16 @@ from data.dl_system_data import DLSystemDataManager
 from data.dl_monitor_ledger import DLMonitorLedgerManager
 from data.dl_modifiers import DLModifierManager
 from data.dl_hedges import DLHedgeManager
-from core.constants import SONIC_SAUCE_PATH, BASE_DIR
+from core.constants import SONIC_SAUCE_PATH, BASE_DIR, DB_PATH
 from core.core_imports import log
 from datetime import datetime
 
 
 class DataLocker:
+    """Singleton-style access point for all data managers."""
+
+    _instance = None
+
     def __init__(self, db_path: str):
         self.db = DatabaseManager(db_path)
 
@@ -57,6 +61,13 @@ class DataLocker:
             log.error(f"❌ DataLocker setup failed: {e}", source="DataLocker")
 
         log.debug("All DL managers bootstrapped successfully.", source="DataLocker")
+
+    @classmethod
+    def get_instance(cls, db_path: str = str(DB_PATH)):
+        """Return a singleton instance of DataLocker."""
+        if cls._instance is None or str(cls._instance.db.db_path) != str(db_path):
+            cls._instance = cls(db_path)
+        return cls._instance
 
     def initialize_database(self):
         """
