@@ -20,11 +20,15 @@ from core.constants import DB_PATH
 print("👁 Viewer using DB path:", os.path.abspath(DB_PATH))
 
 def validate_position_service_source():
+    """Helper for debugging where PositionCore is loaded from."""
     import inspect
-    from positions.position_service import PositionService
+    from positions.position_core import PositionCore
 
-    print("📂 [Validator] PositionService loaded from:", inspect.getfile(PositionService))
-    print("🔍 Has method update_jupiter_positions():", hasattr(PositionService, "update_jupiter_positions"))
+    print("📂 [Validator] PositionCore loaded from:", inspect.getfile(PositionCore))
+    print(
+        "🔍 Has method update_positions_from_jupiter():",
+        hasattr(PositionCore, "update_positions_from_jupiter"),
+    )
 
 
 class CyclonePositionService:
@@ -45,8 +49,10 @@ class CyclonePositionService:
     async def enrich_positions(self):
         log.info("✨ Starting Position Enrichment", source="CyclonePosition")
         try:
-            positions = PositionService.get_all_positions()
-            count = len(positions)
+            from positions.position_core import PositionCore
+            core = PositionCore(self.dl)
+            enriched = await core.enrich_positions()
+            count = len(enriched)
             log.success(f"✅ Enriched {count} positions", source="CyclonePosition")
             print(f"🔍 Enriched {count} positions.")
         except Exception as e:
@@ -54,7 +60,7 @@ class CyclonePositionService:
 
     async def delete_position(self, position_id: str):
         try:
-            await asyncio.to_thread(PositionService.delete_position, position_id)
+            await asyncio.to_thread(self.dl.positions.delete_position, position_id)
             log.warning(f"🧹 Deleted position: {position_id}", source="CyclonePosition")
         except Exception as e:
             log.error(f"❌ Failed to delete position: {e}", source="CyclonePosition")
@@ -69,7 +75,9 @@ class CyclonePositionService:
     async def link_hedges(self):
         log.info("🛡 Finding hedge candidates...", source="CyclonePosition")
         try:
-            await asyncio.to_thread(PositionService.link_hedges)
+            from positions.position_core import PositionCore
+            core = PositionCore(self.dl)
+            await asyncio.to_thread(core.link_hedges)
             log.success("✅ Hedges linked.", source="CyclonePosition")
         except Exception as e:
             log.error(f"❌ Failed to link hedges: {e}", source="CyclonePosition")
