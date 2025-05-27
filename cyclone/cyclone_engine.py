@@ -272,6 +272,15 @@ class Cyclone:
         if new_config:
             self.config = new_config
 
+    async def run_system_updates(self):
+        """Run system-level update tasks."""
+        log.info("Starting system updates", source="Cyclone")
+        try:
+            await self.run_operations_update()
+            log.success("✅ System updates completed", source="Cyclone")
+        except Exception as e:
+            log.error(f"System updates failed: {e}", source="Cyclone")
+
     async def enrich_positions(self):
         log.info("🚀 Enriching All Positions via PositionCore...", "Cyclone")
         await self.position_core.enrich_positions()
