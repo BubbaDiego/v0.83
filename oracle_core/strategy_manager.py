@@ -1,5 +1,6 @@
 import json
-from typing import Dict, Iterable
+from pathlib import Path
+from typing import Dict, Iterable, List
 
 
 class Strategy:
@@ -26,6 +27,10 @@ class StrategyManager:
 
     def __init__(self):
         self._strategies: Dict[str, Strategy] = {}
+        strategies_dir = Path(__file__).with_name("strategies")
+        if strategies_dir.is_dir():
+            for path in strategies_dir.glob("*.json"):
+                self.load_from_file(path)
 
     def load(self, strategies: Iterable[Dict]):
         for data in strategies:
@@ -47,3 +52,7 @@ class StrategyManager:
         if name not in self._strategies:
             raise KeyError(name)
         return self._strategies[name]
+
+    def list_strategies(self) -> List[str]:
+        """Return the names of all loaded strategies."""
+        return sorted(self._strategies.keys())
