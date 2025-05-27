@@ -112,7 +112,7 @@ def operations_menu():
             time.sleep(1)
 
 
-def test_core_menu():
+def core_tests_menu():
     """Run unit tests via :class:`TestCore`."""
     tester = TestCore()
     tester.interactive_menu()
@@ -183,7 +183,7 @@ def main_menu():
         elif choice == "5":
             operations_menu()
         elif choice == "6":
-            test_core_menu()
+            core_tests_menu()
         elif choice == "7":
             check_api_status()
         elif choice == "8":
