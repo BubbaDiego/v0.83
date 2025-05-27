@@ -14,6 +14,14 @@ def test_strategy_manager_builtin_loading():
     assert "safe" in manager.list_strategies()
 
 
+def test_strategy_manager_alias(monkeypatch):
+    sm_mod = importlib.import_module("oracle_core.strategy_manager")
+    manager = sm_mod.StrategyManager()
+    # 'aggressive' should resolve to the built-in 'degen' strategy
+    strat = manager.get("aggressive")
+    assert strat.name == "degen"
+
+
 def setup_core(monkeypatch):
     base = Path(__file__).resolve().parents[1]
 
