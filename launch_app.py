@@ -6,6 +6,8 @@ import sys
 import subprocess
 import time
 import webbrowser
+import asyncio
+import cyclone_app
 from rich.console import Console
 from rich.text import Text
 
@@ -53,11 +55,9 @@ def launch_sonic_web():
 
 
 def launch_cyclone():
-    """Launch the Cyclone interactive console in the background."""
+    """Launch the Cyclone interactive console."""
     console.print("[bold blue]Launching Cyclone...[/bold blue]")
-    subprocess.Popen([sys.executable, "cyclone_app.py"])
-    console.print("[cyan]Cyclone started in background.[/cyan]")
-    input("Press ENTER to return...")
+    asyncio.run(cyclone_app.main())
 
 
 def launch_web_and_monitor():
