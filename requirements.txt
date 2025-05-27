@@ -29,7 +29,6 @@ cycler==0.12.1
 cytoolz==1.0.1
 distro==1.9.0
 docutils==0.21.2
-dotenv==0.9.9
 eth-account==0.13.6
 eth-hash==0.7.1
 eth-keyfile==0.8.1
