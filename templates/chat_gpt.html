@@ -27,6 +27,14 @@
       text-shadow: 0 0 15px #7f00ff, 0 0 10px #7f00ff;
     }
 
+    .panel-wrapper {
+      width: 100%;
+      height: 90vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
     .container {
       display: flex;
       width: 90%;
@@ -175,7 +183,8 @@
 </head>
 <body>
   <h1>🔮 Speak to the Oracle</h1>
-  <div class="container">
+  <div class="panel-wrapper">
+    <div class="container">
     <!-- Oracle Panel -->
     <div class="panel">
       <div class="oracle-btns">
@@ -197,6 +206,7 @@
       </div>
       <div id="tokenInfo"></div>
     </div>
+  </div>
   </div>
 
   <script>
