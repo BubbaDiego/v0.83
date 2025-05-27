@@ -27,10 +27,27 @@ class StrategyManager:
 
     def __init__(self):
         self._strategies: Dict[str, Strategy] = {}
-        strategies_dir = Path(__file__).with_name("strategies")
+        self._load_builtin()
+
+    def _load_builtin(self):
+        """Load strategies bundled with the package."""
+        import os
+
+        base = os.path.join(os.path.dirname(__file__), "strategies")
+        if not os.path.isdir(base):  # pragma: no cover - defensive
+            return
+        for name in os.listdir(base):
+            if name.endswith(".json"):
+                try:
+                    self.load_from_file(os.path.join(base, name))
+                except Exception:
+                    continue
+
+                    strategies_dir = Path(__file__).with_name("strategies")
         if strategies_dir.is_dir():
             for path in strategies_dir.glob("*.json"):
                 self.load_from_file(path)
+
 
     def load(self, strategies: Iterable[Dict]):
         for data in strategies:
@@ -53,6 +70,7 @@ class StrategyManager:
             raise KeyError(name)
         return self._strategies[name]
 
-    def list_strategies(self) -> List[str]:
+    def list_strategies(self) -> Iterable[str]:
         """Return the names of all loaded strategies."""
-        return sorted(self._strategies.keys())
+        return list(self._strategies.keys())
+
