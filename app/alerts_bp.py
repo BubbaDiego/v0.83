@@ -10,6 +10,7 @@ from dashboard.dashboard_service import WALLET_IMAGE_MAP, DEFAULT_WALLET_IMAGE
 
 from flask import Blueprint, jsonify, render_template, render_template_string, request, session
 from config.config_loader import update_config as merge_config
+from utils.alert_helpers import calculate_threshold_progress
 
 APP_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'app'))
 ALERT_MONITOR_DIR = os.path.join(APP_DIR, 'alert_monitor')
@@ -57,6 +58,7 @@ def convert_types_in_dict(d):
             except ValueError:
                 return d
     return d
+
 
 # --- Routes ---
 
@@ -214,25 +216,10 @@ def alert_status_page():
             a["wallet_image"] = wallet_img
             a["wallet_name"] = wallet_name
             start = a.get("starting_value")
-            # If no explicit start value exists, fall back to the first
-            # evaluated value. Using the trigger value caused all progress
-            # bars to show 100%.
-            if start is None:
-                start = a.get("evaluated_value", 0)
-
             trigger = a.get("trigger_value", 0)
             current = a.get("evaluated_value", 0)
 
-            if trigger != start:
-                progress = ((current - start) / (trigger - start)) * 100
-            elif trigger != 0:
-                # Handle cases where start equals trigger by comparing the
-                # current value directly against the trigger.
-                progress = (current / trigger) * 100
-            else:
-                progress = 0
-
-            progress = max(min(progress, 100), -100)
+            progress = calculate_threshold_progress(start, trigger, current)
             a["threshold_progress"] = progress
 
             enriched.append(a)
