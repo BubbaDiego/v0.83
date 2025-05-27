@@ -3,20 +3,68 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🔲 GPT Oracle</title>
+  <title>🔮 GPT Oracle</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap">
   <style>
+    :root {
+      --bg-color: radial-gradient(ellipse at center, #1c1c2b 0%, #0d0d17 100%);
+      --text-color: #e0e0ff;
+      --accent-color: #5f00ff;
+      --panel-bg: rgba(25, 25, 50, 0.9);
+      --input-bg: #2a2a40;
+    }
+
+    [data-theme="light"] {
+      --bg-color: linear-gradient(to bottom right, #ffffff, #e0e0ff);
+      --text-color: #1a1a1a;
+      --accent-color: #7f00ff;
+      --panel-bg: rgba(255, 255, 255, 0.9);
+      --input-bg: #f0f0f0;
+    }
+
     @import url('https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap');
 
     body {
       margin: 0;
-      background: radial-gradient(ellipse at center, #1c1c2b 0%, #0d0d17 100%);
+      background: var(--bg-color);
       font-family: 'IM Fell English SC', serif;
-      color: #e0e0ff;
+      color: var(--text-color);
       display: flex;
       flex-direction: column;
       align-items: center;
       height: 100vh;
       overflow: hidden;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .title-bar {
+      width: 100%;
+      background-color: var(--accent-color);
+      padding: 0.5rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+    }
+
+    .title-bar .title {
+      font-size: 1.4rem;
+      font-weight: bold;
+    }
+
+    .title-bar .controls {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .title-bar button {
+      background: transparent;
+      border: 1px solid #fff;
+      color: #fff;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
     }
 
     h1 {
@@ -24,7 +72,7 @@
       margin: 1rem;
       font-size: 2.5rem;
       color: #c7bfff;
-      text-shadow: 0 0 15px #7f00ff, 0 0 10px #7f00ff;
+      text-shadow: 0 0 15px var(--accent-color), 0 0 10px var(--accent-color);
     }
 
     .panel-wrapper {
@@ -43,18 +91,18 @@
       gap: 2rem;
     }
 
-    .panel {
-      flex: 1;
-      background: rgba(25, 25, 50, 0.9);
-      border: 1px solid #5f00ff;
-      border-radius: 12px;
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 0 20px #5f00ff88;
-      overflow: hidden;
-      position: relative;
-    }
+      .panel {
+        flex: 1;
+        background: var(--panel-bg);
+        border: 1px solid var(--accent-color);
+        border-radius: 12px;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 0 20px var(--accent-color);
+        overflow: hidden;
+        position: relative;
+      }
 
     .panel::before {
       content: "\2728";
@@ -78,16 +126,16 @@
       margin-bottom: 1rem;
     }
 
-    .oracle-btn {
-      background: transparent;
-      border: 1px solid #b4a0ff;
-      color: #e0e0ff;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1.2rem;
-      transition: all 0.3s ease-in-out;
-    }
+      .oracle-btn {
+        background: transparent;
+        border: 1px solid #b4a0ff;
+        color: var(--text-color);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: all 0.3s ease-in-out;
+      }
 
     .oracle-btn:hover {
       background-color: #5f00ff33;
@@ -131,25 +179,27 @@
       gap: 0.5rem;
     }
 
-    .input-area input {
-      flex: 1;
-      padding: 0.75rem;
-      font-size: 1rem;
-      border-radius: 8px;
-      border: none;
-      outline: none;
-    }
+      .input-area input {
+        flex: 1;
+        padding: 0.75rem;
+        font-size: 1rem;
+        border-radius: 8px;
+        border: none;
+        outline: none;
+        background: var(--input-bg);
+        color: var(--text-color);
+      }
 
-    .input-area button {
-      padding: 0.75rem 1rem;
-      font-size: 1rem;
-      border-radius: 8px;
-      border: none;
-      background: #5f00ff;
-      color: #fff;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
+      .input-area button {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        border-radius: 8px;
+        border: none;
+        background: var(--accent-color);
+        color: #fff;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
 
     .input-area button:hover {
       background: #7f00ff;
@@ -182,7 +232,15 @@
   </style>
 </head>
 <body>
-  <h1>🔮 Speak to the Oracle</h1>
+  <div class="title-bar">
+    <div class="title">🧙 GPT Oracle Interface</div>
+    <div class="controls">
+      <button onclick="document.body.setAttribute('data-theme', 'light')">Light</button>
+      <button onclick="document.body.setAttribute('data-theme', 'dark')">Dark</button>
+      <button onclick="document.body.style.fontSize = 'larger'">A+</button>
+      <button onclick="document.body.style.fontSize = 'smaller'">A-</button>
+    </div>
+  </div>
   <div class="panel-wrapper">
     <div class="container">
     <!-- Oracle Panel -->
