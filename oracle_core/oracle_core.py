@@ -38,6 +38,7 @@ class OracleCore:
             self.client = OpenAI(api_key=api_key) if api_key else None
         else:
             self.client = None
+        # Load built-in strategies automatically
         self.strategy_manager = StrategyManager()
         self.handlers: Dict[str, object] = {}
         self.register_topic_handler("portfolio", PortfolioTopicHandler(data_locker))

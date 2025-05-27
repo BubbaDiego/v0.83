@@ -48,7 +48,7 @@ def test_oracle_core_build_prompt(monkeypatch):
             return {"x": 1}
 
     oc = mod.OracleCore(DummyLocker())
-    oc.strategy_manager.register({"name": "test", "instructions": "do"})
+    assert "test" in oc.strategy_manager.list_strategies()
     monkeypatch.setattr(oc, "query_gpt", lambda messages: messages)
     messages = oc.ask("portfolio", "test")
     assert messages[0]["role"] == "system"
