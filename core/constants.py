@@ -68,7 +68,7 @@ LIQUIDATION_DATA_ADDR = "0xABCDEFabcdefABCDEFabcdefABCDEFabcdefABCD"
 # -----------------------------
 # ☄️ Jupiter API
 # -----------------------------
-JUPITER_API_BASE = os.getenv("JUPITER_API_BASE", "https://perps-api.jup.ag")
+JUPITER_API_BASE = os.getenv("JUPITER_API_BASE", "https://futures-api.jup.ag")
 
 # -----------------------------
 # 🧪 Contract ABIs
