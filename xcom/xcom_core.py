@@ -59,7 +59,9 @@ class XComCore:
             "results": results
         })
 
-        # 🧾 Write to monitor ledger with initiator
+        # Determine overall success and log to ledger with initiator
+        success = any(v is True for v in results.values()) and error_msg is None
+
         try:
             from data.data_locker import DataLocker
             from core.constants import DB_PATH
@@ -67,7 +69,6 @@ class XComCore:
 
             dl = DataLocker(DB_PATH)
             ledger = DLMonitorLedgerManager(dl.db)
-            status = "Success" if any(v is True for v in results.values()) else "Error"
 
             metadata = {
                 "level": level,
@@ -76,11 +77,17 @@ class XComCore:
                 "recipient": recipient,
                 "results": results
             }
-            ledger.insert_ledger_entry("xcom_monitor", status, metadata)
+            ledger.insert_ledger_entry(
+                "xcom_monitor",
+                "Success" if success else "Error",
+                metadata,
+            )
 
         except Exception as e:
             log.error(f"🧨 Failed to write xcom_monitor ledger: {e}", source="XComCore")
 
+        # Include success flag in return payload for monitor use
+        results["success"] = success
         return results
 
 

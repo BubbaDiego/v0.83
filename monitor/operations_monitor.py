@@ -81,7 +81,7 @@ class OperationsMonitor(BaseMonitor):
             and api_status.get("twilio_success")
         )
 
-        payload = {"startup": startup, "api_status": api_status}
+        payload = {"startup": startup, "api_status": api_status, "success": overall_success}
 
         self.data_locker.ledger.insert_ledger_entry(
             monitor_name=self.name,

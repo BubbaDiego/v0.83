@@ -15,7 +15,7 @@
           <div class="flip-card-back status-card monitor-style {{ item.color }}">
             {% if item.title == "Price" %}
               <strong>Status:</strong>
-              {% if item.color == 'green' %}✅{% elif item.color == 'yellow' %}⚠️{% else %}❌{% endif %}
+              {% if price_monitor_status == 'Success' %}✅{% else %}❌{% endif %}
               <ul class="mini-list">
                 {% for asset in price_monitor_history %}
                   <li>{{ asset.icon }} <span class="text-bold">{{ asset.label }}:</span>
@@ -24,6 +24,8 @@
                 {% endfor %}
               </ul>
             {% elif item.title == "Positions" %}
+              <strong>Status:</strong>
+              {% if positions_monitor_status == 'Success' %}✅{% else %}❌{% endif %}
               <ul class="mini-list">
                 {% for sync in positions_monitor_history %}
                   <li>+{{ sync.imported }} <span style="color:#ffaa1a;">Skipped: {{ sync.skipped }}</span>
@@ -32,6 +34,8 @@
                 {% endfor %}
               </ul>
             {% elif item.title == "Operations" %}
+              <strong>Status:</strong>
+              {% if operations_monitor_status == 'Success' %}✅{% else %}❌{% endif %}
               <ul class="mini-list">
                 {% for op in operations_monitor_history %}
                   <li>
@@ -42,6 +46,8 @@
                 {% endfor %}
               </ul>
             {% elif item.title == "Xcom" %}
+              <strong>Status:</strong>
+              {% if xcom_monitor_status == 'Success' %}✅{% else %}❌{% endif %}
               <ul class="mini-list">
                 {% for xc in xcom_monitor_history %}
                   <li>{{ xc.comm_type }} from {{ xc.source }} @ {{ xc.timestamp }}</li>

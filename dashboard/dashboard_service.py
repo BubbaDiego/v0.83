@@ -252,6 +252,13 @@ def get_dashboard_context(data_locker, system_core=None):
         "last_xcom_time": ls.get_status("xcom_monitor").get("last_timestamp"),
     }
 
+    monitor_statuses = {
+        "price": ls.get_status("price_monitor").get("status", "Unknown"),
+        "positions": ls.get_status("position_monitor").get("status", "Unknown"),
+        "operations": ls.get_status("operations_monitor").get("status", "Unknown"),
+        "xcom": ls.get_status("xcom_monitor").get("status", "Unknown"),
+    }
+
     # Monitor card data (real, not canned)
     price_monitor_history = get_latest_price_monitor_history(data_locker)
     positions_monitor_history = get_latest_positions_monitor_history(data_locker)
@@ -354,4 +361,8 @@ def get_dashboard_context(data_locker, system_core=None):
         "positions_monitor_history": positions_monitor_history,
         "operations_monitor_history": operations_monitor_history,
         "xcom_monitor_history": xcom_monitor_history,
+        "price_monitor_status": monitor_statuses["price"],
+        "positions_monitor_status": monitor_statuses["positions"],
+        "operations_monitor_status": monitor_statuses["operations"],
+        "xcom_monitor_status": monitor_statuses["xcom"],
     }
