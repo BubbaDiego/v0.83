@@ -5,9 +5,13 @@
 {% block extra_styles %}
 {{ super() }}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/alert_matrix.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/title_bar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/sonic_titles.css') }}">
 {% endblock %}
 
 {% block content %}
+{% set title_text = 'Alert Matrix' %}
+{% include "title_bar.html" %}
 <div class="container-fluid pt-4">
 
   <!-- Alert Matrix Card -->
