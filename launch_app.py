@@ -37,41 +37,39 @@ def show_banner():
 
 
 def launch_sonic_web():
-    """Start the Sonic web server and open the browser."""
+    """Start the Sonic web server and open the browser.
+
+    The previous behaviour blocked the launcher until the web server exited,
+    requiring a restart to get back to the menu. The server is now started in
+    the background and control returns to the main menu immediately.
+    """
     console.print("[bold green]Launching Sonic Web...[/bold green]")
-    proc = subprocess.Popen([sys.executable, "sonic_app.py"])
+    subprocess.Popen([sys.executable, "sonic_app.py"])
     time.sleep(2)
     log.print_dashboard_link(host="127.0.0.1", port=5000, route="/")
     webbrowser.open("http://127.0.0.1:5000")
-    try:
-        proc.wait()
-    except KeyboardInterrupt:
-        proc.terminate()
+    console.print("[cyan]Sonic Web started in background.[/cyan]")
+    input("Press ENTER to return...")
 
 
 def launch_cyclone():
-    """Launch the Cyclone interactive console."""
+    """Launch the Cyclone interactive console in the background."""
     console.print("[bold blue]Launching Cyclone...[/bold blue]")
-    proc = subprocess.Popen([sys.executable, "cyclone_app.py"])
-    try:
-        proc.wait()
-    except KeyboardInterrupt:
-        proc.terminate()
+    subprocess.Popen([sys.executable, "cyclone_app.py"])
+    console.print("[cyan]Cyclone started in background.[/cyan]")
+    input("Press ENTER to return...")
 
 
 def launch_web_and_monitor():
     """Start the Sonic web server and Sonic monitor together."""
     console.print("[bold green]Launching Sonic App and Monitor...[/bold green]")
-    web_proc = subprocess.Popen([sys.executable, "sonic_app.py"])
-    monitor_proc = subprocess.Popen([sys.executable, os.path.join("monitor", "sonic_monitor.py")])
+    subprocess.Popen([sys.executable, "sonic_app.py"])
+    subprocess.Popen([sys.executable, os.path.join("monitor", "sonic_monitor.py")])
     time.sleep(2)
     log.print_dashboard_link(host="127.0.0.1", port=5000, route="/")
     webbrowser.open("http://127.0.0.1:5000")
-    try:
-        web_proc.wait()
-    except KeyboardInterrupt:
-        web_proc.terminate()
-        monitor_proc.terminate()
+    console.print("[cyan]Sonic Web and Monitor started in background.[/cyan]")
+    input("Press ENTER to return...")
 
 
 def operations_menu():
