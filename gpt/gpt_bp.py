@@ -43,7 +43,7 @@ def oracle(topic: str):
 
 
 @gpt_bp.route('/gpt/oracle/query', methods=['POST'])
-def oracle_query():
+def oracle_query_modifiers():
     """Return persona-aware modifiers for a topic."""
     data = request.get_json() or {}
     topic = data.get("topic")
