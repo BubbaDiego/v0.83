@@ -146,6 +146,9 @@
         <option value="Angie" title="🧛 Bold risk-taker with sharp instincts">🧛 Angie (Aggressive)</option>
         <option value="Wizard" title="🧙\u200d♂️ Mystical risk wizard">🧙\u200d♂️ Wizard (Experimental)</option>
       </select>
+      <select id="voice-select">
+        <option value="">Default Voice</option>
+      </select>
     </div>
     <input type="text" id="oracle-query" placeholder="Speak your query...">
     <button class="send-button" id="sendBtn">📨 Send</button>
@@ -161,6 +164,8 @@
       <strong>Profile:</strong> Aggressive<br />
       <strong>Strategies:</strong> 💹 Dynamic Hedging (30%), 💎 Profit Management (20%)<br />
       <strong>Overview:</strong> Prioritizes aggressive returns with minimal hedging delay and less restrictive profit locks.
+      <br />
+      <strong>Voice:</strong> <span id="debug-voice">Default</span>
     </div>
   </div>
 </div>
@@ -174,12 +179,32 @@
 <script>
   let currentTopic = 'portfolio';
 
-  document.getElementById('persona-select').addEventListener('change', updateDebug);
+  const personaSelect = document.getElementById('persona-select');
+  const voiceSelect = document.getElementById('voice-select');
+
+  personaSelect.addEventListener('change', updateDebug);
+  voiceSelect.addEventListener('change', updateVoiceDebug);
   document.getElementById('sendBtn').addEventListener('click', askOracle);
 
+  function populateVoices() {
+    if (!window.speechSynthesis) return;
+    const voices = speechSynthesis.getVoices().filter(v => v.lang.startsWith('en'));
+    voiceSelect.innerHTML = '<option value="">Default Voice</option>' +
+      voices.map(v => `<option value="${v.name}">${v.name}</option>`).join('');
+    updateVoiceDebug();
+  }
+
+  speechSynthesis.onvoiceschanged = populateVoices;
+  populateVoices();
+
   function updateDebug() {
-    const persona = document.getElementById('persona-select').value;
+    const persona = personaSelect.value;
     document.getElementById('debug-persona').textContent = persona;
+  }
+
+  function updateVoiceDebug() {
+    const voice = voiceSelect.value || 'Default';
+    document.getElementById('debug-voice').textContent = voice;
   }
 
   function presetQuery(topic) {
@@ -194,7 +219,7 @@
   }
 
   function askOracle() {
-    const persona = document.getElementById('persona-select').value;
+    const persona = personaSelect.value;
     const query = document.getElementById('oracle-query').value.trim();
     const url = `/gpt/oracle/query?persona=${encodeURIComponent(persona)}&topic=${encodeURIComponent(currentTopic)}&query=${encodeURIComponent(query)}`;
     fetch(url)
@@ -216,9 +241,11 @@
     utterance.pitch = 1.1;
     utterance.rate = 0.92;
     utterance.volume = 1;
-    utterance.voice = speechSynthesis.getVoices().find(voice =>
-      voice.name.includes('Whisper') || voice.name.includes('Zira') || voice.lang.includes('en')
+    const selectedName = voiceSelect.value;
+    const defaultVoice = speechSynthesis.getVoices().find(v =>
+      v.name.includes('Whisper') || v.name.includes('Zira') || v.lang.includes('en')
     );
+    utterance.voice = speechSynthesis.getVoices().find(v => v.name === selectedName) || defaultVoice;
     speechSynthesis.speak(utterance);
   }
 </script>
