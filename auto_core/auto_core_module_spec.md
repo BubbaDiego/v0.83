@@ -17,11 +17,22 @@ auto_core/
 Central orchestrator for automating deposit and withdrawal flows via Jupiter's UI.
 
 ```python
-AutoCore(phantom_path: str, profile_dir: str, headless: bool = False)
+AutoCore(
+    phantom_path: str,
+    profile_dir: str,
+    headless: bool = False,
+    *,
+    extension_id: str | None = None,
+    user_agent: str | None = None,
+    slow_mo: int | None = None,
+)
 ```
 - `phantom_path`: path to the Phantom extension directory.
 - `profile_dir`: folder for Playwright's persistent profile.
 - `headless`: optional headless mode flag.
+- `extension_id`: ID for the Phantom extension when running headless.
+- `user_agent`: optional custom user agent.
+- `slow_mo`: Playwright slow motion delay in ms.
 
 **Key Methods**
 - `_launch_context()` – Start Playwright with Phantom and open Jupiter. 【F:auto_core/auto_core.py†L17-L30】
