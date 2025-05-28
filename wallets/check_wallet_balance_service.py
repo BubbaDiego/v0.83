@@ -11,11 +11,9 @@ except Exception:  # pragma: no cover - optional dependency
 
 try:
     from solana.rpc.api import Client
-    from solana.publickey import PublicKey
     from solana.rpc.commitment import Confirmed
 except Exception:  # pragma: no cover - optional dependency
     Client = None  # type: ignore
-    PublicKey = None  # type: ignore
     Confirmed = None  # type: ignore
 
 from core.logging import log
@@ -58,11 +56,10 @@ class CheckWalletBalanceService:
             log.error("solana library unavailable", source="WalletBalanceSvc")
             return None
         try:
-            key = PublicKey(address) if PublicKey else address
             kwargs = {}
             if Confirmed:
                 kwargs["commitment"] = Confirmed
-            resp = self._sol.get_balance(key, **kwargs)
+            resp = self._sol.get_balance(str(address), **kwargs)
             lamports = resp.get("result", {}).get("value")
             if lamports is not None:
                 return lamports / LAMPORTS_PER_SOL
