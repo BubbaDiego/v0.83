@@ -163,5 +163,20 @@
     "low_notify": "",
     "medium_notify": "",
     "high_notify": ""
+  },
+  {
+    "id": "262d71f3-88e7-4a25-92e5-4fbb3c17b761",
+    "alert_type": "DeathNail",
+    "alert_class": "System",
+    "metric_key": "death_nail",
+    "condition": "ABOVE",
+    "low": 0.0,
+    "medium": 0.0,
+    "high": 1.0,
+    "enabled": 0,
+    "last_modified": "2025-05-25T21:11:08.690000+00:00",
+    "low_notify": "",
+    "medium_notify": "",
+    "high_notify": ""
   }
 ]
