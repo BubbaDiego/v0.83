@@ -838,10 +838,12 @@ def xcom_api_status():
         "placeholder": core.check_placeholder(),
     }
 
-    status = {
-        name: ("ok" if res.get("success") else f"error: {res.get('error')}")
-        for name, res in checks.items()
-    }
+    def normalize(res):
+        if isinstance(res, dict):
+            return "ok" if res.get("success") else f"error: {res.get('error')}"
+        return "ok" if res == "ok" else f"error: {res}"
+
+    status = {name: normalize(res) for name, res in checks.items()}
 
     return jsonify(status)
 
