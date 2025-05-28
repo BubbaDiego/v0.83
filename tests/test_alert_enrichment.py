@@ -97,3 +97,11 @@ async def test_missing_heat_index_defaults(enrichment_service, dummy_position):
     enriched = await enrichment_service._enrich_heat_index(alert)
     assert enriched.evaluated_value == 5.0
     assert "Default heat index applied" in enriched.notes
+
+
+@pytest.mark.asyncio
+async def test_enrich_system(enrichment_service):
+    alert = make_alert(AlertType.Profit)
+    alert.alert_class = "System"
+    enriched = await enrichment_service.enrich(alert)
+    assert enriched.evaluated_value == 1.0

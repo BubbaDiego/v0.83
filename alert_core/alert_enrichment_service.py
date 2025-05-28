@@ -53,6 +53,9 @@ class AlertEnrichmentService:
             elif alert.alert_class == "Market":
                 return await self._enrich_price_threshold(alert)
 
+            elif alert.alert_class == "System":
+                return await self._enrich_system(alert)
+
             else:
                 log.warning(f"⚠️ Unknown alert_class '{alert.alert_class}' for alert {alert.id}",
                             source="AlertEnrichment")
@@ -221,6 +224,11 @@ class AlertEnrichmentService:
         wallet_name = position.get("wallet_name")
         wallet = self.data_locker.get_wallet_by_name(wallet_name) if wallet_name else None
         alert.evaluated_value = heat
+        return alert
+
+    async def _enrich_system(self, alert):
+        """Simple system alert enrichment."""
+        alert.evaluated_value = 1.0
         return alert
 
     async def enrich_all(self, alerts):
