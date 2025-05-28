@@ -832,16 +832,20 @@ def xcom_api_status():
     core = get_core()
 
     checks = {
-        "twilio": core.check_twilio(),
+        "twilio": core.check_twilio_api(),
         "chatgpt": core.check_chatgpt(),
         "jupiter": core.check_jupiter(),
-        "placeholder": core.check_placeholder(),
     }
 
-    status = {
-        name: ("ok" if res.get("success") else f"error: {res.get('error')}")
-        for name, res in checks.items()
-    }
+    if hasattr(core, "check_placeholder"):
+        checks["placeholder"] = core.check_placeholder()
+
+    def _format(res):
+        if isinstance(res, dict):
+            return "ok" if res.get("success") else f"error: {res.get('error')}"
+        return "ok" if str(res).lower() == "ok" else f"error: {res}"
+
+    status = {name: _format(res) for name, res in checks.items()}
 
     return jsonify(status)
 

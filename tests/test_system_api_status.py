@@ -74,9 +74,20 @@ def test_xcom_api_status_ok(monkeypatch):
     monkeypatch.setattr(cts, "CheckTwilioHeartbeartService", DummyService)
     monkeypatch.setenv("OPENAI_API_KEY", "test")
 
+    class DummyResp:
+        def raise_for_status(self):
+            pass
+
+    class Requests:
+        def get(self, url, timeout=None):
+            return DummyResp()
+
+    sc = importlib.import_module("system.system_core")
+    monkeypatch.setattr(sc, "requests", Requests())
+
     resp = client.get("/system/xcom_api_status")
     assert resp.status_code == 200
-    assert resp.get_json() == {"chatgpt": "ok", "api": "ok"}
+    assert resp.get_json() == {"twilio": "ok", "chatgpt": "ok", "jupiter": "ok"}
 
 
 def test_xcom_config_template_contains_status_button():
