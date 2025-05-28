@@ -21,19 +21,20 @@ def test_get_balance_solana(monkeypatch):
     mock_client = MagicMock()
     mock_client.get_balance.return_value = {"result": {"value": 2 * svc.LAMPORTS_PER_SOL}}
     monkeypatch.setattr(service, "_sol", mock_client)
+    monkeypatch.setattr(svc, "PublicKey", lambda x: x)
 
     bal = service.get_balance("SoLAddress")
     assert bal == 2.0
     mock_client.get_balance.assert_called()
 
 
-def test_solana_client_called_with_str(monkeypatch):
+def test_solana_client_called_with_public_key(monkeypatch):
     service = svc.BlockchainBalanceService()
     mock_client = MagicMock()
     monkeypatch.setattr(service, "_sol", mock_client)
     monkeypatch.setattr(svc, "Confirmed", None)
+    monkeypatch.setattr(svc, "PublicKey", lambda x: f"PK:{x}")
 
     service.get_balance("Addr")
     args, kwargs = mock_client.get_balance.call_args
-    assert args[0] == "Addr"
-    assert isinstance(args[0], str)
+    assert args[0] == "PK:Addr"
