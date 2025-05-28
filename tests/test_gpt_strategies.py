@@ -23,6 +23,15 @@ def test_strategy_manager_alias(monkeypatch):
     assert strat.name == "degen"
 
 
+def test_merge_modifiers():
+    sm_mod = importlib.import_module("oracle_core.strategy_manager")
+    Strategy = sm_mod.Strategy
+    mods = [({"a": 1, "b": [1]}, 1.0), ({"a": 3, "b": [2]}, 1.0)]
+    merged = Strategy.merge_modifiers(mods)
+    assert merged["a"] == 2
+    assert sorted(merged["b"]) == [1, 2]
+
+
 def setup_core(monkeypatch):
     base = Path(__file__).resolve().parents[1]
 
@@ -113,3 +122,15 @@ def test_oracle_endpoint_with_strategy(client):
     ctx = json.loads(data["reply"][1]["content"])
     assert ctx.get("strategy_modifiers", {}).get("risk_level") == "low"
     assert data["reply"][-1]["content"] == "Answer briefly and focus on risk mitigation."
+
+
+def test_persona_application(monkeypatch):
+    GPTCore = setup_core(monkeypatch)
+    core = GPTCore()
+    messages = core.ask_oracle("portfolio", "risk_averse")
+    ctx = json.loads(messages[1]["content"])
+    mods = ctx.get("strategy_modifiers", {})
+    assert mods.get("risk_level") == "low"
+    assert mods.get("risk_tolerance") == "very_low"
+    text = messages[-1]["content"]
+    assert "Adopt a conservative trading approach." in text
