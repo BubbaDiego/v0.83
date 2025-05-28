@@ -1,7 +1,18 @@
 // === dashboard_oracle.js ===
 // Add click handlers for oracle icons on the dashboard panels
 
+let availableVoices = [];
+
+function populateVoices() {
+  if (!window.speechSynthesis) return;
+  availableVoices = speechSynthesis.getVoices();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  populateVoices();
+  if (window.speechSynthesis) {
+    speechSynthesis.onvoiceschanged = populateVoices;
+  }
   document.querySelectorAll('.oracle-icon').forEach(icon => {
     icon.addEventListener('click', () => {
       const topic = icon.dataset.topic;
@@ -24,9 +35,8 @@ function speakResponse(text) {
   utter.pitch = 1.1;
   utter.rate = 0.92;
   utter.volume = 1;
-  const voices = speechSynthesis.getVoices();
-  const voice = voices.find(v => v.name === 'Google UK English Female') ||
-                voices.find(v => v.lang && v.lang.includes('en'));
+  const voice = availableVoices.find(v => v.name === 'Google UK English Female') ||
+                availableVoices.find(v => v.lang && v.lang.startsWith('en'));
   if (voice) utter.voice = voice;
   speechSynthesis.speak(utter);
 }
