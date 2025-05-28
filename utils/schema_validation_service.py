@@ -14,9 +14,9 @@ class SchemaValidationService:
     Can be invoked in post-deployment or other test suites.
     """
 
-    ALERT_LIMITS_FILE = "c:/v0.8/config/alert_limits.json"
+    ALERT_THRESHOLDS_FILE = "c:/v0.8/config/alert_thresholds.json"
 
-    ALERT_LIMITS_SCHEMA = {
+    ALERT_THRESHOLDS_SCHEMA = {
         "type": "object",
         "properties": {
             "alert_ranges": {
@@ -86,7 +86,7 @@ class SchemaValidationService:
 
     @classmethod
     def validate_alert_ranges(cls):
-        return cls.validate_schema(cls.ALERT_LIMITS_FILE, cls.ALERT_LIMITS_SCHEMA, name="Alert Ranges")
+        return cls.validate_schema(cls.ALERT_THRESHOLDS_FILE, cls.ALERT_THRESHOLDS_SCHEMA, name="Alert Ranges")
 
     @classmethod
     def batch_validate(cls):
@@ -95,7 +95,7 @@ class SchemaValidationService:
         results = []
 
         validations = [
-            ("Alert Ranges", cls.ALERT_LIMITS_FILE, cls.ALERT_LIMITS_SCHEMA)
+            ("Alert Ranges", cls.ALERT_THRESHOLDS_FILE, cls.ALERT_THRESHOLDS_SCHEMA)
             # Future: add more configs here
         ]
 

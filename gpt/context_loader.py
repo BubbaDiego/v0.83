@@ -26,7 +26,7 @@ def get_context_data() -> dict:
     files = [
         "gpt_meta_input.json",
         "gpt_definitions_input.json",
-        "gpt_alert_limits_input.json",
+        "gpt_alert_thresholds_input.json",
         "gpt_module_references.json",
         "snapshot_sample.json",
     ]

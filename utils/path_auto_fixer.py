@@ -5,10 +5,10 @@ import re
 
 # Define which replacements to make
 FIX_PATTERNS = {
-    r"['\"]data/alert_limits\.json['\"]": "str(ALERT_LIMITS_PATH)",
+    r"['\"]data/alert_thresholds\.json['\"]": "str(ALERT_THRESHOLDS_PATH)",
 }
 
-TARGET_IMPORT = "from config.config_constants import ALERT_LIMITS_PATH"
+TARGET_IMPORT = "from config.config_constants import ALERT_THRESHOLDS_PATH"
 
 EXCLUDED_DIRS = {"__pycache__", ".git", "venv", "env", ".venv"}
 
@@ -19,8 +19,8 @@ def fix_file(file_path):
     original_content = content
     fixed = False
 
-    # Ensure ALERT_LIMITS_PATH import
-    if "ALERT_LIMITS_PATH" not in content:
+    # Ensure ALERT_THRESHOLDS_PATH import
+    if "ALERT_THRESHOLDS_PATH" not in content:
         content = TARGET_IMPORT + "\n" + content
         fixed = True
 

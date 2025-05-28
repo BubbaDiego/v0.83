@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.abspath(Path(__file__).resolve().parent.parent))
 from core.constants import (
     DB_PATH,
     CONFIG_PATH,
-    ALERT_LIMITS_PATH,
+    ALERT_THRESHOLDS_PATH,
     BASE_DIR,
     SONIC_SAUCE_PATH,
     COM_CONFIG_PATH,
@@ -101,7 +101,7 @@ class StartUpService:
         steps = [
             StartUpService.check_for_mother_brain,
             StartUpService.verify_required_paths,
-            StartUpService.ensure_alert_limits,
+            StartUpService.ensure_alert_thresholds,
             StartUpService.check_env_vars,
             StartUpService.initialize_database,
             StartUpService.verify_required_tables,
@@ -141,7 +141,7 @@ class StartUpService:
         required = [
             DB_PATH,
             CONFIG_PATH,
-            ALERT_LIMITS_PATH,
+            ALERT_THRESHOLDS_PATH,
             SONIC_SAUCE_PATH,
             COM_CONFIG_PATH,
             THEME_CONFIG_PATH,
@@ -159,9 +159,9 @@ class StartUpService:
             log.info("✅ All required file paths present.", source="StartUpService")
 
     @staticmethod
-    def ensure_alert_limits():
-        if not os.path.exists(ALERT_LIMITS_PATH):
-            log.warning("⚠️ alert_limits.json not found. Creating default template...")
+    def ensure_alert_thresholds():
+        if not os.path.exists(ALERT_THRESHOLDS_PATH):
+            log.warning("⚠️ alert_thresholds.json not found. Creating default template...")
             default = {
                 "alert_ranges": {},
                 "global_alert_config": {
@@ -170,18 +170,18 @@ class StartUpService:
                     "thresholds": {}
                 }
             }
-            save_config("alert_limits.json", default)
-            log.success("✅ Default alert_limits.json created.", source="StartUpService")
+            save_config("alert_thresholds.json", default)
+            log.success("✅ Default alert_thresholds.json created.", source="StartUpService")
         else:
-            log.info("✅ alert_limits.json found.", source="StartUpService")
+            log.info("✅ alert_thresholds.json found.", source="StartUpService")
             valid = SchemaValidationService.validate_schema(
-                str(ALERT_LIMITS_PATH),
+                str(ALERT_THRESHOLDS_PATH),
                 SchemaValidationService.ALERT_LIMITS_SCHEMA,
                 name="Alert Ranges",
             )
             if not valid:
                 raise SystemExit(
-                    "Startup check failed: alert_limits.json schema invalid"
+                    "Startup check failed: alert_thresholds.json schema invalid"
                 )
 
     @staticmethod

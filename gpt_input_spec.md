@@ -19,7 +19,7 @@ Acts as the main bundle reference.
   "generated": "YYYY-MM-DDTHH:MM:SSZ",
   "meta_file": "gpt_meta_input.json",
   "definitions_file": "gpt_definitions_input.json",
-  "alert_limits_file": "gpt_alert_limits_input.json",
+  "alert_thresholds_file": "gpt_alert_thresholds_input.json",
   "module_reference_file": "gpt_module_references.json",
   "current_snapshot_file": "snapshot_<DATE>.json",
   "previous_snapshot_file": "snapshot_<DATE>.json",

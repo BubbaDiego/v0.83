@@ -62,7 +62,7 @@ The constructor looks for `OPENAI_API_KEY` first and falls back to
             "generated": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
             "meta": { ... },
             "definitions": { ... },
-            "alert_limits": { ... },
+            "alert_thresholds": { ... },
             "module_references": { ... },
             "current_snapshot": snaps.get("current"),
             "previous_snapshot": snaps.get("previous"),
@@ -128,7 +128,7 @@ relevant data. Strategies modify the context before building the prompt.
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 
 def get_context_data() -> dict:
-    files = ["gpt_meta_input.json", "gpt_definitions_input.json", "gpt_alert_limits_input.json", "gpt_module_references.json", "snapshot_sample.json"]
+    files = ["gpt_meta_input.json", "gpt_definitions_input.json", "gpt_alert_thresholds_input.json", "gpt_module_references.json", "snapshot_sample.json"]
     data = {}
     for fname in files:
         content = _load_json(fname)
