@@ -33,7 +33,6 @@ def oracle(topic: str):
     """Handle oracle queries for various topics."""
     strategy = request.args.get("strategy", "none")
     core = GPTCore()
-    strategy = request.args.get("strategy")
     try:
         result = core.ask_oracle(topic, strategy)
         return jsonify({"reply": result})

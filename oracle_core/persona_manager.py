@@ -1,7 +1,6 @@
 import json
 import os
 
-from pathlib import Path
 from typing import Dict, Iterable
 
 
@@ -15,6 +14,10 @@ class Persona:
         self.modifiers = data.get("modifiers", {})
         self.strategy_weights = data.get("strategy_weights", {})
         self.instructions = data.get("instructions", "")
+
+        self.system_message = data.get("system_message", "")
+
+
 
 class PersonaManager:
     """Load and manage personas."""
@@ -36,8 +39,6 @@ class PersonaManager:
             self.register(data)
 
 
-
-
     def load_from_file(self, path: str):
         with open(path, "r", encoding="utf-8") as fh:
             data = json.load(fh)
@@ -46,6 +47,10 @@ class PersonaManager:
             self.register(data)
         elif isinstance(data, list):
             self.load(data)
+
+    def load(self, personas: Iterable[Dict]):
+        for data in personas:
+            self.register(data)
 
 
     def register(self, data: Dict):
