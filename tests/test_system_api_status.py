@@ -47,7 +47,7 @@ def test_validate_api_success(monkeypatch):
     resp_obj = types.SimpleNamespace(status_code=200, json=lambda: {}, text="")
     monkeypatch.setattr(importlib.import_module("requests"), "get", lambda *a, **k: resp_obj)
 
-    resp = client.post("/xcom_config/validate_api")
+    resp = client.post("/system/xcom_config/validate_api")
     assert resp.status_code == 200
     data = resp.get_json()
     assert data["status"] == "ok"
@@ -74,15 +74,15 @@ def test_xcom_api_status_ok(monkeypatch):
     monkeypatch.setattr(cts, "CheckTwilioHeartbeartService", DummyService)
     monkeypatch.setenv("OPENAI_API_KEY", "test")
 
-    resp = client.get("/xcom_api_status")
+    resp = client.get("/system/xcom_api_status")
     assert resp.status_code == 200
     assert resp.get_json() == {"chatgpt": "ok", "api": "ok"}
 
 
 def test_xcom_config_template_contains_status_button():
     client = make_client()
-    resp = client.get("/xcom_config")
+    resp = client.get("/system/xcom_config")
     assert resp.status_code == 200
     html = resp.data.decode()
-    assert "checkApiStatus" in html
-    assert "apiStatusResult" in html
+    assert "checkAllApis" in html
+    assert "apiStatusList" in html
