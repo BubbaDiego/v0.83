@@ -9,6 +9,7 @@ import traceback  # PATCH: for full stack info
 
 from data.data_locker import DataLocker
 from core.constants import DB_PATH, ALERT_LIMITS_PATH
+from alert_core.alert_utils import load_alert_limits_from_file
 from core.logging import log, configure_console_log
 
 # PATCH: Import SystemCore for death screams
@@ -86,12 +87,23 @@ class Cyclone:
 
         self.config = self.data_locker.system.get_var("alert_limits")
         if not self.config:
-            self.system_core.death({
-                "message": "🛑 alert_limits missing from DB",
-                "level": "HIGH",
-                "payload": {"context": "alert_limits not loaded"}
-            })
-            raise RuntimeError("🛑 alert_limits missing from DB. Death triggered.")
+            log.warning(
+                "⚠️ alert_limits missing from DB. Loading from JSON...",
+                source="Cyclone",
+            )
+            try:
+                self.config = load_alert_limits_from_file(self.data_locker)
+            except Exception as exc:
+                self.system_core.death(
+                    {
+                        "message": "🛑 alert_limits missing and failed to load",
+                        "level": "HIGH",
+                        "payload": {"error": str(exc)},
+                    }
+                )
+                raise RuntimeError(
+                    "🛑 alert_limits missing from DB and file load failed"
+                )
 
         self.position_core = PositionCore(self.data_locker)
         # Pass alert limits config to AlertCore so alert creation respects
