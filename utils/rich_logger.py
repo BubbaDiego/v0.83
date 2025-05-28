@@ -223,11 +223,23 @@ class RichLogger:
         self.info(f"🕵️ Logger '{target_logger_name}' hijacked", source="LoggerControl")
 
     def print_dashboard_link(self, host: str = "127.0.0.1", port: int = 5001, route: str = "/dashboard"):
-        """Print a clickable hyperlink to the Sonic Dashboard in supported terminals."""
-        url = f"http://{host}:{port}{route}"
+        """Print hyperlinks for both localhost and LAN dashboard URLs."""
+        from utils.net_utils import get_local_ip
+
+        url_local = f"http://{host}:{port}{route}"
+        lan_ip = get_local_ip()
+        url_lan = f"http://{lan_ip}:{port}{route}"
+
         try:
-            hyperlink = f"\033]8;;{url}\033\\🔗 Open Sonic Dashboard\033]8;;\033\\"
-            print(f"\n🌐 Sonic Dashboard: {hyperlink}\n")
+            hyperlink_local = f"\033]8;;{url_local}\033\\🔗 Open Sonic Dashboard\033]8;;\033\\"
+            hyperlink_lan = f"\033]8;;{url_lan}\033\\🔗 Open Sonic Dashboard (LAN)\033]8;;\033\\"
+            print(f"\n🌐 Sonic Dashboard: {hyperlink_local}")
+            if lan_ip != host:
+                print(f"🌐 Sonic Dashboard: {hyperlink_lan}")
+            print()
         except Exception:
             # Fallback to plain URL if ANSI hyperlinks aren't supported
-            print(f"\n🌐 Sonic Dashboard: {url}\n")
+            print(f"\n🌐 Sonic Dashboard: {url_local}")
+            if lan_ip != host:
+                print(f"🌐 Sonic Dashboard: {url_lan}")
+            print()

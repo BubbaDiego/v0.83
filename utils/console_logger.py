@@ -279,12 +279,25 @@ class ConsoleLogger:
 
     @classmethod
     def print_dashboard_link(cls, host="127.0.0.1", port=5001, route="/dashboard"):
-        url = f"http://{host}:{port}{route}"
+        """Display both localhost and LAN links to the dashboard."""
+        from utils.net_utils import get_local_ip
+
+        url_local = f"http://{host}:{port}{route}"
+        lan_ip = get_local_ip()
+        url_lan = f"http://{lan_ip}:{port}{route}"
+
         try:
-            hyperlink = f"\033]8;;{url}\033\\🔗 Open Sonic Dashboard\033]8;;\033\\"
-            print(f"\n🌐 Sonic Dashboard: {hyperlink}\n")
+            hyperlink_local = f"\033]8;;{url_local}\033\\🔗 Open Sonic Dashboard\033]8;;\033\\"
+            hyperlink_lan = f"\033]8;;{url_lan}\033\\🔗 Open Sonic Dashboard (LAN)\033]8;;\033\\"
+            print(f"\n🌐 Sonic Dashboard: {hyperlink_local}")
+            if lan_ip != host:
+                print(f"🌐 Sonic Dashboard: {hyperlink_lan}")
+            print()
         except Exception:
-            print(f"\n🌐 Sonic Dashboard: {url}\n")
+            print(f"\n🌐 Sonic Dashboard: {url_local}")
+            if lan_ip != host:
+                print(f"🌐 Sonic Dashboard: {url_lan}")
+            print()
 
     @classmethod
     def route(cls, message: str, source: str = None, payload: dict = None):
