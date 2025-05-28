@@ -9,6 +9,17 @@ from pathlib import Path
 import pytest
 from core.core_imports import log
 
+try:
+    from rich.console import Console
+    from rich.panel import Panel
+    from rich.table import Table
+    console = Console()
+except Exception:  # pragma: no cover - rich optional
+    Console = None
+    Panel = None
+    Table = None
+    console = None
+
 
 class TestCore:
     """Utility to run pytest with rich reporting."""
@@ -196,20 +207,37 @@ class TestCore:
 
     # ------------------------------------------------------------------
     def interactive_menu(self) -> None:
-        """Interactive CLI for running tests."""
-        print("\n=== 🔍 Test Runner Console ===")
-        print("1) Run all tests")
-        print("2) Run test file pattern")
-        print("3) Run Alert Core tests")
-        print("4) Pick tests to run")
-        print("5) Exit")
-
+        """Interactive CLI for running tests with optional Rich formatting."""
         while True:
-            choice = input("Enter your choice (1-5): ").strip()
+            if console:
+                console.clear()
+                console.print(Panel("[bold magenta]🔍 Test Runner Console[/bold magenta]", border_style="magenta"))
+
+                table = Table(show_header=False, box=None)
+                table.add_column("#", style="cyan", justify="right")
+                table.add_column("Action", style="white")
+                table.add_row("1", "📚 Run all tests")
+                table.add_row("2", "🗂️ Run test file pattern")
+                table.add_row("3", "🧪 Run Alert Core tests")
+                table.add_row("4", "🎯 Pick tests to run")
+                table.add_row("5", "❌ Exit")
+                console.print(table)
+                choice = console.input("Choose > ").strip()
+            else:
+                os.system("cls" if os.name == "nt" else "clear")
+                print("\n=== 🔍 Test Runner Console ===")
+                print("1) 📚 Run all tests")
+                print("2) 🗂️ Run test file pattern")
+                print("3) 🧪 Run Alert Core tests")
+                print("4) 🎯 Pick tests to run")
+                print("5) ❌ Exit")
+                choice = input("Choose > ").strip()
+
             if choice == "1":
                 self.run_glob()
             elif choice == "2":
-                pattern = input("Pattern (e.g., tests/test_*.py): ").strip()
+                pattern_prompt = "Pattern (e.g., tests/test_*.py): "
+                pattern = console.input(pattern_prompt).strip() if console else input(pattern_prompt).strip()
                 self.run_glob(pattern)
             elif choice == "3":
                 self.test_alert_core()
@@ -218,5 +246,14 @@ class TestCore:
             elif choice == "5":
                 break
             else:
-                print("Invalid choice. Try again.")
+                if console:
+                    console.print("[red]Invalid choice. Try again.[/red]")
+                else:
+                    print("Invalid choice. Try again.")
+                continue
+
+            if console:
+                console.input("\n[grey]Press ENTER to return...[/grey]")
+            else:
+                input("\nPress ENTER to return...")
 
