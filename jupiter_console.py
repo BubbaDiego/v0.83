@@ -23,15 +23,20 @@ def _select_wallet(core: WalletCore):
     if not wallets:
         console.print("[red]No wallets found.[/red]")
         return None
-    console.print("\nAvailable wallets:")
-    for idx, w in enumerate(wallets, start=1):
-        console.print(f"{idx}) {w.name} ({w.public_address})")
-    try:
-        choice = int(console.input("Select wallet > ").strip())
-        return wallets[choice - 1]
-    except Exception:
+    while True:
+        console.print("\nAvailable wallets:")
+        for idx, w in enumerate(wallets, start=1):
+            console.print(f"{idx}) {w.name} ({w.public_address})")
+        choice_str = console.input("Select wallet > ").strip()
+        if choice_str.lower() in {"q", "exit"}:
+            return None
+        try:
+            choice = int(choice_str)
+            if 1 <= choice <= len(wallets):
+                return wallets[choice - 1]
+        except Exception:
+            pass
         console.print("[red]Invalid selection[/red]")
-        return None
 
 
 def _get_input(prompt: str, cast=float):
