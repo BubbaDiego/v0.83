@@ -169,10 +169,10 @@ a single command.
 ## Exporting Alert Thresholds
 
 Use the **Export** button on the Alert Thresholds page (or the
-`/system/alert_thresholds/export` API endpoint) to download a JSON snapshot of
-the threshold limits currently stored in the database. These exported values are
-the limits the system uses when evaluating alerts—they do **not** represent the
-current alerts themselves.
+`/system/alert_thresholds/export` API endpoint) to save a JSON snapshot of the
+current threshold limits to the `/config/alert_thresholds.json` file on the
+server. These exported values are the limits the system uses when evaluating
+alerts—they do **not** represent the current alerts themselves.
 
 ## Running `sonic_app.py`
 
