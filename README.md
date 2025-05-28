@@ -101,6 +101,10 @@ curl "http://localhost:5000/gpt/oracle/portfolio?strategy=none"
 Replace `portfolio` with any other topic to receive a short summary. Use the
 `strategy` query parameter to apply a named strategy (defaults to `none`).
 
+System queries now include the latest update timestamps along with recent
+`death_log.txt` entries and any system alerts so GPT can report operational
+issues.
+
 ### Personas
 
 Oracle responses can adopt different tones. Specify a `persona` with the

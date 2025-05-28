@@ -13,8 +13,18 @@ class OracleDataService:
     def fetch_prices(self):
         return self.dl.prices.get_all_prices()[:20]
 
+    def fetch_death_log(self):
+        return self.dl.get_death_log_entries()
+
+    def fetch_system_alerts(self):
+        return self.dl.get_system_alerts()
+
     def fetch_system(self):
-        return self.dl.get_last_update_times()
+        return {
+            "last_update_times": self.dl.get_last_update_times(),
+            "death_log": self.fetch_death_log(),
+            "system_alerts": self.fetch_system_alerts(),
+        }
 
     def get_topic_data(self, topic: str):
         if topic == "portfolio":
