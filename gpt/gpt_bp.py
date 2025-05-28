@@ -75,6 +75,7 @@ def oracle_query():
     if not persona_name:
         return jsonify({"error": "persona parameter required"}), 400
     topic = request.args.get('topic', 'portfolio').strip() or 'portfolio'
+    user_query = request.args.get('query', '').strip()
 
     core = GPTCore()
     pm = PersonaManager()
@@ -92,7 +93,7 @@ def oracle_query():
     handler = oracle.handlers[topic]
     context = handler.get_context()
 
-    instructions = persona.instructions or OracleCore.DEFAULT_INSTRUCTIONS.get(topic, "Assist the user.")
+    instructions = user_query or persona.instructions or OracleCore.DEFAULT_INSTRUCTIONS.get(topic, "Assist the user.")
     system_msg = persona.system_message or OracleCore.DEFAULT_SYSTEM_MESSAGES.get(topic, "You assist the user.")
 
     messages = oracle.build_prompt(topic, context, instructions)
