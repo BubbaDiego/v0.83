@@ -23,6 +23,7 @@ class AlertType(str, Enum):
     HeatIndex = "HeatIndex"
     Profit = "Profit"
     TravelPercentLiquid = "TravelPercentLiquid"
+    DeathNail = "DeathNail"
 
     # 📈 Market-level alert types
     PriceThreshold = "PriceThreshold"
