@@ -15,10 +15,20 @@ class CalculationCore:
         self.modifiers = self._load_modifiers()
 
     def _load_modifiers(self):
-        rows = self.data_locker.db.get_cursor().execute(
-            "SELECT key, value FROM modifiers WHERE group_name = 'heat_modifiers'"
-        ).fetchall()
-        weights = {row['key']: float(row['value']) for row in rows}
+        cursor = self.data_locker.db.get_cursor()
+        if not cursor:
+            log.error("❌ DB unavailable, using default modifiers", source="CalculationCore")
+            weights = self.calc_services.weights
+            return weights
+
+        try:
+            rows = cursor.execute(
+                "SELECT key, value FROM modifiers WHERE group_name = 'heat_modifiers'"
+            ).fetchall()
+            weights = {row['key']: float(row['value']) for row in rows}
+        except Exception as e:
+            log.error(f"❌ Failed loading modifiers: {e}", source="CalculationCore")
+            weights = {}
 
         if not weights:
             log.warning("⚠️ No modifiers found in DB; falling back to default", source="CalculationCore")
