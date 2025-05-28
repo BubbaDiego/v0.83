@@ -56,4 +56,4 @@ Each handler (`PortfolioTopicHandler`, `AlertsTopicHandler`, `PricesTopicHandler
 - `fetch_portfolio()` → latest portfolio snapshot
 - `fetch_alerts()` → recent alerts
 - `fetch_prices()` → recent prices
-- `fetch_system()` → last update timestamps
+- `fetch_system()` → `{"last_update_times": ..., "death_log": [...], "system_alerts": [...]}`

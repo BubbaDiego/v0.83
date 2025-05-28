@@ -314,6 +314,30 @@ class DataLocker:
         except Exception:
             return {}
 
+    def get_death_log_entries(self, limit: int = 20) -> list:
+        """Return the most recent entries from the death log file."""
+        path = os.path.join(BASE_DIR, "death_log.txt")
+        try:
+            if not os.path.exists(path):
+                return []
+            with open(path, "r", encoding="utf-8") as f:
+                lines = [line.strip() for line in f.readlines() if line.strip()]
+            entries = [json.loads(l) for l in lines]
+            return entries[-limit:]
+        except Exception as e:
+            log.error(f"❌ Failed to read death log: {e}", source="DataLocker")
+            return []
+
+    def get_system_alerts(self, limit: int = 20) -> list:
+        """Return recent alerts belonging to the System class."""
+        try:
+            alerts = self.alerts.get_all_alerts()
+            system_alerts = [a for a in alerts if a.get("alert_class") == "System"]
+            return system_alerts[:limit]
+        except Exception as e:
+            log.error(f"❌ Failed to retrieve system alerts: {e}", source="DataLocker")
+            return []
+
     def insert_or_update_price(self, asset_type, price, source="PriceMonitor"):
         from uuid import uuid4
         from datetime import datetime
