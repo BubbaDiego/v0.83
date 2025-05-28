@@ -1,5 +1,7 @@
 # 🧠 SystemCore — updated for theme profile support
 
+import os
+
 from alert_core.threshold_service import ThresholdService
 from wallets.wallet_service import WalletService
 from wallets.wallet_core import WalletCore
@@ -7,6 +9,12 @@ from system.theme_service import ThemeService
 from xcom.xcom_core import XComCore
 from system.death_nail_service import DeathNailService
 from core.logging import log
+from core.constants import JUPITER_API_BASE
+
+try:  # Optional dependency
+    import requests
+except Exception:  # pragma: no cover - requests may be missing
+    requests = None
 
 class SystemCore:
     def __init__(self, data_locker):
@@ -130,6 +138,7 @@ class SystemCore:
             self.log.error(f"Failed to get active profile name: {e}", source="SystemCore")
             return ""
 
+
     # === API Health Checks ===
     def check_chatgpt(self) -> dict:
         """Verify connectivity to the ChatGPT API."""
@@ -151,11 +160,17 @@ class SystemCore:
 
     def check_twilio(self) -> dict:
         """Verify connectivity to the Twilio API."""
+
+    # --- Connectivity Checks ---
+    def check_twilio_api(self) -> str:
+        """Return 'ok' if Twilio credentials are valid, otherwise error text."""
+
         try:
             from xcom.check_twilio_heartbeart_service import CheckTwilioHeartbeartService
 
             result = CheckTwilioHeartbeartService({}).check(dry_run=True)
             if result.get("success"):
+
                 return {"success": True}
             return {"success": False, "error": result.get("error")}
         except Exception as exc:  # pragma: no cover - network dependent
@@ -191,3 +206,37 @@ class SystemCore:
         if name == "jupiter":
             return self.check_jupiter()
         return self.check_placeholder()
+
+                return "ok"
+            return result.get("error", "unknown error")
+        except Exception as exc:  # pragma: no cover - optional dependency
+            self.log.error(f"Twilio heartbeat check failed: {exc}", source="SystemCore")
+            return str(exc)
+
+    def check_chatgpt(self) -> str:
+        """Return 'ok' if ChatGPT API is reachable, else an error message."""
+        api_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPEN_AI_KEY")
+        if not api_key:
+            return "missing api key"
+        try:
+            from openai import OpenAI  # type: ignore
+
+            client = OpenAI(api_key=api_key)
+            client.chat.completions.create(model="gpt-3.5-turbo", messages=[{"role": "user", "content": "ping"}])
+            return "ok"
+        except Exception as exc:  # pragma: no cover - network dependent
+            self.log.error(f"ChatGPT check failed: {exc}", source="SystemCore")
+            return str(exc)
+
+    def check_jupiter(self) -> str:
+        """Return 'ok' if the Jupiter API endpoint is reachable."""
+        if not requests:  # pragma: no cover - optional dependency
+            return "requests_unavailable"
+        try:
+            resp = requests.get(f"{JUPITER_API_BASE}/v1/perp_markets", timeout=5)
+            resp.raise_for_status()
+            return "ok"
+        except Exception as exc:  # pragma: no cover - network dependent
+            self.log.error(f"Jupiter API check failed: {exc}", source="SystemCore")
+            return str(exc)
+
