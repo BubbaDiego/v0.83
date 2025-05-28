@@ -164,6 +164,23 @@ def import_wallets():
     return redirect(url_for("system.list_wallets"))
 
 
+# 💉 Inject wallets from backup JSON using insert_wallets script
+@system_bp.route("/wallets/inject", methods=["POST"])
+def inject_wallets():
+    """Run the wallet DB injection script."""
+    try:
+        from scripts.insert_wallets import main as insert_wallets_main
+
+        result = insert_wallets_main([])
+        if result == 0:
+            flash("💉 Wallets injected from backup.", "success")
+        else:
+            flash("⚠️ Wallet injection completed with errors.", "warning")
+    except Exception as e:  # pragma: no cover - best effort
+        flash(f"❌ Wallet injection failed: {e}", "danger")
+    return redirect(url_for("system.list_wallets"))
+
+
 # ✏️ Update wallet (from modal)
 @system_bp.route("/wallets/update/<name>", methods=["POST"])
 def update_wallet(name):
