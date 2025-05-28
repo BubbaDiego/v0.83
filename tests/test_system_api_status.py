@@ -87,7 +87,12 @@ def test_xcom_api_status_ok(monkeypatch):
 
     resp = client.get("/system/xcom_api_status")
     assert resp.status_code == 200
-    assert resp.get_json() == {"twilio": "ok", "chatgpt": "ok", "jupiter": "ok"}
+    assert resp.get_json() == {
+        "twilio": "ok",
+        "chatgpt": "ok",
+        "jupiter": "ok",
+        "github": "ok",
+    }
 
 
 def test_xcom_config_template_contains_status_button():
