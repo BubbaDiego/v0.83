@@ -40,7 +40,7 @@ class AutoCore:
         context = pw.chromium.launch_persistent_context(
             self.profile_dir,
             channel="chromium",
-            headless=False,
+            headless=self.headless,
             args=args,
             user_agent=self.user_agent,
             slow_mo=self.slow_mo,
