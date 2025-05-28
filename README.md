@@ -101,6 +101,10 @@ curl "http://localhost:5000/gpt/oracle/portfolio?strategy=none"
 Replace `portfolio` with any other topic to receive a short summary. Use the
 `strategy` query parameter to apply a named strategy (defaults to `none`).
 
+The previously available `dynamic_hedging` strategy has been deprecated and is no
+longer shown in the UI. The JSON file remains under `oracle_core/strategies` for
+backward compatibility.
+
 ## Required Environment Variables
 
 The application expects several environment variables for email and Twilio

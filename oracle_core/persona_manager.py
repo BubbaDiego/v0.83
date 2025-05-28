@@ -1,6 +1,10 @@
 import json
 import os
+
+from pathlib import Path
 from typing import Dict, Iterable
+
+
 
 class Persona:
     """Simple persona container."""
@@ -25,16 +29,28 @@ class PersonaManager:
             if fname.endswith(".json"):
                 self.load_from_file(os.path.join(self.base_dir, fname))
 
+        self.strategy_weights = data.get("strategy_weights", {})
+        self.instructions = data.get("instructions", "")
+
+
+
+
     def load_from_file(self, path: str):
         with open(path, "r", encoding="utf-8") as fh:
             data = json.load(fh)
-        self.register(data)
+
+        if isinstance(data, dict) and "name" in data:
+            self.register(data)
+        elif isinstance(data, list):
+            self.load(data)
+
 
     def register(self, data: Dict):
         persona = data if isinstance(data, Persona) else Persona(data)
         self._personas[persona.name] = persona
 
     def get(self, name: str) -> Persona:
+
         return self._personas[name]
 
     def list_personas(self) -> Iterable[str]:
@@ -45,3 +61,4 @@ class PersonaManager:
         merged = dict(base)
         merged.update(persona.modifiers)
         return merged
+
