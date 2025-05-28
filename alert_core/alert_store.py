@@ -66,6 +66,18 @@ class AlertStore:
             self.config_loader = strict_config_loader
 
     @staticmethod
+    def _is_enabled(cfg: dict) -> bool:
+        """Return True if the config value represents an enabled state."""
+        val = cfg.get("enabled", False)
+        if isinstance(val, str):
+            low = val.lower().strip()
+            if low in {"true", "1", "yes", "on"}:
+                return True
+            if low in {"false", "0", "no", "off", ""}:
+                return False
+        return bool(val)
+
+    @staticmethod
     def initialize_alert_data(alert_data: dict = None) -> dict:
         from data.models import Status, AlertLevel
         from uuid import uuid4
@@ -264,7 +276,10 @@ class AlertStore:
                 for spec in alerts:
                     # Skip duplicates
                     if self._alert_exists(spec["alert_type"], AlertClass.POSITION.value, pos_id):
-                        log.info(f"Skipping existing position alert {spec["description"]} for {pos_id}", source="AlertStore")
+                        log.info(
+                            f"Skipping existing position alert {spec['description']} for {pos_id}",
+                            source="AlertStore",
+                        )
                         continue
                     metric_cfg = pos_cfg.get(spec["description"])
                     # 🐞 DEBUG: Check whether this metric is enabled
@@ -273,7 +288,7 @@ class AlertStore:
                         source="AlertStore",
                     )
                     # Skip alert creation if explicitly disabled or key is missing
-                    if not metric_cfg or not metric_cfg.get("enabled", False):
+                    if not metric_cfg or not self._is_enabled(metric_cfg):
                         log.debug(
                             f"Skipping position metric '{spec['description']}' due to disabled config",
                             source="AlertStore",
@@ -350,7 +365,7 @@ class AlertStore:
                 source="AlertStore",
             )
             # Skip when disabled or missing in config
-            if not metric_cfg or not metric_cfg.get("enabled", False):
+            if not metric_cfg or not self._is_enabled(metric_cfg):
                 log.debug(
                     f"Skipping portfolio metric '{description}' due to disabled config",
                     source="AlertStore",

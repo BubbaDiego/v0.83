@@ -63,3 +63,31 @@ def test_portfolio_alert_respects_disabled(tmp_path):
     alerts = dl.db.fetch_all("alerts")
     types = {a["alert_type"] for a in alerts}
     assert types == {"TotalSize"}
+
+
+def test_disabled_string_values(tmp_path):
+    db_path = tmp_path / "alerts3.db"
+    dl = DataLocker(str(db_path))
+    _insert_position(dl)
+
+    def cfg():
+        return {
+            "alert_ranges": {
+                "positions_alerts": {
+                    "heat_index": {"enabled": "false"},
+                    "travel_percent": {"enabled": "true", "medium": 5},
+                },
+                "portfolio_alerts": {
+                    "total_value": {"enabled": "false"},
+                    "total_size": {"enabled": "true", "medium": 2},
+                },
+            }
+        }
+
+    store = AlertStore(dl, cfg)
+    store.create_portfolio_alerts()
+    store.create_position_alerts()
+
+    alerts = dl.db.fetch_all("alerts")
+    types = {a["alert_type"] for a in alerts}
+    assert types == {"TravelPercentLiquid", "TotalSize"}
