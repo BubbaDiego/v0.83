@@ -12,9 +12,11 @@ except Exception:  # pragma: no cover - optional dependency
 try:
     from solana.rpc.api import Client
     from solana.rpc.commitment import Confirmed
+    from solana.publickey import PublicKey
 except Exception:  # pragma: no cover - optional dependency
     Client = None  # type: ignore
     Confirmed = None  # type: ignore
+    PublicKey = object  # type: ignore
 
 from core.logging import log
 
@@ -59,7 +61,7 @@ class CheckWalletBalanceService:
             kwargs = {}
             if Confirmed:
                 kwargs["commitment"] = Confirmed
-            resp = self._sol.get_balance(str(address), **kwargs)
+            resp = self._sol.get_balance(PublicKey(address), **kwargs)
             lamports = resp.get("result", {}).get("value")
             if lamports is not None:
                 return lamports / LAMPORTS_PER_SOL
