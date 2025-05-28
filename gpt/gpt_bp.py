@@ -41,6 +41,34 @@ def oracle(topic: str):
         return jsonify({"error": "Unknown topic"}), 400
 
 
+
+@gpt_bp.route('/gpt/oracle/query', methods=['POST'])
+def oracle_query():
+    """Return persona-aware modifiers for a topic."""
+    data = request.get_json() or {}
+    topic = data.get("topic")
+    persona = data.get("persona")
+    if not topic:
+        return jsonify({"error": "Missing topic"}), 400
+
+    base_mods = {
+        "distanceWeight": 0.6,
+        "leverageWeight": 0.3,
+        "collateralWeight": 0.1,
+    }
+    from oracle_core.persona_manager import PersonaManager
+
+    if persona:
+        manager = PersonaManager()
+        try:
+            mods = manager.merge_modifiers(base_mods, persona)
+        except KeyError:
+            return jsonify({"error": "Unknown persona"}), 400
+    else:
+        mods = base_mods
+
+    return jsonify({"reply": {"topic": topic, "modifiers": mods}})
+
 @gpt_bp.route('/gpt/oracle/query', methods=['GET'])
 def oracle_query():
     """Query GPT using a persona and optional topic."""
@@ -78,3 +106,4 @@ def oracle_query():
     except Exception as ex:  # pragma: no cover - depends on OpenAI API
         logger.exception("Oracle query failed: %s", ex)
         return jsonify({"error": str(ex)}), 500
+

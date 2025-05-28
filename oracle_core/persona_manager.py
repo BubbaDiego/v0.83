@@ -1,7 +1,9 @@
 import json
 import os
+
 from pathlib import Path
 from typing import Dict, Iterable
+
 
 
 class Persona:
@@ -10,43 +12,53 @@ class Persona:
     def __init__(self, data: Dict):
         self.name = data.get("name", "")
         self.description = data.get("description", "")
+        self.modifiers = data.get("modifiers", {})
+
+class PersonaManager:
+    """Load and manage personas."""
+
+    def __init__(self, base_dir: str | None = None):
+        self.base_dir = base_dir or os.path.join(os.path.dirname(__file__), "personas")
+        self._personas: Dict[str, Persona] = {}
+        self._load_all()
+
+    def _load_all(self):
+        if not os.path.isdir(self.base_dir):
+            return
+        for fname in os.listdir(self.base_dir):
+            if fname.endswith(".json"):
+                self.load_from_file(os.path.join(self.base_dir, fname))
+
         self.strategy_weights = data.get("strategy_weights", {})
         self.instructions = data.get("instructions", "")
 
 
-class PersonaManager:
-    """Load and retrieve personas."""
 
-    def __init__(self):
-        self._personas: Dict[str, Persona] = {}
-        self._load_builtin()
-
-    def _load_builtin(self):
-        base = Path(__file__).with_name("personas")
-        if base.is_dir():
-            for path in base.glob("*.json"):
-                self.load_from_file(path)
-
-    def load(self, personas: Iterable[Dict]):
-        for data in personas:
-            self.register(data)
 
     def load_from_file(self, path: str):
         with open(path, "r", encoding="utf-8") as fh:
             data = json.load(fh)
+
         if isinstance(data, dict) and "name" in data:
             self.register(data)
         elif isinstance(data, list):
             self.load(data)
+
 
     def register(self, data: Dict):
         persona = data if isinstance(data, Persona) else Persona(data)
         self._personas[persona.name] = persona
 
     def get(self, name: str) -> Persona:
-        if name not in self._personas:
-            raise KeyError(name)
+
         return self._personas[name]
 
-    def list_personas(self):
+    def list_personas(self) -> Iterable[str]:
         return list(self._personas.keys())
+
+    def merge_modifiers(self, base: Dict[str, float], persona_name: str) -> Dict[str, float]:
+        persona = self.get(persona_name)
+        merged = dict(base)
+        merged.update(persona.modifiers)
+        return merged
+
