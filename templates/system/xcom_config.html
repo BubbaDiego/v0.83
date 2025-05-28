@@ -27,7 +27,7 @@
           <div class="accordion-item">
             <h2 class="accordion-header">
               <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#apiCollapse">
-                <i class="fab fa-twilio me-2 text-danger"></i>API Settings
+                <i class="fab fa-twilio me-2 text-danger"></i>Twilio Settings
               </button>
             </h2>
             <div id="apiCollapse" class="accordion-collapse collapse">
@@ -167,8 +167,17 @@
           <i class="fas fa-plug me-2"></i>API Status
         </div>
         <div class="card-body">
-          <p id="apiStatusResult" class="text-muted">Click below to check connectivity.</p>
-          <button id="checkApiBtn" class="btn btn-outline-secondary" type="button" onclick="checkApiStatus(this)">
+          <ul class="list-group mb-3">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span><i class="fab fa-openai me-2 text-success"></i>ChatGPT</span>
+              <span id="chatgptStatus" class="badge bg-secondary">Unknown</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span><i class="fab fa-twilio me-2 text-danger"></i>Twilio</span>
+              <span id="apiStatus" class="badge bg-secondary">Unknown</span>
+            </li>
+          </ul>
+          <button id="checkApisBtn" class="btn btn-outline-secondary w-100" type="button" onclick="checkAllApis(this)">
             <i class="fas fa-sync me-2"></i>Check APIs
           </button>
         </div>
@@ -184,26 +193,42 @@ function toggleToken() {
   field.type = field.type === "password" ? "text" : "password";
 }
 
-function checkApiStatus(btn) {
+function setApiStatus(id, state, message) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = message;
+  el.className = 'badge';
+  if (state === 'ok') {
+    el.classList.add('bg-success');
+  } else if (state === 'checking') {
+    el.classList.add('bg-warning');
+  } else {
+    el.classList.add('bg-danger');
+  }
+}
+
+function checkSingleApi(key, data) {
+  const val = data[key];
+  if (val === 'ok') {
+    setApiStatus(key + 'Status', 'ok', 'OK');
+  } else {
+    setApiStatus(key + 'Status', 'error', String(val));
+  }
+}
+
+function checkAllApis(btn) {
   btn.disabled = true;
+  setApiStatus('chatgptStatus', 'checking', 'Checking...');
+  setApiStatus('apiStatus', 'checking', 'Checking...');
   fetch("{{ url_for('system.xcom_api_status') }}")
     .then(res => res.json())
     .then(data => {
-      const out = [];
-      if (data.chatgpt === "ok") {
-        out.push("✅ ChatGPT reachable");
-      } else {
-        out.push("❌ ChatGPT: " + data.chatgpt);
-      }
-      if (data.api === "ok") {
-        out.push("✅ API reachable");
-      } else {
-        out.push("❌ API: " + data.api);
-      }
-      document.getElementById("apiStatusResult").textContent = out.join("\n");
+      checkSingleApi('chatgpt', data);
+      checkSingleApi('api', data);
     })
     .catch(err => {
-      document.getElementById("apiStatusResult").textContent = "Error: " + err;
+      setApiStatus('chatgptStatus', 'error', String(err));
+      setApiStatus('apiStatus', 'error', String(err));
     })
     .finally(() => {
       btn.disabled = false;
