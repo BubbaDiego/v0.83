@@ -3,6 +3,7 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import json
 import os
+import asyncio
 from datetime import datetime
 from xcom.sound_service import SoundService
 from core.logging import log
@@ -73,6 +74,22 @@ class DeathNailService:
 
                 except Exception as e:
                     self.logger.warning(f"⚠️ XCom escalation failed: {e}", source="DeathNail")
+
+            # 🚨 5. Create system alert via AlertCore
+            if self.xcom and hasattr(self.xcom, "alert_core"):
+                try:
+                    alert_payload = {
+                        "alert_type": "DeathNail",
+                        "alert_class": "System",
+                        "evaluated_value": 1.0,
+                        "trigger_value": 1.0,
+                        "condition": "ABOVE",
+                    }
+                    created = asyncio.run(self.xcom.alert_core.create_alert(alert_payload))
+                    if not created:
+                        self.logger.warning("⚠️ Failed to create DeathNail alert", source="DeathNail")
+                except Exception as e:
+                    self.logger.warning(f"⚠️ Alert creation failed: {e}", source="DeathNail")
 
         finally:
             self._death_active = False
