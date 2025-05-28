@@ -3,13 +3,14 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from core.core_imports import log
+from core.constants import CONFIG_DIR
 from datetime import datetime, timezone
 from data.models import AlertThreshold
 from uuid import uuid4
 from datetime import datetime
 import json
 
-ALERT_THRESHOLDS_JSON_PATH = "alert_thresholds.json"
+ALERT_THRESHOLDS_JSON_PATH = str(CONFIG_DIR / "alert_thresholds.json")
 
 class DLThresholdManager:
     def __init__(self, db):
