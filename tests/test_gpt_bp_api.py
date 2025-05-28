@@ -40,6 +40,52 @@ def load_blueprint():
     core_mod.GPTCore = DummyCore
     sys.modules["gpt.gpt_core"] = core_mod
 
+    persona_mod = types.ModuleType("gpt.persona_manager")
+
+    class DummyPersona:
+        def __init__(self, name="test"):
+            self.name = name
+            self.system_message = "sys"
+            self.instructions = "inst"
+
+    class DummyPersonaManager:
+        def __init__(self, *a, **k):
+            pass
+
+        def get(self, name: str):
+            if name != "test":
+                raise KeyError(name)
+            return DummyPersona(name)
+
+    persona_mod.PersonaManager = DummyPersonaManager
+    persona_mod.Persona = DummyPersona
+    sys.modules["gpt.persona_manager"] = persona_mod
+
+    oracle_mod = types.ModuleType("oracle_core")
+
+    class DummyOracle:
+        DEFAULT_INSTRUCTIONS = {"portfolio": "inst"}
+        DEFAULT_SYSTEM_MESSAGES = {"portfolio": "sys"}
+
+        def __init__(self, *a, **k):
+            self.handlers = {
+                "portfolio": types.SimpleNamespace(get_context=lambda: {})
+            }
+            self.client = None
+
+        def build_prompt(self, topic, ctx, instructions):
+            return [
+                {"role": "system", "content": "sys"},
+                {"role": "system", "content": "{}"},
+                {"role": "user", "content": instructions},
+            ]
+
+        def query_gpt(self, messages):
+            return "oracle_reply"
+
+    oracle_mod.OracleCore = DummyOracle
+    sys.modules["oracle_core"] = oracle_mod
+
     path = base / "gpt_bp.py"
     spec = importlib.util.spec_from_file_location("gpt.gpt_bp", path)
     module = importlib.util.module_from_spec(spec)
@@ -81,3 +127,9 @@ def test_oracle_with_strategy(client):
     assert resp.status_code == 200
     data = resp.get_json()
     assert "reply" in data
+
+def test_oracle_query_endpoint(client):
+    resp = client.get("/gpt/oracle/query?persona=test")
+    assert resp.status_code == 200
+    data = resp.get_json()
+    assert data["reply"] == "oracle_reply"
