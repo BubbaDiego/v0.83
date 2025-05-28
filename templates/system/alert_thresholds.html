@@ -8,12 +8,24 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/sonic_dashboard.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/sonic_themes.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/sonic_titles.css') }}">
+  <style>
+    .alert-thresholds-panel {
+      width: 100%;
+      max-width: none;
+      margin: 0 auto;
+    }
+    body.wide-mode .alert-thresholds-panel,
+    body.fitted-mode .alert-thresholds-panel {
+      max-width: none;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
 {% set title_text = 'Alert Thresholds' %}
 {% include "title_bar.html" %}
-<div class="container-fluid pt-4">
+<div class="sonic-section-container sonic-section-middle mt-3">
+  <div class="sonic-content-panel alert-thresholds-panel">
   <!-- Title moved to bar -->
   <div class="d-flex justify-content-end mb-3 gap-2">
     <button id="importThresholds" class="btn btn-secondary">Import</button>
@@ -99,6 +111,7 @@
     </div>
   </div>
   {% endfor %}
+  </div>
 </div>
 {% endblock %}
 
