@@ -101,9 +101,19 @@ curl "http://localhost:5000/gpt/oracle/portfolio?strategy=none"
 Replace `portfolio` with any other topic to receive a short summary. Use the
 `strategy` query parameter to apply a named strategy (defaults to `none`).
 
-The previously available `dynamic_hedging` strategy has been deprecated and is no
-longer shown in the UI. The JSON file remains under `oracle_core/strategies` for
-backward compatibility.
+### Personas
+
+Oracle responses can adopt different tones. Specify a `persona` with the
+`/gpt/oracle/<topic>` route or call the dedicated persona endpoint:
+
+```bash
+curl "http://localhost:5000/gpt/persona/gothic/portfolio?strategy=degen"
+```
+
+Built in personas include `default`, `gothic`, and `surfer`. Combine personas
+with strategies like `cautious`, `safe`, `degen`, or `dynamic_hedging` for
+fine‑tuned replies.
+
 
 ## Required Environment Variables
 

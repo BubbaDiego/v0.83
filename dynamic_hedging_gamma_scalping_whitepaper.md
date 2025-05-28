@@ -88,7 +88,7 @@ while True:
     pnl = calculate_strategy_pnl()
     sleep(SHORT_INTERVAL)
 ```
-The Oracle Core can incorporate AI decision-making—GPT models may analyze the current state and output hedging recommendations or adjustments to parameters. User-defined risk profiles guide how aggressive or conservative the system behaves. Real-time dashboards monitor delta, funding, and P&L, with alerts for anomalies or failures.
+The Oracle Core can incorporate AI decision-making—GPT models may analyze the current state and output hedging recommendations or adjustments to parameters. User-defined personas and risk profiles guide how **degen** or **cautious** the system behaves. Real-time dashboards monitor delta, funding, and P&L, with alerts for anomalies or failures.
 
 ## Conclusion
 Dynamic hedging and gamma scalping are powerful techniques for managing and profiting from volatility in crypto markets. By staying delta-neutral and continually adjusting to price moves, traders can capture short-term oscillations while limiting directional exposure. In perpetual futures, these strategies revolve around exploiting realized volatility and funding differentials. The integration of AI-driven tools—the Oracle Core concept—offers adaptive, automated execution that keeps pace with 24/7 market dynamics. With proper risk controls, monitoring, and technology, dynamic hedging and gamma scalping can turn crypto volatility into a steady source of returns.
