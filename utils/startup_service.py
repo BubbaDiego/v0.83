@@ -24,6 +24,7 @@ from monitor.operations_monitor import OperationsMonitor
 from xcom.check_twilio_heartbeart_service import CheckTwilioHeartbeartService
 from utils.path_audit import run_audit
 from xcom.sound_service import SoundService
+from scripts.verify_all_tables_exist import verify_all_tables_exist
 try:
     from dotenv import load_dotenv
 except Exception:  # pragma: no cover - optional dependency
@@ -103,6 +104,7 @@ class StartUpService:
             StartUpService.ensure_alert_limits,
             StartUpService.check_env_vars,
             StartUpService.initialize_database,
+            StartUpService.verify_required_tables,
             StartUpService.ensure_wallet_exists,
             StartUpService.ensure_required_directories,
             StartUpService.run_path_audit,
@@ -232,6 +234,13 @@ class StartUpService:
         except Exception as exc:
             log.critical(f"❌ Database initialization failed: {exc}", source="StartUpService")
             raise SystemExit("Startup failed during database initialization.")
+
+    @staticmethod
+    def verify_required_tables():
+        """Ensure all required tables exist."""
+        code = verify_all_tables_exist(str(DB_PATH))
+        if code != 0:
+            raise SystemExit("Startup failed due to missing database tables.")
 
     @staticmethod
     def ensure_wallet_exists():

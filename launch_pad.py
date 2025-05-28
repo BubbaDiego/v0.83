@@ -18,6 +18,7 @@ from test_core import TestCore
 from data.data_locker import DataLocker
 from core.constants import DB_PATH
 from utils.startup_service import StartUpService
+from scripts.verify_all_tables_exist import verify_all_tables_exist
 
 console = Console()
 configure_console_log()
@@ -120,6 +121,7 @@ def database_utils_menu():
         console.print("1) Initialize Database")
         console.print("2) Recover Database")
         console.print("3) Insert Wallets from JSON")
+        console.print("4) Verify Required Tables")
         console.print("b) Back")
         choice = input("→ ").strip().lower()
 
@@ -147,6 +149,11 @@ def database_utils_menu():
             from scripts.insert_wallets import main as insert_wallets_main
 
             insert_wallets_main(args)
+            input("Press ENTER to continue...")
+        elif choice == "4":
+            code = verify_all_tables_exist()
+            msg = "[green]All tables verified.[/green]" if code == 0 else "[red]Missing tables detected.[/red]"
+            console.print(msg)
             input("Press ENTER to continue...")
         elif choice == "b":
             break

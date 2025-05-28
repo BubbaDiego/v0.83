@@ -21,9 +21,9 @@ sys.modules.setdefault("rich.text", dummy_text)
 import pytest
 
 try:
-    import launch_app
+    import launch_pad
 except Exception:
-    pytest.skip("launch_app module unavailable", allow_module_level=True)
+    pytest.skip("launch_pad module unavailable", allow_module_level=True)
 
 
 def test_operations_menu_recover(monkeypatch):
@@ -54,9 +54,9 @@ def test_operations_menu_recover(monkeypatch):
 
     inputs = iter(["3", "", "b"])
     monkeypatch.setattr(builtins, "input", lambda _: next(inputs))
-    monkeypatch.setattr(launch_app, "clear_screen", lambda: None)
-    monkeypatch.setattr(launch_app, "DataLocker", DummyLocker)
+    monkeypatch.setattr(launch_pad, "clear_screen", lambda: None)
+    monkeypatch.setattr(launch_pad, "DataLocker", DummyLocker)
 
-    launch_app.operations_menu()
+    launch_pad.operations_menu()
 
     assert called["recover"] is True
