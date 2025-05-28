@@ -114,6 +114,7 @@ Built in personas include `default`, `gothic`, and `surfer`. Combine personas
 with strategies like `cautious`, `safe`, `degen`, or `dynamic_hedging` for
 fine‑tuned replies.
 
+
 ## Required Environment Variables
 
 The application expects several environment variables for email and Twilio

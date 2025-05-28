@@ -1,5 +1,8 @@
 # Dynamic Hedging and Gamma Scalping for Perpetual Futures
 
+**Deprecated:** The `dynamic_hedging` strategy is no longer exposed in the UI but
+the configuration file is retained for backward compatibility.
+
 ## Abstract
 This white paper presents an in-depth exploration of dynamic delta hedging and gamma scalping strategies tailored for high-volatility cryptocurrency markets. Focusing on Bitcoin (BTC), Ethereum (ETH), and Solana (SOL) perpetual futures, we bridge theoretical models with practical execution techniques suited to near-term trading. Key concepts from options theory (e.g., delta-neutral positioning and gamma trading) are adapted to perpetual swap markets, emphasizing real-time adjustments and automated strategy implementation. We outline how an AI-driven “Oracle Core” system can integrate strategy logic, live position and market data, and user-defined risk profiles to actively manage exposure. Clearly defined sections cover relevant models, execution methods on crypto futures platforms (like Jupiter’s exchange), and tools for monitoring risk. The goal is to provide both a conceptual framework and actionable guidance—including example workflows, supporting tables, and diagrams—for implementing dynamic hedging and gamma scalping in an automated trading context.
 

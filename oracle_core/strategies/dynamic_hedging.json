@@ -1,5 +1,6 @@
 {
   "name": "dynamic_hedging",
+  "deprecated": true,
   "description": "Implements a volatility-sensitive delta-neutral strategy with real-time gamma scalping influences.",
   "modifiers": {
     "hedging_frequency": "adaptive",
