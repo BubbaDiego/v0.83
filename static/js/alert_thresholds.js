@@ -50,15 +50,15 @@ window.addEventListener('DOMContentLoaded', () => {
     try {
       const resp = await fetch('/system/alert_thresholds/export');
       const data = await resp.json();
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'alert_thresholds.json';
-      a.click();
-      URL.revokeObjectURL(url);
-      if (typeof showToast === 'function') {
-        showToast('✅ Exported alert_thresholds.json');
+      if (resp.ok && Array.isArray(data)) {
+        if (typeof showToast === 'function') {
+          showToast('✅ Exported alert_thresholds.json');
+        }
+      } else {
+        const msg = data.error || resp.statusText;
+        if (typeof showToast === 'function') {
+          showToast(`❌ Failed to export thresholds: ${msg}`, true);
+        }
       }
     } catch (err) {
       if (typeof showToast === 'function') {
