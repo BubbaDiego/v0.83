@@ -1,8 +1,0 @@
-{
-  "name": "wizard",
-  "description": "A mystical risk wizard persona.",
-  "modifiers": {
-    "distanceWeight": 0.9,
-    "leverageWeight": 0.05
-  }
-}

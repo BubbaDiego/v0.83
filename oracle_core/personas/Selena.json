@@ -1,0 +1,9 @@
+{
+  "name": "Selena",
+  "profile": "Conservative",
+  "strategy_weights": {
+    "dynamic_hedging": 0.7,
+    "profit_management": 0.9
+  },
+  "description": "Risk-averse strategist focused on capital preservation and long-term safety."
+}
