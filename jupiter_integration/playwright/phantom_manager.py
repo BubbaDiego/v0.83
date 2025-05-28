@@ -1,8 +1,5 @@
-"""Phantom wallet automation helpers using Playwright."""
+"""Re-export PhantomManager from :mod:`auto_core`."""
 
+from auto_core import PhantomManager
 
-class PhantomManager:
-    """Placeholder manager for Phantom wallet workflows."""
-
-    pass
-
+__all__ = ["PhantomManager"]
