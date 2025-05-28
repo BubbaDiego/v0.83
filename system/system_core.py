@@ -190,3 +190,19 @@ class SystemCore:
         except Exception as exc:  # pragma: no cover - network dependent
             self.log.error(f"GitHub API check failed: {exc}", source="SystemCore")
             return str(exc)
+
+    def check_api(self, api_name: str) -> dict:
+        """Dispatch to the appropriate API check based on ``api_name``."""
+        checks = {
+            "twilio": self.check_twilio_api,
+            "chatgpt": self.check_chatgpt,
+            "jupiter": self.check_jupiter,
+            "github": self.check_github,
+        }
+
+        check_func = checks.get(api_name.lower())
+        if not check_func:
+            return {"status": "unknown api"}
+
+        result = check_func()
+        return {"status": result}
