@@ -109,3 +109,28 @@ def test_check_github_error(monkeypatch):
     sc = load_core(monkeypatch, Requests())
     core = make_core(sc)
     assert core.check_github() == "boom"
+
+
+def test_check_api_dispatch(monkeypatch):
+    sc = load_core(monkeypatch)
+    core = make_core(sc)
+
+    called = {}
+
+    def dummy():
+        called["name"] = True
+        return "ok"
+
+    monkeypatch.setattr(core, "check_twilio_api", dummy)
+
+    result = core.check_api("twilio")
+
+    assert result == {"status": "ok"}
+    assert called["name"] is True
+
+
+def test_check_api_unknown(monkeypatch):
+    sc = load_core(monkeypatch)
+    core = make_core(sc)
+
+    assert core.check_api("doesnotexist") == {"status": "unknown api"}
