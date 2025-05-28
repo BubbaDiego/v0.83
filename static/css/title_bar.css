@@ -256,11 +256,6 @@
   animation: fadeOut 0.4s forwards;
 }
 
-
-  cursor: pointer;
-  animation: bounceIn 1.5s ease, float 3s ease-in-out infinite, pulseGlow 2s infinite;
-}
-
 .profit-badge.dismissed {
   animation: fadeOut 0.4s forwards;
 }
