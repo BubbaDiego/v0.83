@@ -223,7 +223,7 @@ function checkAllApis() {
 
 function checkSingleApi(apiName, btn) {
   btn.disabled = true;
-  fetch(`/api/check/${apiName}`)
+  fetch("{{ url_for('system.api_check', api_name='') }}" + apiName)
     .then(res => res.json())
     .then(data => {
       setApiStatus(apiName, data.status === "ok" ? "ok" : "fail", data.status);
