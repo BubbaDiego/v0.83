@@ -14,7 +14,7 @@ CORE_IMPORTS = {
     "DB_PATH": "DB_PATH",
     "CONFIG_PATH": "CONFIG_PATH",
     "BASE_DIR": "BASE_DIR",
-    "ALERT_LIMITS_PATH": "ALERT_LIMITS_PATH",
+    "ALERT_THRESHOLDS_PATH": "ALERT_THRESHOLDS_PATH",
     "retry_on_locked": "retry_on_locked",
     "JsonManager": "JsonManager"
 }

@@ -34,7 +34,7 @@ DB_FILENAME = os.getenv("DB_FILENAME", "mother_brain.db")
 DB_PATH = DATA_DIR / DB_FILENAME
 
 CONFIG_PATH = CONFIG_DIR / os.getenv("CONFIG_FILENAME", "sonic_config.json")
-ALERT_LIMITS_PATH = CONFIG_DIR / os.getenv("ALERT_LIMITS_FILENAME", "alert_limits.json")
+ALERT_THRESHOLDS_PATH = CONFIG_DIR / os.getenv("ALERT_THRESHOLDS_FILENAME", "alert_thresholds.json")
 SONIC_SAUCE_PATH = CONFIG_DIR / os.getenv("SONIC_SAUCE_FILENAME", "sonic_sauce.json")
 COM_CONFIG_PATH = CONFIG_DIR / os.getenv("COM_CONFIG_FILENAME", "com_config.json")
 THEME_CONFIG_PATH = CONFIG_DIR / os.getenv("THEME_CONFIG_FILENAME", "theme_config.json")

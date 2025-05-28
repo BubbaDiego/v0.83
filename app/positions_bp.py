@@ -40,7 +40,7 @@ def list_positions():
         core = PositionCore(current_app.data_locker)
         positions = core.get_active_positions()
 
-        config_data = current_app.data_locker.system.get_var("alert_limits") or {}
+        config_data = current_app.data_locker.system.get_var("alert_thresholds") or {}
         alert_dict = config_data.get("alert_ranges", {})
 
         def get_alert_class(value, low, med, high):

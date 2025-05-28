@@ -168,18 +168,18 @@ def log_alert_summary(alert):
         )
 
 
-def load_alert_limits_from_file(data_locker):
-    """Manually import alert_limits from disk into the database."""
+def load_alert_thresholds_from_file(data_locker):
+    """Manually import alert_thresholds from disk into the database."""
     from config.config_loader import load_config
-    from core.constants import ALERT_LIMITS_PATH
+    from core.constants import ALERT_THRESHOLDS_PATH
 
-    config = load_config(str(ALERT_LIMITS_PATH))
+    config = load_config(str(ALERT_THRESHOLDS_PATH))
     if not config:
         raise RuntimeError("🛑 Config file is invalid or empty")
 
-    data_locker.system.set_var("alert_limits", config)
+    data_locker.system.set_var("alert_thresholds", config)
     log.success(
-        "✅ Loaded alert_limits config into DB from file",
+        "✅ Loaded alert_thresholds config into DB from file",
         source="ConfigImport",
     )
     return config

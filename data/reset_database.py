@@ -2,8 +2,8 @@ import sqlite3
 from datetime import datetime
 import os
 
-# 🔧 Set your DB path here (customize if needed)
-DB_PATH = "mother_brain.db"  # Change if your DB is stored elsewhere
+# Use shared DB_PATH from core.constants to ensure consistent location
+from core.constants import DB_PATH
 
 def reset_database(db_path):
     # 🔍 Show full absolute path for inspection

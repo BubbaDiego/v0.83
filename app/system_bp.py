@@ -17,7 +17,7 @@ from flask import (
 )
 from werkzeug.utils import secure_filename
 
-# from config.alert_limits_json import legacy_alert_limits  # Simulating legacy load
+# from config.alert_thresholds_json import legacy_alert_thresholds  # Simulating legacy load
 
 from system.system_core import SystemCore
 from data.dl_thresholds import DLThresholdManager

@@ -4,6 +4,16 @@ from typing import Optional
 
 from playwright.sync_api import sync_playwright
 
+# When executed as a script, ``__package__`` is ``None`` and relative imports
+# fail. Adjust ``sys.path`` to make ``auto_core`` importable so the relative
+# import below succeeds.
+if __name__ == "__main__" and __package__ is None:
+    import os
+    import sys
+
+    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+    __package__ = "auto_core"
+
 from . import phantom_workflow as pwf
 
 

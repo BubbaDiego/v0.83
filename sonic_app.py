@@ -113,6 +113,9 @@ with app.app_context():
 def api_heartbeat():
     dl = app.data_locker
     cursor = dl.db.get_cursor()
+    if not cursor:
+        log.error("No DB cursor available; cannot query heartbeat data.")
+        return jsonify({"monitors": []})
     cursor.execute("SELECT monitor_name, last_run, interval_seconds FROM monitor_heartbeat")
     rows = cursor.fetchall()
     result = []

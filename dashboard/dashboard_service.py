@@ -17,7 +17,7 @@ from zoneinfo import ZoneInfo
 from system.system_core import SystemCore
 from utils.fuzzy_wuzzy import fuzzy_match_key
 from calc_core.calculation_core import CalculationCore
-from core.core_imports import ALERT_LIMITS_PATH, DB_PATH
+from core.core_imports import DB_PATH
 
 # Mapping of wallet names to icon filenames
 WALLET_IMAGE_MAP = {

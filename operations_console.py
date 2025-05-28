@@ -176,6 +176,10 @@ def menu_sysvars():
 def menu_thresholds():
     banner("🎯 ALERT THRESHOLDS")
     cursor = dl.db.get_cursor()
+    if not cursor:
+        log.error("No DB cursor available; cannot load alert thresholds.")
+        pause()
+        return
     rows = cursor.execute("SELECT * FROM alert_thresholds").fetchall()
     for r in rows:
         print(f"{r['alert_type']} ({r['alert_class']}): low={r['low']}, med={r['medium']}, high={r['high']}")

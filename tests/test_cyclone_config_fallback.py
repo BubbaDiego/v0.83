@@ -23,12 +23,12 @@ def test_cyclone_loads_json_when_db_missing(tmp_path, monkeypatch):
 
     # Stub file loader
     def fake_loader(dl):
-        dl.system.set_var("alert_limits", dummy_config)
+        dl.system.set_var("alert_thresholds", dummy_config)
         return dummy_config
 
-    monkeypatch.setattr(ce, "load_alert_limits_from_file", fake_loader)
+    monkeypatch.setattr(ce, "load_alert_thresholds_from_file", fake_loader)
 
     engine = ce.Cyclone()
 
     assert engine.config == dummy_config
-    assert store["alert_limits"] == dummy_config
+    assert store["alert_thresholds"] == dummy_config
