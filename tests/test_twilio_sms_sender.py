@@ -1,0 +1,10 @@
+from notifications.twilio_sms_sender import TwilioSMSSender
+
+
+def test_twilio_sms_sender(monkeypatch):
+    monkeypatch.setenv("TWILIO_ACCOUNT_SID", "sid")
+    monkeypatch.setenv("TWILIO_AUTH_TOKEN", "token")
+    monkeypatch.setenv("TWILIO_FROM_NUMBER", "+10000000000")
+
+    sender = TwilioSMSSender()
+    assert sender.send_sms("+15555555555", "test") is True
