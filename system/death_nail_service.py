@@ -6,6 +6,7 @@ import os
 from datetime import datetime
 from xcom.sound_service import SoundService
 from core.logging import log
+import asyncio
 
 
 class DeathNailService:
@@ -73,6 +74,24 @@ class DeathNailService:
 
                 except Exception as e:
                     self.logger.warning(f"⚠️ XCom escalation failed: {e}", source="DeathNail")
+
+            # 📝 5. Create alert record if alert_core is available
+            if self.xcom and hasattr(self.xcom, "alert_core"):
+                try:
+                    alert_data = {
+                        "alert_type": "DeathNail",
+                        "alert_class": "System",
+                        "trigger_value": 1.0,
+                        "evaluated_value": 1.0,
+                        "description": message,
+                        "notes": json.dumps(payload) if payload else ""
+                    }
+
+                    result = asyncio.run(self.xcom.alert_core.create_alert(alert_data))
+                    if not result:
+                        self.logger.warning("⚠️ Failed to create DeathNail alert", source="DeathNail")
+                except Exception as e:
+                    self.logger.warning(f"⚠️ Failed to create DeathNail alert: {e}", source="DeathNail")
 
         finally:
             self._death_active = False
