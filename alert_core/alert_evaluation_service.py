@@ -19,6 +19,12 @@ class AlertEvaluationService:
 
     def evaluate(self, alert):
         try:
+            if (
+                str(alert.alert_class).strip() == "System"
+                and alert.alert_type == AlertType.DeathNail
+            ):
+                alert.level = AlertLevel.HIGH
+                return alert
             if alert.evaluated_value is None:
                 log.warning(
                     f"⚠️ Missing evaluated_value for alert {alert.id}; defaulting to 0",
