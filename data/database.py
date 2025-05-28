@@ -3,6 +3,7 @@
 import sqlite3
 import os
 from core.core_imports import log
+from system.death_nail_service import DeathNailService
 
 class DatabaseManager:
     def __init__(self, db_path: str):
@@ -30,6 +31,10 @@ class DatabaseManager:
                                 os.remove(shm)
                         except OSError:
                             pass
+                        DeathNailService(log).trigger({
+                            "message": "Database corruption detected during connect",
+                            "payload": {"error": str(e), "db": self.db_path},
+                        })
                         self.conn = sqlite3.connect(self.db_path, check_same_thread=False)
                     else:
                         raise
@@ -51,6 +56,10 @@ class DatabaseManager:
                                 os.remove(shm)
                         except OSError:
                             pass
+                        DeathNailService(log).trigger({
+                            "message": "Database corruption detected during connect",
+                            "payload": {"error": str(e), "db": self.db_path},
+                        })
                         self.conn = sqlite3.connect(self.db_path, check_same_thread=False)
                         self.conn.row_factory = sqlite3.Row
                         self.conn.execute("PRAGMA journal_mode=WAL;")
@@ -68,6 +77,10 @@ class DatabaseManager:
                 self.conn.close()
             finally:
                 self.conn = None
+        DeathNailService(log).trigger({
+            "message": "Database recovery triggered",
+            "payload": {"db": self.db_path},
+        })
         try:
             os.remove(self.db_path)
         except OSError:
