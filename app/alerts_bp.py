@@ -144,6 +144,7 @@ def delete_all_alerts():
 
 @alerts_bp.route('/alert_config_page', methods=['GET'])
 def alert_config_page():
+
     """Render the alert thresholds configuration page with config data."""
     try:
         config_data = current_app.data_locker.system.get_var("alert_thresholds") or {}
