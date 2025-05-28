@@ -7,7 +7,8 @@ try:
 except Exception:  # pragma: no cover - optional dependency
     OpenAI = None
 
-from .strategy_manager import StrategyManager
+from .strategy_manager import StrategyManager, Strategy
+from .persona_manager import PersonaManager
 from .portfolio_topic_handler import PortfolioTopicHandler
 from .alerts_topic_handler import AlertsTopicHandler
 from .prices_topic_handler import PricesTopicHandler
@@ -38,8 +39,9 @@ class OracleCore:
             self.client = OpenAI(api_key=api_key) if api_key else None
         else:
             self.client = None
-        # Load built-in strategies automatically
+        # Load built-in strategies and personas automatically
         self.strategy_manager = StrategyManager()
+        self.persona_manager = PersonaManager()
         self.handlers: Dict[str, object] = {}
         self.register_topic_handler("portfolio", PortfolioTopicHandler(data_locker))
         self.register_topic_handler("alerts", AlertsTopicHandler(data_locker))
@@ -71,9 +73,25 @@ class OracleCore:
         context = handler.get_context()
         instructions = self.DEFAULT_INSTRUCTIONS.get(topic, "Assist the user.")
         if strategy_name:
-            strategy = self.strategy_manager.get(strategy_name)
-            context = strategy.apply(context)
-            instructions = strategy.instructions or instructions
+            try:
+                strategy = self.strategy_manager.get(strategy_name)
+                context = strategy.apply(context)
+                instructions = strategy.instructions or instructions
+            except KeyError:
+                persona = self.persona_manager.get(strategy_name)
+                weighted = []
+                for sname, weight in persona.strategy_weights.items():
+                    strat = self.strategy_manager.get(sname)
+                    weighted.append((strat.modifiers, weight))
+                merged = Strategy.merge_modifiers(weighted)
+                if merged:
+                    context = dict(context)
+                    context["strategy_modifiers"] = merged
+                inst_parts = [persona.instructions] + [
+                    self.strategy_manager.get(n).instructions
+                    for n in persona.strategy_weights
+                ]
+                instructions = " ".join(i for i in inst_parts if i) or instructions
         messages = self.build_prompt(topic, context, instructions)
         return self.query_gpt(messages)
 
@@ -84,8 +102,24 @@ class OracleCore:
         context = handler.get_context()
         instructions = self.DEFAULT_INSTRUCTIONS.get(topic, "Assist the user.")
         if strategy_name:
-            strategy = self.strategy_manager.get(strategy_name)
-            context = strategy.apply(context)
-            instructions = strategy.instructions or instructions
+            try:
+                strategy = self.strategy_manager.get(strategy_name)
+                context = strategy.apply(context)
+                instructions = strategy.instructions or instructions
+            except KeyError:
+                persona = self.persona_manager.get(strategy_name)
+                weighted = [
+                    (self.strategy_manager.get(n).modifiers, w)
+                    for n, w in persona.strategy_weights.items()
+                ]
+                merged = Strategy.merge_modifiers(weighted)
+                if merged:
+                    context = dict(context)
+                    context["strategy_modifiers"] = merged
+                inst_parts = [persona.instructions] + [
+                    self.strategy_manager.get(n).instructions
+                    for n in persona.strategy_weights
+                ]
+                instructions = " ".join(i for i in inst_parts if i) or instructions
         messages = self.build_prompt(topic, context, instructions)
         return {"topic": topic, "messages": messages}

@@ -21,6 +21,44 @@ class Strategy:
         new_ctx["strategy_modifiers"] = self.modifiers
         return new_ctx
 
+    @staticmethod
+    def merge_modifiers(weighted_mods: Iterable[tuple[Dict, float]]) -> Dict:
+        """Merge multiple modifier dicts given (modifiers, weight) pairs."""
+
+        def _merge(target: Dict, source: Dict, weight: float):
+            for key, value in source.items():
+                if isinstance(value, dict):
+                    target.setdefault(key, {})
+                    _merge(target[key], value, weight)
+                elif isinstance(value, list):
+                    target.setdefault(key, set())
+                    target[key].update(value)
+                elif isinstance(value, (int, float)):
+                    total, w_sum = target.get(key, (0.0, 0.0))
+                    target[key] = (total + value * weight, w_sum + weight)
+                else:
+                    cur_val, cur_w = target.get(key, (None, 0.0))
+                    if cur_val is None or weight > cur_w:
+                        target[key] = (value, weight)
+
+        merged: Dict[str, object] = {}
+        for mods, weight in weighted_mods:
+            _merge(merged, mods, float(weight))
+
+        def _finalize(value):
+            if isinstance(value, dict):
+                return {k: _finalize(v) for k, v in value.items()}
+            if isinstance(value, set):
+                return list(value)
+            if isinstance(value, tuple):
+                val, w = value
+                if isinstance(val, (int, float)):
+                    return val / w if w else val
+                return val
+            return value
+
+        return {k: _finalize(v) for k, v in merged.items()}
+
 
 class StrategyManager:
     """Manage loading and retrieval of strategies."""
