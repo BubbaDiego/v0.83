@@ -39,8 +39,8 @@ def client():
 def test_oracle_query_with_persona(client):
     resp = client.post(
         "/gpt/oracle/query",
-        json={"topic": "portfolio", "persona": "wizard"},
+        json={"topic": "portfolio", "persona": "Wizard"},
     )
     assert resp.status_code == 200
     data = resp.get_json()
-    assert data["reply"]["modifiers"]["distanceWeight"] == 0.9
+    assert data["reply"]["modifiers"]["distanceWeight"] == 0.6
