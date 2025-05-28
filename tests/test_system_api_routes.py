@@ -39,7 +39,7 @@ def test_api_check_route_calls_core(monkeypatch, make_app):
 
 def test_xcom_api_status_aggregates(monkeypatch, make_app):
     core = types.SimpleNamespace(
-        check_twilio=lambda: {"success": True},
+        check_twilio_api=lambda: {"success": True},
         check_chatgpt=lambda: {"success": True},
         check_jupiter=lambda: {"success": False, "error": "boom"},
         check_placeholder=lambda: {"success": True},
