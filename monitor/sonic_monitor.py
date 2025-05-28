@@ -16,6 +16,9 @@ DEFAULT_INTERVAL = 60  # fallback if nothing set in DB
 def get_monitor_interval(db_path=DB_PATH, monitor_name=MONITOR_NAME):
     dl = DataLocker(str(db_path))
     cursor = dl.db.get_cursor()
+    if not cursor:
+        logging.error("No DB cursor available; using default interval")
+        return DEFAULT_INTERVAL
     cursor.execute(
         "SELECT interval_seconds FROM monitor_heartbeat WHERE monitor_name = ?",
         (monitor_name,)
@@ -31,6 +34,9 @@ def get_monitor_interval(db_path=DB_PATH, monitor_name=MONITOR_NAME):
 def update_heartbeat(monitor_name, interval_seconds, db_path=DB_PATH):
     dl = DataLocker(str(db_path))
     cursor = dl.db.get_cursor()
+    if not cursor:
+        logging.error("No DB cursor available; heartbeat not recorded")
+        return
     cursor.execute("""
         INSERT INTO monitor_heartbeat (monitor_name, last_run, interval_seconds)
         VALUES (?, datetime('now'), ?)
@@ -59,6 +65,9 @@ def main():
     # --- Ensure the heartbeat table exists ---
     dl = DataLocker(str(DB_PATH))
     cursor = dl.db.get_cursor()
+    if not cursor:
+        logging.error("No DB cursor available; cannot initialize heartbeat table")
+        return
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS monitor_heartbeat (
             monitor_name TEXT PRIMARY KEY,
