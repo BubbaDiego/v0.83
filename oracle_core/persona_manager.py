@@ -1,7 +1,6 @@
 import json
 import os
 
-from pathlib import Path
 from typing import Dict, Iterable
 
 
@@ -17,6 +16,7 @@ class Persona:
         self.instructions = data.get("instructions", "")
         self.system_message = data.get("system_message", "")
 
+
 class PersonaManager:
     """Load and manage personas."""
 
@@ -31,9 +31,6 @@ class PersonaManager:
         for fname in os.listdir(self.base_dir):
             if fname.endswith(".json"):
                 self.load_from_file(os.path.join(self.base_dir, fname))
-
-
-
 
     def load_from_file(self, path: str):
         with open(path, "r", encoding="utf-8") as fh:
