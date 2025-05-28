@@ -21,7 +21,7 @@ def test_get_balance_solana(monkeypatch):
     mock_client = MagicMock()
     mock_client.get_balance.return_value = {"result": {"value": 2 * svc.LAMPORTS_PER_SOL}}
     monkeypatch.setattr(service, "_sol", mock_client)
-    monkeypatch.setattr(svc, "PublicKey", lambda x: x)
+    monkeypatch.setattr(svc, "Pubkey", types.SimpleNamespace(from_string=lambda x: x))
 
     bal = service.get_balance("SoLAddress")
     assert bal == 2.0
@@ -33,7 +33,7 @@ def test_solana_client_called_with_public_key(monkeypatch):
     mock_client = MagicMock()
     monkeypatch.setattr(service, "_sol", mock_client)
     monkeypatch.setattr(svc, "Confirmed", None)
-    monkeypatch.setattr(svc, "PublicKey", lambda x: f"PK:{x}")
+    monkeypatch.setattr(svc, "Pubkey", types.SimpleNamespace(from_string=lambda x: f"PK:{x}"))
 
     service.get_balance("Addr")
     args, kwargs = mock_client.get_balance.call_args

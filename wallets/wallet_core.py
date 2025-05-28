@@ -19,14 +19,16 @@ try:
     from solana.rpc.api import Client
     from solana.transaction import Transaction
     from solana.keypair import Keypair
-    from solana.publickey import PublicKey
+    from solders.pubkey import Pubkey
     from solana.rpc.commitment import Confirmed
     from solana.rpc.types import TxOpts
-except Exception:  # pragma: no cover - optional dependency
+except Exception as e:  # pragma: no cover - optional dependency
+    import sys
+    print("❌ Failed to import solana/solders:", e, file=sys.stderr)
     Client = None
     Transaction = object
     Keypair = object
-    PublicKey = object
+    Pubkey = object
     Confirmed = None
     TxOpts = object
 
@@ -86,7 +88,7 @@ class WalletCore:
             log.debug("fetch_balance skipped; solana client unavailable", source="WalletCore")
             return None
         try:
-            resp = self.client.get_balance(PublicKey(wallet.public_address), commitment=Confirmed)
+            resp = self.client.get_balance(Pubkey.from_string(wallet.public_address.strip()), commitment=Confirmed)
             lamports = resp.get("result", {}).get("value")
             if lamports is not None:
                 return lamports / LAMPORTS_PER_SOL
