@@ -12,6 +12,7 @@ def test_strategy_manager_builtin_loading():
     sm_mod = importlib.import_module("oracle_core.strategy_manager")
     manager = sm_mod.StrategyManager()
     assert "safe" in manager.list_strategies()
+    assert "profit_management" in manager.list_strategies()
 
 
 def test_strategy_manager_alias(monkeypatch):
