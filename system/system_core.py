@@ -138,14 +138,75 @@ class SystemCore:
             self.log.error(f"Failed to get active profile name: {e}", source="SystemCore")
             return ""
 
+
+    # === API Health Checks ===
+    def check_chatgpt(self) -> dict:
+        """Verify connectivity to the ChatGPT API."""
+        api_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPEN_AI_KEY")
+        if not api_key:
+            return {"success": False, "error": "missing api key"}
+        try:  # pragma: no cover - openai optional
+            from openai import OpenAI
+
+            client = OpenAI(api_key=api_key)
+            client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": "ping"}],
+            )
+            return {"success": True}
+        except Exception as exc:  # pragma: no cover - network dependent
+            self.log.error(f"ChatGPT check failed: {exc}", source="SystemCore")
+            return {"success": False, "error": str(exc)}
+
+    def check_twilio(self) -> dict:
+        """Verify connectivity to the Twilio API."""
+
     # --- Connectivity Checks ---
     def check_twilio_api(self) -> str:
         """Return 'ok' if Twilio credentials are valid, otherwise error text."""
+
         try:
             from xcom.check_twilio_heartbeart_service import CheckTwilioHeartbeartService
 
             result = CheckTwilioHeartbeartService({}).check(dry_run=True)
             if result.get("success"):
+
+                return {"success": True}
+            return {"success": False, "error": result.get("error")}
+        except Exception as exc:  # pragma: no cover - network dependent
+            self.log.error(f"Twilio check failed: {exc}", source="SystemCore")
+            return {"success": False, "error": str(exc)}
+
+    def check_jupiter(self) -> dict:
+        """Verify connectivity to the Jupiter API."""
+        try:
+            import requests
+            from core.constants import JUPITER_API_BASE
+
+            url = f"{JUPITER_API_BASE.rstrip('/')}/ping"
+            res = requests.get(url, timeout=5)
+            if res.status_code == 200:
+                return {"success": True}
+            return {"success": False, "error": f"status {res.status_code}"}
+        except Exception as exc:  # pragma: no cover - network dependent
+            self.log.error(f"Jupiter check failed: {exc}", source="SystemCore")
+            return {"success": False, "error": str(exc)}
+
+    def check_placeholder(self) -> dict:
+        """Placeholder API check that always succeeds."""
+        return {"success": True}
+
+    def check_api(self, api_name: str) -> dict:
+        """Dispatch to a specific API health check based on ``api_name``."""
+        name = (api_name or "").lower()
+        if name == "twilio":
+            return self.check_twilio()
+        if name == "chatgpt":
+            return self.check_chatgpt()
+        if name == "jupiter":
+            return self.check_jupiter()
+        return self.check_placeholder()
+
                 return "ok"
             return result.get("error", "unknown error")
         except Exception as exc:  # pragma: no cover - optional dependency
@@ -178,3 +239,4 @@ class SystemCore:
         except Exception as exc:  # pragma: no cover - network dependent
             self.log.error(f"Jupiter API check failed: {exc}", source="SystemCore")
             return str(exc)
+
