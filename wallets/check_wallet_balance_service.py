@@ -12,11 +12,13 @@ except Exception:  # pragma: no cover - optional dependency
 try:
     from solana.rpc.api import Client
     from solana.rpc.commitment import Confirmed
-    from solana.publickey import PublicKey
-except Exception:  # pragma: no cover - optional dependency
+    from solders.pubkey import Pubkey
+except Exception as e:  # pragma: no cover - optional dependency
+    import sys
+    print("❌ Failed to import solana/solders:", e, file=sys.stderr)
     Client = None  # type: ignore
     Confirmed = None  # type: ignore
-    PublicKey = object  # type: ignore
+    Pubkey = object  # type: ignore
 
 from core.logging import log
 
@@ -61,7 +63,8 @@ class CheckWalletBalanceService:
             kwargs = {}
             if Confirmed:
                 kwargs["commitment"] = Confirmed
-            resp = self._sol.get_balance(PublicKey(address), **kwargs)
+            clean_address = address.strip()
+            resp = self._sol.get_balance(Pubkey.from_string(clean_address), **kwargs)
             lamports = resp.get("result", {}).get("value")
             if lamports is not None:
                 return lamports / LAMPORTS_PER_SOL
