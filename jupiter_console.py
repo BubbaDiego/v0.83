@@ -25,6 +25,7 @@ def _select_wallet(core: WalletCore):
         console.print("🚫 [red]No wallets found.[/red]")
         return None
     while True:
+<
         console.print("\n👛 [bold]Available Wallets[/bold]")
         for idx, w in enumerate(wallets, start=1):
             console.print(f"{idx}) {w.name} ({w.public_address})")
@@ -32,15 +33,18 @@ def _select_wallet(core: WalletCore):
         log.debug("Wallet input", payload={"input": choice_str}, source="JupiterConsole")
         if choice_str.lower() in {"q", "exit"}:
             log.debug("Wallet selection aborted", source="JupiterConsole")
+
             return None
         try:
             choice = int(choice_str)
             if 1 <= choice <= len(wallets):
+
                 selected = wallets[choice - 1]
                 log.debug("Wallet selected", payload={"wallet": selected.public_address}, source="JupiterConsole")
                 return selected
         except Exception as exc:
             log.debug("Parse failure", payload={"error": str(exc)}, source="JupiterConsole")
+
         console.print("[red]Invalid selection[/red]")
 
 

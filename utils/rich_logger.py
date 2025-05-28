@@ -50,11 +50,9 @@ class RichLogger:
     def __init__(self, name: str = "cyclone") -> None:
         self.logger = logging.getLogger(name)
         handler = RichHandler(show_path=False, markup=True)
-        # Ensure INFO messages render in blue rather than the default green/red
-        try:
-            handler.level_styles["info"] = "blue"
-        except Exception:
-            pass
+        # Force INFO messages to display in blue. Some environments render INFO
+        # as red, so wrap the message in explicit markup as a fallback.
+        self._info_markup = "[blue]{label}[/blue]"
         handler.addFilter(ModuleFilter(self))
         formatter = logging.Formatter("%(message)s")
         handler.setFormatter(formatter)
@@ -103,6 +101,10 @@ class RichLogger:
         timestamp = self._timestamp()
         icon = self.ICONS.get(icon_key, "")
         label = f"{icon} {message} :: [{module}] @ {timestamp}"
+        if level == logging.INFO:
+            # Wrap INFO lines in explicit blue markup so they never inherit
+            # previous error colors.
+            label = self._info_markup.format(label=label)
 
         inline_payload = ""
         if payload:
