@@ -207,6 +207,17 @@ python scripts/initialize_database.py --reset --seed-thresholds --seed-wallets
 python scripts/initialize_database.py --all
 ```
 
+If you encounter SQLite errors such as `file is not a database`, the
+database file is likely corrupted. Rebuild it by running:
+
+```bash
+python scripts/initialize_database.py --reset
+```
+
+This removes the existing `mother_brain.db` and recreates all tables. You can
+also call `StartUpService.run_all()` from `utils.startup_service` to perform the
+same checks and initialization at startup.
+
 **Existing Installations**
 
 If you have an older database created before version 0.8.5, add the new `status` column manually:
@@ -239,6 +250,15 @@ python launch_pad.py
 
 Open the **Operations** menu and choose **Recover Database**. This deletes the
 damaged `mother_brain.db` and recreates it with the required tables.
+
+You can perform the same reset from the command line:
+
+```bash
+python scripts/initialize_database.py --reset
+```
+
+Run this (or `StartUpService.run_all()` in `utils.startup_service`) whenever you
+see errors like `file is not a database` to rebuild a corrupted DB file.
 
 ## Windows Branch Name Compatibility
 If a remote branch name contains characters that are invalid on Windows (such as `>` or `:`), Git cannot create the local reference. Rename the branch on a Unix-like system or ask the author to rename it. For example:
