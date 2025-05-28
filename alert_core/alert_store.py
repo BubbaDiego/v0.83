@@ -57,9 +57,13 @@ class AlertStore:
         if config_loader:
             self.config_loader = config_loader
         else:
-            self.config_loader = (
-                lambda: self.data_locker.system.get_var("alert_limits") or {}
-            )
+            def strict_config_loader():
+                config = self.data_locker.system.get_var("alert_limits")
+                if config is None:
+                    raise RuntimeError("🛑 No alert_limits config found in DB")
+                return config
+
+            self.config_loader = strict_config_loader
 
     @staticmethod
     def initialize_alert_data(alert_data: dict = None) -> dict:

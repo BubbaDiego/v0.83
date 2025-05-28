@@ -11,9 +11,13 @@ from core.core_imports import log
 class AlertCore:
     def __init__(self, data_locker, config_loader=None):
         self.data_locker = data_locker
-        self.config_loader = config_loader or (
-            lambda: self.data_locker.system.get_var("alert_limits") or {}
-        )
+        def strict_config_loader():
+            config = self.data_locker.system.get_var("alert_limits")
+            if config is None:
+                raise RuntimeError("🛑 No alert_limits config found in DB")
+            return config
+
+        self.config_loader = config_loader or strict_config_loader
         self.repo = AlertStore(data_locker, self.config_loader)
         self.enricher = AlertEnrichmentService(data_locker)
         threshold_service = ThresholdService(data_locker.db)

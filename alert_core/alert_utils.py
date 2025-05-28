@@ -161,7 +161,24 @@ def log_alert_summary(alert):
         alert_class = alert.get("alert_class")
         trigger_value = alert.get("trigger_value")
 
-    log.info(
-        f"📦 Alert Created → 🧭 Class: {alert_class} | 🏷️ Type: {alert_type} | 🎯 Trigger: {trigger_value}",
-        source="CreateAlert"
+        log.info(
+            f"📦 Alert Created → 🧭 Class: {alert_class} | 🏷️ Type: {alert_type} | 🎯 Trigger: {trigger_value}",
+            source="CreateAlert"
+        )
+
+
+def load_alert_limits_from_file(data_locker):
+    """Manually import alert_limits from disk into the database."""
+    from config.config_loader import load_config
+    from core.constants import ALERT_LIMITS_PATH
+
+    config = load_config(str(ALERT_LIMITS_PATH))
+    if not config:
+        raise RuntimeError("🛑 Config file is invalid or empty")
+
+    data_locker.system.set_var("alert_limits", config)
+    log.success(
+        "✅ Loaded alert_limits config into DB from file",
+        source="ConfigImport",
     )
+    return config

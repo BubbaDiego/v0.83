@@ -7,7 +7,6 @@ from datetime import datetime
 from uuid import uuid4
 import traceback  # PATCH: for full stack info
 
-from alert_core.alert_core import AlertCore #alert_service_manager import AlertServiceManager
 from data.data_locker import DataLocker
 from core.constants import DB_PATH, ALERT_LIMITS_PATH
 from core.logging import log, configure_console_log
@@ -81,19 +80,18 @@ class Cyclone:
 
         self.data_locker = global_data_locker
         self.price_sync = PriceSyncService(self.data_locker)
-        self.config = self.data_locker.system.get_var("alert_limits") or {}
+
+        # PATCH: Create a system_core instance for death screams
+        self.system_core = SystemCore(self.data_locker)
+
+        self.config = self.data_locker.system.get_var("alert_limits")
         if not self.config:
-            from config.config_loader import load_config
-            from core.constants import ALERT_LIMITS_PATH
-            try:
-                self.config = load_config(str(ALERT_LIMITS_PATH)) or {}
-                if self.config:
-                    self.data_locker.system.set_var("alert_limits", self.config)
-            except Exception as e:
-                log.warning(
-                    f"⚠️ Failed to load alert_limits config: {e}",
-                    source="Cyclone",
-                )
+            self.system_core.death({
+                "message": "🛑 alert_limits missing from DB",
+                "level": "HIGH",
+                "payload": {"context": "alert_limits not loaded"}
+            })
+            raise RuntimeError("🛑 alert_limits missing from DB. Death triggered.")
 
         self.position_core = PositionCore(self.data_locker)
         # Pass alert limits config to AlertCore so alert creation respects
@@ -105,9 +103,6 @@ class Cyclone:
         self.wallet_service = CycloneWalletService(self.data_locker)
         self.maintenance_service = CycloneMaintenanceService(self.data_locker)
         self.hedge_core = HedgeCore(self.data_locker)
-
-        # PATCH: Create a system_core instance for death screams
-        self.system_core = SystemCore(self.data_locker)
 
         log.banner("🌀  🌪️ CYCLONE ENGINE STARTUP 🌪️ 🌀")
 
