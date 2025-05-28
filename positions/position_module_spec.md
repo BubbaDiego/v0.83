@@ -30,10 +30,10 @@ Accepts full DL for internal access to pricing, portfolio, system, positions, et
 Methods
 get_all_positions() → List[dict]
 Loads all from store
+Returns raw position dictionaries
 
-Runs PositionEnrichmentService.enrich(...) on each
-
-Returns enriched result set
+get_active_positions() → List[dict]
+Returns only records with status "ACTIVE"
 
 create_position(pos_dict) → bool
 Enriches position

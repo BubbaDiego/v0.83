@@ -15,7 +15,7 @@ alerts/
 ├── alert_enrichment_service.py # 🧠 Adds evaluated_value
 ├── alert_evaluation_service.py # 📊 Determines alert level
 ├── alert_utils.py              # 🧰 Normalizers / aliases
-├── threshold_utils.py          # (deprecated / merged)
+├── threshold_service.py        # 🛡️ CRUD for alert thresholds
 🔧 AlertCore
 Purpose
 Central orchestrator for alert creation, enrichment, evaluation, and lifecycle ops.
@@ -108,8 +108,8 @@ Constructor
 python
 Copy
 Edit
-AlertEvaluationService(thresholds)
-thresholds: config dict from alert_limits.json
+AlertEvaluationService(threshold_service: ThresholdService)
+threshold_service: helper for DB-backed threshold lookups
 
 Methods
 evaluate(alert: Alert) → Alert
