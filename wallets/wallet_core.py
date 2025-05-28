@@ -88,8 +88,10 @@ class WalletCore:
             log.debug("fetch_balance skipped; solana client unavailable", source="WalletCore")
             return None
         try:
-            resp = self.client.get_balance(Pubkey.from_string(wallet.public_address.strip()), commitment=Confirmed)
-            lamports = resp.get("result", {}).get("value")
+            resp = self.client.get_balance(
+                Pubkey.from_string(wallet.public_address.strip()), commitment=Confirmed
+            )
+            lamports = resp.value
             if lamports is not None:
                 return lamports / LAMPORTS_PER_SOL
         except Exception as e:

@@ -19,7 +19,7 @@ def test_get_balance_eth(monkeypatch):
 def test_get_balance_solana(monkeypatch):
     service = svc.BlockchainBalanceService()
     mock_client = MagicMock()
-    mock_client.get_balance.return_value = {"result": {"value": 2 * svc.LAMPORTS_PER_SOL}}
+    mock_client.get_balance.return_value = types.SimpleNamespace(value=2 * svc.LAMPORTS_PER_SOL)
     monkeypatch.setattr(service, "_sol", mock_client)
     monkeypatch.setattr(svc, "Pubkey", types.SimpleNamespace(from_string=lambda x: x))
 
