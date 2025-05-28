@@ -20,6 +20,7 @@ class AlertEnrichmentService:
     def __init__(self, data_locker, system_core=None):
         self.data_locker = data_locker
         self.core = CalculationCore(data_locker)
+        self.calc_services = self.core.calc_services
         self.system_core = system_core
 
     async def enrich(self, alert):
