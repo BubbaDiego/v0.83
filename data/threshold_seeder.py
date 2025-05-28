@@ -112,6 +112,8 @@ class AlertThresholdSeeder:
 
             # === Market Metrics
             ("PriceThreshold", "Market", "current_price", 20000, 30000, 40000, "ABOVE"),
+            # === System Alerts
+            ("DeathNail", "System", "death_nail", 0, 0, 1, "ABOVE"),
         ]
 
         created = 0
