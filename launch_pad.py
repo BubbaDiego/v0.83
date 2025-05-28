@@ -78,10 +78,10 @@ def operations_menu():
     while True:
         clear_screen()
         console.print("[bold cyan]Operations[/bold cyan]")
-        console.print("1) Run POST")
+        console.print("1) 🚀 Run POST")
         console.print("2) 🛠️ Core Config Test")
-        console.print("3) Recover Database")
-        console.print("b) Back")
+        console.print("3) ♻️ Recover Database")
+        console.print("b) 🔙 Back")
         choice = input("→ ").strip().lower()
         if choice == "1":
             monitor = OperationsMonitor()
@@ -118,11 +118,11 @@ def database_utils_menu():
     while True:
         clear_screen()
         console.print("[bold cyan]Database Utilities[/bold cyan]")
-        console.print("1) Initialize Database")
-        console.print("2) Recover Database")
-        console.print("3) Insert Wallets from JSON")
-        console.print("4) Verify Required Tables")
-        console.print("b) Back")
+        console.print("1) 🆕 Initialize Database")
+        console.print("2) ♻️ Recover Database")
+        console.print("3) 👛 Insert Wallets from JSON")
+        console.print("4) ✅ Verify Required Tables")
+        console.print("b) 🔙 Back")
         choice = input("→ ").strip().lower()
 
         if choice == "1":
@@ -214,13 +214,13 @@ def main_menu():
         show_banner()
         console.print("1) 🦔 Sonic App + 🖥️ Sonic Monitor")
         console.print("2) 🌀 Launch Cyclone")
-        console.print("3) Launch Sonic Web")
+        console.print("3) 🌐 Launch Sonic Web")
         console.print("4) 🌅 Startup Service")
         console.print("5) ⚙️ Operations")
         console.print("6) 🗄️ Database Utilities")
         console.print("7) 🧪 Test Core")
         console.print("8) 🔌 API Status")
-        console.print("9) Exit")
+        console.print("9) 🚪 Exit")
         choice = input("→ ").strip()
         if choice == "1":
             launch_web_and_monitor()
