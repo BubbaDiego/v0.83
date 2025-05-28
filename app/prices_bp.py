@@ -174,10 +174,10 @@ def update_prices_route():
         asyncio.run(pm.update_prices())
         dl = get_locker()
         now = datetime.now()
-        dl.set_last_update_times(
-            prices_dt=now,
-            prices_source=source
-        )
+        dl.set_last_update_times({
+            "last_update_time_prices": now.isoformat(),
+            "last_update_prices_source": source
+        })
         return jsonify({
             "status": "ok",
             "message": "Prices updated successfully",

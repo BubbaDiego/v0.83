@@ -297,9 +297,6 @@ class DataLocker:
     def read_positions(self):
         return self.positions.get_all_positions()
 
-    def set_last_update_times(self, prices_dt, prices_source):
-        self.system.set_last_update_times(prices_dt, prices_source)
-
     def close(self):
         self.db.close()  # Hey
         log.debug("DataLocker shutdown complete.", source="DataLocker")
