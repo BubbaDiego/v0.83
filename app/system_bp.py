@@ -835,10 +835,8 @@ def xcom_api_status():
         "twilio": core.check_twilio_api(),
         "chatgpt": core.check_chatgpt(),
         "jupiter": core.check_jupiter(),
+        "github": core.check_github(),
     }
-
-    if hasattr(core, "check_placeholder"):
-        checks["placeholder"] = core.check_placeholder()
 
     def _format(res):
         if isinstance(res, dict):

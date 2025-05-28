@@ -178,3 +178,15 @@ class SystemCore:
         except Exception as exc:  # pragma: no cover - network dependent
             self.log.error(f"Jupiter API check failed: {exc}", source="SystemCore")
             return str(exc)
+
+    def check_github(self) -> str:
+        """Return 'ok' if the GitHub API is reachable."""
+        if not requests:  # pragma: no cover - optional dependency
+            return "requests_unavailable"
+        try:
+            resp = requests.get("https://api.github.com", timeout=5)
+            resp.raise_for_status()
+            return "ok"
+        except Exception as exc:  # pragma: no cover - network dependent
+            self.log.error(f"GitHub API check failed: {exc}", source="SystemCore")
+            return str(exc)

@@ -42,7 +42,7 @@ def test_xcom_api_status_aggregates(monkeypatch, make_app):
         check_twilio_api=lambda: {"success": True},
         check_chatgpt=lambda: {"success": True},
         check_jupiter=lambda: {"success": False, "error": "boom"},
-        check_placeholder=lambda: {"success": True},
+        check_github=lambda: {"success": True},
     )
     app = make_app(core)
     with app.test_client() as client:
@@ -53,5 +53,5 @@ def test_xcom_api_status_aggregates(monkeypatch, make_app):
             "twilio": "ok",
             "chatgpt": "ok",
             "jupiter": "error: boom",
-            "placeholder": "ok",
+            "github": "ok",
         }

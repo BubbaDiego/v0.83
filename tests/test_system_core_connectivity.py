@@ -85,3 +85,27 @@ def test_check_jupiter_error(monkeypatch):
     sc = load_core(monkeypatch, Requests())
     core = make_core(sc)
     assert core.check_jupiter() == "boom"
+
+
+def test_check_github_success(monkeypatch):
+    class DummyResp:
+        def raise_for_status(self):
+            pass
+
+    class Requests:
+        def get(self, url, timeout=None):
+            return DummyResp()
+
+    sc = load_core(monkeypatch, Requests())
+    core = make_core(sc)
+    assert core.check_github() == "ok"
+
+
+def test_check_github_error(monkeypatch):
+    class Requests:
+        def get(self, url, timeout=None):
+            raise Exception("boom")
+
+    sc = load_core(monkeypatch, Requests())
+    core = make_core(sc)
+    assert core.check_github() == "boom"
