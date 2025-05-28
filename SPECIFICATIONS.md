@@ -39,6 +39,9 @@ The [GPT Input specification](gpt_input_spec.md) details the JSON bundle used to
 ### GPT Core
 The [GPT Core specification](gpt/gpt_core_spec.md) describes the Python modules and chat UI for interacting with OpenAI's API.
 
+### Oracle Core
+The [Oracle Core specification](oracle_core/oracle_core_spec.md) explains the strategy and persona system used to build GPT prompts.
+
 ---
 
 Each linked specification contains more detailed design notes, functional requirements, and example workflows.
