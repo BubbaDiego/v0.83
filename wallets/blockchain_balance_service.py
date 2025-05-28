@@ -67,7 +67,7 @@ class BlockchainBalanceService:
                 kwargs["commitment"] = Confirmed
             clean_address = address.strip()
             resp = self._sol.get_balance(Pubkey.from_string(clean_address), **kwargs)
-            lamports = resp.get("result", {}).get("value")
+            lamports = resp.value
             if lamports is not None:
                 return lamports / LAMPORTS_PER_SOL
         except Exception as exc:  # pragma: no cover - network failures
