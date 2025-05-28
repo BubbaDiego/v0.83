@@ -109,6 +109,18 @@ def withdraw_flow(core: WalletCore):
         _maybe_send_tx(core, wallet, result)
 
 
+def check_balance_flow(core: WalletCore):
+    log.banner("💳 CHECK WALLET BALANCE")
+    wallet = _select_wallet(core)
+    if not wallet:
+        return
+    balance = core.fetch_balance(wallet)
+    if balance is not None:
+        console.print(f"💰 [green]{wallet.name}[/green] has [cyan]{balance:.4f} SOL[/cyan]")
+    else:
+        console.print(f"🚫 [red]Could not fetch balance for {wallet.name}[/red]")
+
+
 def main():
     DataLocker.get_instance(str(DB_PATH))  # ensure DB initialized
     core = WalletCore()
@@ -116,7 +128,8 @@ def main():
         console.print("\n[bold cyan]Jupiter Collateral Console[/bold cyan]")
         console.print("1) 💰 Deposit Collateral")
         console.print("2) 📤 Withdraw Collateral")
-        console.print("3) ❌ Exit")
+        console.print("3) 💳 Check Wallet Balance")
+        console.print("4) ❌ Exit")
         choice = console.input("Choose > ").strip()
         log.debug("Menu choice", payload={"choice": choice}, source="JupiterConsole")
         if choice == "1":
@@ -124,6 +137,8 @@ def main():
         elif choice == "2":
             withdraw_flow(core)
         elif choice == "3":
+            check_balance_flow(core)
+        elif choice == "4":
             log.success("Console exited. Goodbye 👋", source="JupiterConsole")
             break
         else:
