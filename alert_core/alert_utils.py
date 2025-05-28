@@ -101,6 +101,7 @@ def normalize_alert_type(alert_type_input):
             "profit": AlertType.Profit,
             "travelpercentliquid": AlertType.TravelPercentLiquid,
             "heatindex": AlertType.HeatIndex,
+            "deathnail": AlertType.DeathNail,
             "totalvalue": AlertType.TotalValue,
             "totalsize": AlertType.TotalSize,
             "avgleverage": AlertType.AvgLeverage,

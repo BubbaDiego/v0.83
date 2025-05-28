@@ -38,6 +38,7 @@ class AlertType(str, Enum):
     TIME = "time"
     PROFIT = "profit"
     HEAT_INDEX = "heatindex"
+    DEATH_NAIL = "deathnail"
 
     # 📦 Portfolio-Wide Alerts
     TOTAL_VALUE = "totalvalue"
