@@ -71,7 +71,22 @@ sys.modules.setdefault("requests", requests_stub)
 twilio_stub = types.ModuleType("twilio")
 sys.modules.setdefault("twilio", twilio_stub)
 twilio_rest_stub = types.ModuleType("twilio.rest")
-twilio_rest_stub.Client = object
+
+class DummyTwilioMessage:
+    def __init__(self, sid="SMxxxx"):
+        self.sid = sid
+
+
+class DummyTwilioClient:
+    def __init__(self, *a, **k):
+        class Messages:
+            @staticmethod
+            def create(body=None, from_=None, to=None):
+                return DummyTwilioMessage()
+
+        self.messages = Messages()
+
+twilio_rest_stub.Client = DummyTwilioClient
 sys.modules.setdefault("twilio.rest", twilio_rest_stub)
 twilio_voice_stub = types.ModuleType("twilio.twiml.voice_response")
 twilio_voice_stub.VoiceResponse = object

@@ -6,6 +6,8 @@ from alert_core.alert_enrichment_service import AlertEnrichmentService
 from alert_core.alert_evaluation_service import AlertEvaluationService
 from alert_core.threshold_service import ThresholdService
 from alert_core.alert_store import AlertStore
+from alert_core.alert_notifier import AlertNotifier
+from data.alert import NotificationType
 from core.core_imports import log
 
 class AlertCore:
@@ -52,6 +54,16 @@ class AlertCore:
                 source="AlertCore",
                 payload={"id": evaluated.id, "level": evaluated.level, "value": evaluated.evaluated_value}
             )
+
+            if evaluated.notification_type == NotificationType.SMS:
+                try:
+                    notifier = AlertNotifier(self.data_locker)
+                    notifier.notify(evaluated)
+                except Exception as notify_err:
+                    log.error(
+                        f"Failed to send SMS notification: {notify_err}",
+                        source="AlertCore",
+                    )
 
             return evaluated
         except Exception as e:
