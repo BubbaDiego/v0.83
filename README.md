@@ -14,6 +14,8 @@ python -m venv .venv
 source .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
+The requirements list includes the `solana` and `solders` packages used for
+wallet balance lookups.
 
 This installs `pytest` and all other required packages. Run the app with:
 
