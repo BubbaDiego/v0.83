@@ -14,7 +14,9 @@ class Persona:
         self.modifiers = data.get("modifiers", {})
         self.strategy_weights = data.get("strategy_weights", {})
         self.instructions = data.get("instructions", "")
+
         self.system_message = data.get("system_message", "")
+
 
 
 class PersonaManager:
@@ -31,6 +33,11 @@ class PersonaManager:
         for fname in os.listdir(self.base_dir):
             if fname.endswith(".json"):
                 self.load_from_file(os.path.join(self.base_dir, fname))
+
+    def load(self, personas: Iterable[Dict]):
+        for data in personas:
+            self.register(data)
+
 
     def load_from_file(self, path: str):
         with open(path, "r", encoding="utf-8") as fh:
