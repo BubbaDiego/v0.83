@@ -14,9 +14,9 @@ class AlertCore:
     def __init__(self, data_locker, config_loader=None):
         self.data_locker = data_locker
         def strict_config_loader():
-            config = self.data_locker.system.get_var("alert_limits")
+            config = self.data_locker.system.get_var("alert_thresholds")
             if config is None:
-                raise RuntimeError("🛑 No alert_limits config found in DB")
+                raise RuntimeError("🛑 No alert_thresholds config found in DB")
             return config
 
         self.config_loader = config_loader or strict_config_loader

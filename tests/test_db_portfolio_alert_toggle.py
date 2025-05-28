@@ -59,7 +59,7 @@ def test_db_portfolio_alert_toggle(tmp_path, monkeypatch):
     _insert_position(dl)
 
     all_enabled = _base_config()
-    dl.system.set_var("alert_limits", all_enabled)
+    dl.system.set_var("alert_thresholds", all_enabled)
 
     core = AlertCore(dl)
     print("\n🚀 Creating alerts with all enabled")
@@ -71,7 +71,7 @@ def test_db_portfolio_alert_toggle(tmp_path, monkeypatch):
     assert len(portfolio_alerts) == 6
 
     disabled_cfg = _disable_portfolio(all_enabled)
-    dl.system.set_var("alert_limits", disabled_cfg)
+    dl.system.set_var("alert_thresholds", disabled_cfg)
     print("\n🚀 Running creation with portfolio alerts disabled")
     asyncio.run(core.create_all_alerts())
 
@@ -80,7 +80,7 @@ def test_db_portfolio_alert_toggle(tmp_path, monkeypatch):
     print(f"Portfolio alerts after disable run: {len(portfolio_alerts2)}")
     assert len(portfolio_alerts2) == 6
 
-    dl.system.set_var("alert_limits", all_enabled)
+    dl.system.set_var("alert_thresholds", all_enabled)
     print("\n🚀 Re-enabling portfolio alerts and creating again")
     asyncio.run(core.create_all_alerts())
 

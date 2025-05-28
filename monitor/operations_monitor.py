@@ -14,7 +14,7 @@ import time
 from monitor.base_monitor import BaseMonitor
 from data.data_locker import DataLocker
 from core.logging import log
-from core.constants import DB_PATH, ALERT_LIMITS_PATH
+from core.constants import DB_PATH, ALERT_THRESHOLDS_PATH
 from config.config_loader import load_config
 from utils.schema_validation_service import SchemaValidationService
 from jsonschema import validate
@@ -40,11 +40,11 @@ class OperationsMonitor(BaseMonitor):
         self.logger = logging.getLogger("OperationsMonitor")
 
     def check_for_config_updates(self) -> bool:
-        """Reload ``alert_limits`` from disk and update the DB entry if changed.
+        """Reload ``alert_thresholds`` from disk and update the DB entry if changed.
 
         Returns ``True`` when an update was detected and persisted.
         """
-        config_path = str(ALERT_LIMITS_PATH)
+        config_path = str(ALERT_THRESHOLDS_PATH)
         if not os.path.exists(config_path):
             return False
 
@@ -53,10 +53,10 @@ class OperationsMonitor(BaseMonitor):
             log.warning("Config file empty or invalid", source=self.name)
             return False
 
-        current = self.data_locker.system.get_var("alert_limits") or {}
+        current = self.data_locker.system.get_var("alert_thresholds") or {}
         if current != file_config:
-            self.data_locker.system.set_var("alert_limits", file_config)
-            log.info("🔄 alert_limits config updated", source=self.name)
+            self.data_locker.system.set_var("alert_thresholds", file_config)
+            log.info("🔄 alert_thresholds config updated", source=self.name)
             return True
         return False
 
@@ -65,7 +65,7 @@ class OperationsMonitor(BaseMonitor):
         """Perform startup tests and log to the ledger.
 
         This also checks for configuration changes each cycle so the Cyclone
-        engine can reload ``alert_limits`` when updated externally.
+        engine can reload ``alert_thresholds`` when updated externally.
         """
 
         self.check_for_config_updates()
@@ -218,11 +218,11 @@ class OperationsMonitor(BaseMonitor):
         return metadata
 
     def run_configuration_test(self) -> dict:
-        """Validate alert limits configuration."""
-        log.info("🔧 Validating alert limits configuration...")
+        """Validate alert thresholds configuration."""
+        log.info("🔧 Validating alert thresholds configuration...")
         start_time = datetime.now()
 
-        config_path = str(ALERT_LIMITS_PATH)
+        config_path = str(ALERT_THRESHOLDS_PATH)
         file_exists = os.path.exists(config_path)
         config_data = load_config(config_path if file_exists else None)
 
@@ -235,14 +235,14 @@ class OperationsMonitor(BaseMonitor):
             log.error("Config data empty", source=self.name)
         else:
             try:
-                validate(instance=config_data, schema=SchemaValidationService.ALERT_LIMITS_SCHEMA)
+                validate(instance=config_data, schema=SchemaValidationService.ALERT_THRESHOLDS_SCHEMA)
                 success = True
                 log.success(
-                    "Alert limits configuration valid.", source=self.name
+                    "Alert thresholds configuration valid.", source=self.name
                 )
             except Exception as exc:
                 log.error(
-                    f"Alert limits configuration invalid: {exc}", source=self.name
+                    f"Alert thresholds configuration invalid: {exc}", source=self.name
                 )
 
         duration = (datetime.now() - start_time).total_seconds()

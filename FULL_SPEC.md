@@ -78,7 +78,7 @@ Edit
 AlertCore(data_locker, config_loader)
 data_locker: reference to DataLocker
 
-config_loader: lambda returning config dict (alert_limits.json)
+config_loader: lambda returning config dict (alert_thresholds.json)
 
 Methods
 async create_alert(alert_dict: dict) → bool
@@ -240,7 +240,7 @@ normalize_condition(val)	Converts str → Condition
 normalize_notification_type(val)	Same
 get_dashboard_context()	Used in enrichment
 
-🔧 Alert Config (alert_limits.json)
+🔧 Alert Config (alert_thresholds.json)
 Format:
 json
 Copy

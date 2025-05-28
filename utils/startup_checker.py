@@ -3,7 +3,7 @@
 from core.constants import (
     DB_PATH,
     CONFIG_PATH,
-    ALERT_LIMITS_PATH,
+    ALERT_THRESHOLDS_PATH,
     SONIC_SAUCE_PATH,
     COM_CONFIG_PATH,
     THEME_CONFIG_PATH,
@@ -14,7 +14,7 @@ import sys
 paths_to_check = {
     "Database Path": DB_PATH,
     "Config Path": CONFIG_PATH,
-    "Alert Limits Path": ALERT_LIMITS_PATH,
+    "Alert Thresholds Path": ALERT_THRESHOLDS_PATH,
     "Sonic Sauce Path": SONIC_SAUCE_PATH,
     "Com Config Path": COM_CONFIG_PATH,
     "Theme Config Path": THEME_CONFIG_PATH,
