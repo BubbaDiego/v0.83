@@ -14,7 +14,6 @@ from wallets.wallet_schema import WalletIn
 # 📁 Fallback JSON path (ensure file exists or can be written)
 WALLETS_JSON_PATH = "wallets.json"
 
-from data.data_locker import DataLocker
 from core.core_imports import DB_PATH
 
 class WalletRepository:
