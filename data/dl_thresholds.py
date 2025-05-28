@@ -43,6 +43,7 @@ class DLThresholdManager:
                 )
             """, threshold.to_dict())
             self.db.commit()
+            self.export_to_json()
             return True
         except Exception as e:
             log.error(f"❌ Failed to insert threshold: {e}", source="DLThresholdManager")
@@ -74,6 +75,7 @@ class DLThresholdManager:
                 UPDATE alert_thresholds SET {updates} WHERE id = :id
             """, fields)
             self.db.commit()
+            self.export_to_json()
             log.success(f"✅ Threshold {threshold_id} updated", source="DLThresholdManager")
             return True
 
@@ -86,6 +88,7 @@ class DLThresholdManager:
             cursor = self.db.get_cursor()
             cursor.execute("DELETE FROM alert_thresholds WHERE id = ?", (threshold_id,))
             self.db.commit()
+            self.export_to_json()
             return True
         except Exception as e:
             log.error(f"❌ Failed to delete threshold {threshold_id}: {e}", source="DLThresholdManager")
@@ -107,11 +110,22 @@ class DLThresholdManager:
             json.dump([t.to_dict() for t in thresholds], f, indent=2)
 
     def import_from_json(self, path: str = ALERT_THRESHOLDS_JSON_PATH) -> int:
-        """Import thresholds from JSON file, inserting or updating as needed."""
+        """Import thresholds from JSON file, replacing existing ones."""
         if not os.path.exists(path):
             return 0
+
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
+
+        if not isinstance(data, list):
+            return 0
+
+        incoming_ids = {item.get("id") for item in data if item.get("id")}
+        existing_ids = {t.id for t in self.get_all()}
+
+        # Remove thresholds that are no longer present
+        for obsolete in existing_ids - incoming_ids:
+            self.delete(obsolete)
 
         count = 0
         for item in data:
@@ -123,4 +137,6 @@ class DLThresholdManager:
             else:
                 self.insert(AlertThreshold(**item))
             count += 1
+
+        self.export_to_json()
         return count
