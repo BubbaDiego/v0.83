@@ -7,7 +7,7 @@ SUSPICIOUS_PATTERNS = [
     r"data\/.*\.json",
     r"config\/.*\.json",
     r"images\/.*\.(jpg|png|gif)",
-    r"alert_limits\.json",
+    r"alert_thresholds\.json",
     r"sonic_config\.json",
 ]
 

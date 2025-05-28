@@ -144,8 +144,28 @@ def delete_all_alerts():
 
 @alerts_bp.route('/alert_config_page', methods=['GET'])
 def alert_config_page():
-    """Redirect to the system alert threshold configuration page."""
-    return redirect(url_for('system.list_alert_thresholds'))
+    """Render the alert thresholds configuration page with config data."""
+    try:
+        config_data = current_app.data_locker.system.get_var("alert_thresholds") or {}
+        alert_ranges = config_data.get("alert_ranges", {})
+        price_alerts = alert_ranges.get("price_alerts", {})
+        portfolio_alerts = alert_ranges.get("portfolio_alerts", {})
+        positions_alerts = alert_ranges.get("positions_alerts", {})
+        global_alert_config = config_data.get("global_alert_config", {})
+    except Exception as e:
+        logger.error(f"Failed to load alert configuration: {e}", exc_info=True)
+        price_alerts = {}
+        portfolio_alerts = {}
+        positions_alerts = {}
+        global_alert_config = {}
+
+    return render_template(
+        "alert_thresholds_legacy.html",
+        price_alerts=price_alerts,
+        portfolio_alerts=portfolio_alerts,
+        positions_alerts=positions_alerts,
+        global_alert_config=global_alert_config,
+    )
 
 
 @alerts_bp.route('/alert_thresholds', methods=['GET'])
@@ -255,7 +275,7 @@ def monitor_data():
 
 @alerts_bp.route('/update_config', methods=['POST'])
 def update_config():
-    """Update alert limits configuration."""
+    """Update alert thresholds configuration."""
     token = session.get('csrf_token')
     request_token = request.headers.get('X-CSRFToken') or request.form.get('csrf_token')
     if token and token != request_token:
@@ -277,9 +297,9 @@ def update_config():
 
 @alerts_bp.route('/export_config', methods=['GET'])
 def export_config():
-    """Export alert limits configuration as JSON."""
+    """Export alert thresholds configuration as JSON."""
     try:
-        cfg = current_app.data_locker.system.get_var("alert_limits") or {}
+        cfg = current_app.data_locker.system.get_var("alert_thresholds") or {}
         return jsonify(cfg)
     except Exception as e:
         logger.error(f"Failed to export alert config: {e}", exc_info=True)
@@ -288,12 +308,12 @@ def export_config():
 
 @alerts_bp.route('/import_config', methods=['POST'])
 def import_config():
-    """Import alert limits configuration from JSON payload."""
+    """Import alert thresholds configuration from JSON payload."""
     try:
         payload = request.get_json(force=True)
         if not isinstance(payload, dict):
             return jsonify({"success": False, "error": "Expected JSON object"}), 400
-        current_app.data_locker.system.set_var("alert_limits", payload)
+        current_app.data_locker.system.set_var("alert_thresholds", payload)
         return jsonify({"success": True, "message": "Configuration imported"})
     except Exception as e:
         logger.error(f"Failed to import alert config: {e}", exc_info=True)

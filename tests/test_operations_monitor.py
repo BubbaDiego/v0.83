@@ -32,8 +32,8 @@ def patch_datalocker(monkeypatch):
 
 def test_run_configuration_test_missing_file(tmp_path, monkeypatch):
     missing = tmp_path / "missing.json"
-    monkeypatch.setattr(om, "ALERT_LIMITS_PATH", missing)
-    monkeypatch.setattr(SchemaValidationService, "ALERT_LIMITS_FILE", str(missing))
+    monkeypatch.setattr(om, "ALERT_THRESHOLDS_PATH", missing)
+    monkeypatch.setattr(SchemaValidationService, "ALERT_THRESHOLDS_FILE", str(missing))
 
     monitor = om.OperationsMonitor()
     result = monitor.run_configuration_test()
@@ -41,7 +41,7 @@ def test_run_configuration_test_missing_file(tmp_path, monkeypatch):
 
 
 def test_run_configuration_test_valid_file(tmp_path, monkeypatch):
-    valid_file = tmp_path / "alert_limits.json"
+    valid_file = tmp_path / "alert_thresholds.json"
     valid_data = {
         "alert_ranges": {
             "liquidation_distance_ranges": {},
@@ -60,8 +60,8 @@ def test_run_configuration_test_valid_file(tmp_path, monkeypatch):
     with open(valid_file, "w", encoding="utf-8") as f:
         json.dump(valid_data, f)
 
-    monkeypatch.setattr(om, "ALERT_LIMITS_PATH", valid_file)
-    monkeypatch.setattr(SchemaValidationService, "ALERT_LIMITS_FILE", str(valid_file))
+    monkeypatch.setattr(om, "ALERT_THRESHOLDS_PATH", valid_file)
+    monkeypatch.setattr(SchemaValidationService, "ALERT_THRESHOLDS_FILE", str(valid_file))
 
     monitor = om.OperationsMonitor()
     result = monitor.run_configuration_test()
@@ -69,18 +69,18 @@ def test_run_configuration_test_valid_file(tmp_path, monkeypatch):
 
 
 def test_check_for_config_updates(tmp_path, monkeypatch):
-    cfg = tmp_path / "alert_limits.json"
+    cfg = tmp_path / "alert_thresholds.json"
     data = {"a": 1}
     with open(cfg, "w", encoding="utf-8") as f:
         json.dump(data, f)
 
-    monkeypatch.setattr(om, "ALERT_LIMITS_PATH", cfg)
+    monkeypatch.setattr(om, "ALERT_THRESHOLDS_PATH", cfg)
 
     monitor = om.OperationsMonitor()
     updated = monitor.check_for_config_updates()
 
     assert updated is True
-    assert monitor.data_locker.system.get_var("alert_limits") == data
+    assert monitor.data_locker.system.get_var("alert_thresholds") == data
 
 
 def test_check_api_status_logs_to_xcom(monkeypatch):

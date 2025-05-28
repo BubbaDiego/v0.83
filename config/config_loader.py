@@ -1,7 +1,7 @@
 import json
 import os
 from pathlib import Path
-from core.core_imports import ALERT_LIMITS_PATH, log
+from core.core_imports import ALERT_THRESHOLDS_PATH, log
 from core.locker_factory import get_locker
 
 
@@ -25,7 +25,7 @@ def load_config(filename=None):
     If ``filename`` is provided, the JSON file at that path is loaded.
     Otherwise the configuration is read from the ``global_config`` table
     via :func:`~data.dl_system_data.DLSystemDataManager.get_var` using the
-    ``"alert_limits"`` key.
+    ``"alert_thresholds"`` key.
     """
 
     if filename:
@@ -48,7 +48,7 @@ def load_config(filename=None):
 
     # Default: load from database
     locker = get_locker()
-    config = locker.system.get_var("alert_limits") or {}
+    config = locker.system.get_var("alert_thresholds") or {}
     log.info("✅ [ConfigLoader] Loaded config from DB", source="ConfigLoader")
     return config
 
@@ -58,8 +58,8 @@ def update_config(new_config: dict, filename: str | None = None) -> dict:
 
     if filename:
         filename = (
-            str(ALERT_LIMITS_PATH)
-            if Path(filename).name == "alert_limits.json"
+            str(ALERT_THRESHOLDS_PATH)
+            if Path(filename).name == "alert_thresholds.json"
             else os.path.abspath(filename)
         )
 
@@ -71,9 +71,9 @@ def update_config(new_config: dict, filename: str | None = None) -> dict:
 
     # Default: update database entry
     locker = get_locker()
-    current = locker.system.get_var("alert_limits") or {}
+    current = locker.system.get_var("alert_thresholds") or {}
     merged = _deep_merge(current, new_config)
-    locker.system.set_var("alert_limits", merged)
+    locker.system.set_var("alert_thresholds", merged)
     return merged
 
 

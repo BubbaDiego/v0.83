@@ -59,7 +59,7 @@ class GPTCore:
                     "heat_index": "Composite risk metric",
                 },
             },
-            "alert_limits": {
+            "alert_thresholds": {
                 "alert_ranges": {
                     "heat_index_ranges": {
                         "enabled": True,

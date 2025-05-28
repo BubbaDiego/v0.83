@@ -9,13 +9,13 @@ from typing import Optional
 from utils.rich_logger import RichLogger
 import re
 from difflib import get_close_matches
-from core.core_imports import ALERT_LIMITS_PATH
+from core.core_imports import ALERT_THRESHOLDS_PATH
 
 
 from core.constants import THEME_CONFIG_PATH, SONIC_SAUCE_PATH
 
 class JsonType(Enum):
-    ALERT_LIMITS = "alert_limits.json"
+    ALERT_THRESHOLDS = "alert_thresholds.json"
     THEME_CONFIG = "theme_config.json"
     SONIC_SAUCE = "sonic_sauce.json"
     SONIC_CONFIG = "sonic_config.json"
@@ -28,7 +28,7 @@ class JsonManager:
     def load(self, file_path: str, json_type: JsonType = None):
         """Load and return the JSON data from the specified file path."""
         path_map = {
-            JsonType.ALERT_LIMITS: ALERT_LIMITS_PATH,
+            JsonType.ALERT_THRESHOLDS: ALERT_THRESHOLDS_PATH,
             JsonType.THEME_CONFIG: THEME_CONFIG_PATH,
             JsonType.SONIC_SAUCE: SONIC_SAUCE_PATH,
             JsonType.SONIC_CONFIG: "config/sonic_config.json",
@@ -101,7 +101,7 @@ class JsonManager:
         """Save the JSON data to the specified file path and validate the result."""
         if json_type:
             path_map = {
-                JsonType.ALERT_LIMITS: ALERT_LIMITS_PATH,
+                JsonType.ALERT_THRESHOLDS: ALERT_THRESHOLDS_PATH,
                 JsonType.THEME_CONFIG: THEME_CONFIG_PATH,
                 JsonType.SONIC_SAUCE: SONIC_SAUCE_PATH,
             }

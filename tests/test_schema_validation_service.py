@@ -6,8 +6,8 @@ import jsonschema
 if getattr(jsonschema, 'IS_STUB', False):
     pytest.skip('jsonschema not available', allow_module_level=True)
 
-TEST_VALID_FILE = "tests/mock_alert_limits_valid.json"
-TEST_INVALID_SCHEMA_FILE = "tests/mock_alert_limits_invalid_schema.json"
+TEST_VALID_FILE = "tests/mock_alert_thresholds_valid.json"
+TEST_INVALID_SCHEMA_FILE = "tests/mock_alert_thresholds_invalid_schema.json"
 TEST_MISSING_FILE = "tests/mock_missing_file.json"
 TEST_BROKEN_JSON_FILE = "tests/mock_broken_json.json"
 
@@ -73,13 +73,13 @@ def setup_mock_files():
     os.remove(TEST_BROKEN_JSON_FILE)
 
 def test_valid_alert_ranges():
-    assert SchemaValidationService.validate_schema(TEST_VALID_FILE, SchemaValidationService.ALERT_LIMITS_SCHEMA, name="Mock Valid Limits")
+    assert SchemaValidationService.validate_schema(TEST_VALID_FILE, SchemaValidationService.ALERT_THRESHOLDS_SCHEMA, name="Mock Valid Limits")
 
 def test_invalid_schema_alert_ranges():
-    assert not SchemaValidationService.validate_schema(TEST_INVALID_SCHEMA_FILE, SchemaValidationService.ALERT_LIMITS_SCHEMA, name="Mock Invalid Schema")
+    assert not SchemaValidationService.validate_schema(TEST_INVALID_SCHEMA_FILE, SchemaValidationService.ALERT_THRESHOLDS_SCHEMA, name="Mock Invalid Schema")
 
 def test_missing_alert_ranges_file():
-    assert not SchemaValidationService.validate_schema(TEST_MISSING_FILE, SchemaValidationService.ALERT_LIMITS_SCHEMA, name="Mock Missing File")
+    assert not SchemaValidationService.validate_schema(TEST_MISSING_FILE, SchemaValidationService.ALERT_THRESHOLDS_SCHEMA, name="Mock Missing File")
 
 def test_broken_json_file():
-    assert not SchemaValidationService.validate_schema(TEST_BROKEN_JSON_FILE, SchemaValidationService.ALERT_LIMITS_SCHEMA, name="Mock Broken JSON")
+    assert not SchemaValidationService.validate_schema(TEST_BROKEN_JSON_FILE, SchemaValidationService.ALERT_THRESHOLDS_SCHEMA, name="Mock Broken JSON")

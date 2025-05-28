@@ -8,8 +8,8 @@ from uuid import uuid4
 import traceback  # PATCH: for full stack info
 
 from data.data_locker import DataLocker
-from core.constants import DB_PATH, ALERT_LIMITS_PATH
-from alert_core.alert_utils import load_alert_limits_from_file
+from core.constants import DB_PATH, ALERT_THRESHOLDS_PATH
+from alert_core.alert_utils import load_alert_thresholds_from_file
 from core.logging import log, configure_console_log
 
 # PATCH: Import SystemCore for death screams
@@ -85,29 +85,29 @@ class Cyclone:
         # PATCH: Create a system_core instance for death screams
         self.system_core = SystemCore(self.data_locker)
 
-        self.config = self.data_locker.system.get_var("alert_limits")
+        self.config = self.data_locker.system.get_var("alert_thresholds")
         if not self.config:
             log.warning(
-                "⚠️ alert_limits missing from DB. Loading from JSON...",
+                "⚠️ alert_thresholds missing from DB. Loading from JSON...",
                 source="Cyclone",
             )
             try:
-                self.config = load_alert_limits_from_file(self.data_locker)
+                self.config = load_alert_thresholds_from_file(self.data_locker)
             except Exception as exc:
                 self.system_core.death(
                     {
-                        "message": "🛑 alert_limits missing and failed to load",
+                        "message": "🛑 alert_thresholds missing and failed to load",
                         "level": "HIGH",
                         "payload": {"error": str(exc)},
                     }
                 )
                 raise RuntimeError(
-                    "🛑 alert_limits missing from DB and file load failed"
+                    "🛑 alert_thresholds missing from DB and file load failed"
                 )
 
         self.position_core = PositionCore(self.data_locker)
-        # Pass alert limits config to AlertCore so alert creation respects
-        # the "enabled" flags defined in alert_limits.json
+        # Pass alert thresholds config to AlertCore so alert creation respects
+        # the "enabled" flags defined in alert_thresholds.json
         self.alert_core = AlertCore(
             self.data_locker,
             config_loader=lambda: self.config,
@@ -281,7 +281,7 @@ class Cyclone:
         # Refresh alert limits configuration from the database each cycle. The
         # OperationsMonitor will update the DB entry when the source file
         # changes. Reloading here keeps ``self.config`` in sync for AlertCore.
-        new_config = self.data_locker.system.get_var("alert_limits") or {}
+        new_config = self.data_locker.system.get_var("alert_thresholds") or {}
         if new_config:
             self.config = new_config
 
