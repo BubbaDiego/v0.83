@@ -17,13 +17,13 @@ This white paper outlines how to use Playwright in Python to automate collateral
 Use a persistent Chromium context with the Phantom extension loaded:
 ```python
 from playwright.sync_api import sync_playwright
-[launch_app.py](../launch_app.py)
-phantom_path = "/path/to/p[launch_app.py](../launch_app.py)hantom"
+[launch_pad.py](../launch_pad.py)
+phantom_path = "/path/to/p[launch_pad.py](../launch_pad.py)hantom"
 profile_dir = "/tmp/playwright/phantom-profile"
 
 with sync_playwright() as pw:
     context = pw.chromium.launch_persistent_context(
-        profile_dir,[launch_app.py](../launch_app.py)
+        profile_dir,[launch_pad.py](../launch_pad.py)
         channel="chromium",
         headless=False,
         args=[

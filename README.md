@@ -18,7 +18,7 @@ pip install -r requirements.txt
 This installs `pytest` and all other required packages. Run the app with:
 
 ```bash
-python launch_app.py
+python launch_pad.py
 ```
 When the server starts, the console prints a clickable link to
 `http://127.0.0.1:5000/` (in terminals that support hyperlinks) so you can open
