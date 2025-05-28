@@ -8,7 +8,16 @@ from flask import current_app
 from alert_core.alert_utils import resolve_wallet_metadata
 from dashboard.dashboard_service import WALLET_IMAGE_MAP, DEFAULT_WALLET_IMAGE
 
-from flask import Blueprint, jsonify, render_template, render_template_string, request, session
+from flask import (
+    Blueprint,
+    jsonify,
+    render_template,
+    render_template_string,
+    request,
+    session,
+    redirect,
+    url_for,
+)
 from config.config_loader import update_config as merge_config
 from utils.alert_helpers import calculate_threshold_progress
 
@@ -135,34 +144,14 @@ def delete_all_alerts():
 
 @alerts_bp.route('/alert_config_page', methods=['GET'])
 def alert_config_page():
-
-    """Render the alert limits configuration page with config data."""
-    try:
-        config_data = current_app.data_locker.system.get_var("alert_limits") or {}
-        alert_ranges = config_data.get("alert_ranges", {})
-        price_alerts = alert_ranges.get("price_alerts", {})
-        portfolio_alerts = alert_ranges.get("portfolio_alerts", {})
-        positions_alerts = alert_ranges.get("positions_alerts", {})
-        global_alert_config = config_data.get("global_alert_config", {})
-    except Exception as e:
-        logger.error(f"Failed to load alert configuration: {e}", exc_info=True)
-        price_alerts = {}
-        portfolio_alerts = {}
-        positions_alerts = {}
-        global_alert_config = {}
-
-    return render_template(
-        "alert_limits.html",
-        price_alerts=price_alerts,
-        portfolio_alerts=portfolio_alerts,
-        positions_alerts=positions_alerts,
-        global_alert_config=global_alert_config,
-    )
+    """Redirect to the system alert threshold configuration page."""
+    return redirect(url_for('system.list_alert_thresholds'))
 
 
 @alerts_bp.route('/alert_thresholds', methods=['GET'])
 def alert_thresholds():
-    return alert_config_page()
+    """Redirect legacy alert thresholds URL to the new system page."""
+    return redirect(url_for('system.list_alert_thresholds'))
 
 
 @alerts_bp.route('/monitor_page', methods=['GET'])
