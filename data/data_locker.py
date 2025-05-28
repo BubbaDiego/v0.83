@@ -30,6 +30,7 @@ from data.dl_modifiers import DLModifierManager
 from data.dl_hedges import DLHedgeManager
 from core.constants import SONIC_SAUCE_PATH, BASE_DIR, DB_PATH
 from core.core_imports import log
+from system.death_nail_service import DeathNailService
 from datetime import datetime
 
 
@@ -276,6 +277,16 @@ class DataLocker:
                     f"❌ Database corruption detected: {e}. Recreating database.",
                     source="DataLocker",
                 )
+                try:
+                    DeathNailService(log).trigger({
+                        "message": "Database initialization failure",
+                        "payload": {"error": str(e)},
+                    })
+                except Exception as death_e:
+                    log.error(
+                        f"❌ Death nail trigger failed: {death_e}",
+                        source="DataLocker",
+                    )
                 self.db.recover_database()
                 # Retry initialization on a fresh DB
                 self.initialize_database()
