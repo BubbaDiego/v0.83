@@ -818,37 +818,30 @@ def validate_api():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
+@system_bp.route("/api/check/<string:api_name>", methods=["GET"])
+def api_check(api_name: str):
+    """Return health check status for a specific API."""
+    core = get_core()
+    result = core.check_api(api_name)
+    return jsonify(result)
+
+
 @system_bp.route("/xcom_api_status", methods=["GET"])
 def xcom_api_status():
-    """Return ChatGPT and API (Twilio) connectivity status as JSON."""
-    status = {}
+    """Return connectivity status for key XCom APIs."""
+    core = get_core()
 
-    api_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPEN_AI_KEY")
-    if not api_key:
-        status["chatgpt"] = "missing_api_key"
-    else:
-        try:
-            from openai import OpenAI
+    checks = {
+        "twilio": core.check_twilio(),
+        "chatgpt": core.check_chatgpt(),
+        "jupiter": core.check_jupiter(),
+        "placeholder": core.check_placeholder(),
+    }
 
-            client = OpenAI(api_key=api_key)
-            client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[{"role": "user", "content": "ping"}],
-            )
-            status["chatgpt"] = "ok"
-        except Exception as exc:  # pragma: no cover - network dependent
-            status["chatgpt"] = f"error: {exc}"
-
-    try:
-        from xcom.check_twilio_heartbeart_service import CheckTwilioHeartbeartService
-
-        result = CheckTwilioHeartbeartService({}).check(dry_run=True)
-        if result.get("success"):
-            status["api"] = "ok"
-        else:
-            status["api"] = f"error: {result.get('error', 'unknown error')}"
-    except Exception as exc:  # pragma: no cover - network dependent
-        status["api"] = f"error: {exc}"
+    status = {
+        name: ("ok" if res.get("success") else f"error: {res.get('error')}")
+        for name, res in checks.items()
+    }
 
     return jsonify(status)
 
