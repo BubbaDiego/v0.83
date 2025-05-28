@@ -4,6 +4,9 @@
 
 {% block extra_styles %}
 {{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/title_bar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/sonic_themes.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/sonic_titles.css') }}">
 <style>
   body {
     margin: 0;
@@ -124,6 +127,8 @@
 {% endblock %}
 
 {% block content %}
+{% set title_text = 'The Oracle' %}
+{% include "title_bar.html" %}
 <div class="oracle-container">
   <div class="floating-runes">
     <div class="floating-rune" style="left: 10%; animation-delay: 0s;">✦</div>
@@ -139,6 +144,7 @@
         <option value="Selena" title="🧝 Conservative and careful strategist">🧝 Selena (Conservative)</option>
         <option value="Nina" title="🧙 Balanced, data-driven oracle mind">🧙 Nina (Neutral)</option>
         <option value="Angie" title="🧛 Bold risk-taker with sharp instincts">🧛 Angie (Aggressive)</option>
+        <option value="Wizard" title="🧙\u200d♂️ Mystical risk wizard">🧙\u200d♂️ Wizard (Experimental)</option>
       </select>
     </div>
     <input type="text" id="oracle-query" placeholder="Speak your query...">
@@ -162,6 +168,9 @@
 
 {% block extra_scripts %}
 {{ super() }}
+<script src="{{ url_for('static', filename='js/title_bar.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/sonic_theme_toggle.js') }}"></script>
+<script src="{{ url_for('static', filename='js/layout_mode.js') }}"></script>
 <script>
   let currentTopic = 'portfolio';
 
