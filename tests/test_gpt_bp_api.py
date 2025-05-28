@@ -40,7 +40,7 @@ def load_blueprint():
     core_mod.GPTCore = DummyCore
     sys.modules["gpt.gpt_core"] = core_mod
 
-    persona_mod = types.ModuleType("gpt.persona_manager")
+    persona_mod = types.ModuleType("oracle_core.persona_manager")
 
     class DummyPersona:
         def __init__(self, name="test"):
@@ -59,7 +59,7 @@ def load_blueprint():
 
     persona_mod.PersonaManager = DummyPersonaManager
     persona_mod.Persona = DummyPersona
-    sys.modules["gpt.persona_manager"] = persona_mod
+    sys.modules["oracle_core.persona_manager"] = persona_mod
 
     oracle_mod = types.ModuleType("oracle_core")
 

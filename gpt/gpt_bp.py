@@ -2,7 +2,7 @@ import logging
 from flask import Blueprint, jsonify, request
 
 from .gpt_core import GPTCore
-from .persona_manager import PersonaManager
+from oracle_core.persona_manager import PersonaManager
 from oracle_core import OracleCore
 
 logger = logging.getLogger(__name__)
@@ -55,7 +55,6 @@ def oracle_query_modifiers():
         "leverageWeight": 0.3,
         "collateralWeight": 0.1,
     }
-    from oracle_core.persona_manager import PersonaManager
 
     if persona:
         manager = PersonaManager()
