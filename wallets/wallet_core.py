@@ -15,6 +15,8 @@ from __future__ import annotations
 
 from typing import List, Optional
 
+from core.logging import log
+
 try:
     from solana.rpc.api import Client
     from solana.transaction import Transaction
@@ -22,9 +24,8 @@ try:
     from solders.pubkey import Pubkey
     from solana.rpc.commitment import Confirmed
     from solana.rpc.types import TxOpts
-except Exception as e:  # pragma: no cover - optional dependency
-    import sys
-    print("❌ Failed to import solana/solders:", e, file=sys.stderr)
+except ImportError as e:  # pragma: no cover - optional dependency
+    log.warning("Failed to import solana/solders: %s", e)
     Client = None
     Transaction = object
     Keypair = object
@@ -37,7 +38,6 @@ from wallets.jupiter_service import JupiterService
 
 from wallets.wallet_service import WalletService
 from wallets.wallet import Wallet
-from core.logging import log
 
 LAMPORTS_PER_SOL = 1_000_000_000
 
