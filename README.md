@@ -18,6 +18,7 @@ source .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 Python 3.10 or later is required because the codebase uses the `|` union syntax.
+It is tested with Python 3.13 for compatibility.
 The requirements list includes the `solana` and `solders` packages used for
 wallet balance lookups.
 The project relies on the `openai` package with version range `>=1.6,<3`.
