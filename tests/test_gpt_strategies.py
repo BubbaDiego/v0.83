@@ -62,11 +62,16 @@ def setup_core(monkeypatch):
         def get_last_update_times(self):
             return {}
 
+    class DummyPositions:
+        def get_all_positions(self):
+            return []
+
     class DummyLocker:
         def __init__(self, *a, **k):
             self.alerts = DummyAlerts()
             self.prices = DummyPrices()
             self.portfolio = DummyPortfolio()
+            self.positions = DummyPositions()
             self.system = DummySystem()
 
         def get_last_update_times(self):
