@@ -83,7 +83,8 @@ def oracle_query():
     except KeyError:
         return jsonify({"error": "Unknown persona"}), 400
 
-    oracle = OracleCore(core.data_locker)
+    data_locker = getattr(core, "data_locker", None)
+    oracle = OracleCore(data_locker)
     oracle.client = core.client
 
     if topic not in oracle.handlers:
