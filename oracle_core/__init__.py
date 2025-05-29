@@ -1,6 +1,5 @@
 """Oracle core package."""
 
-from .oracle_core import OracleCore
 from .strategy_manager import StrategyManager, Strategy
 from .persona_manager import PersonaManager, Persona
 from .oracle_data_service import OracleDataService
@@ -11,7 +10,6 @@ from .system_topic_handler import SystemTopicHandler
 from .positions_topic_handler import PositionsTopicHandler
 
 __all__ = [
-    "OracleCore",
     "StrategyManager",
     "Strategy",
     "PersonaManager",
@@ -22,4 +20,12 @@ __all__ = [
     "PricesTopicHandler",
     "SystemTopicHandler",
     "PositionsTopicHandler",
+    "OracleCore",
 ]
+
+
+def __getattr__(name):
+    if name == "OracleCore":
+        from .oracle_core import OracleCore
+        return OracleCore
+    raise AttributeError(name)
