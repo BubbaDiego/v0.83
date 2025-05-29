@@ -48,11 +48,6 @@ class PersonaManager:
         elif isinstance(data, list):
             self.load(data)
 
-    def load(self, personas: Iterable[Dict]):
-        for data in personas:
-            self.register(data)
-
-
     def register(self, data: Dict):
         persona = data if isinstance(data, Persona) else Persona(data)
         self._personas[persona.name] = persona
