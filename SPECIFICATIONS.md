@@ -31,7 +31,7 @@ The [HedgeCalcServices specification](hedge_core/hedge_calc_services_spec.md) de
 The [Monitor module](monitor/monitor_module_spec.md) drives periodic tasks and health checks. It registers individual monitors and exposes CLI and API entrypoints for running them.
 
 ### Wallets
-The [Wallet Core specification](wallets/wallet_core_spec.md) outlines wallet operations and blockchain helpers. The [Jupiter API spec](wallets/jupiter_api_spec.md) from **sonic_labs** describes how wallets interact with Jupiter Perps for managing collateral.
+The [Wallet Core specification](wallets/wallet_core_spec.md) outlines wallet operations and blockchain helpers. The [Jupiter API spec](wallets/jupiter_api_spec.md) describes how wallets interact with Jupiter Perps for managing collateral.
 
 ### GPT Input Format
 The [GPT Input specification](gpt_input_spec.md) details the JSON bundle used to send portfolio and alert context to GPT for analysis.
