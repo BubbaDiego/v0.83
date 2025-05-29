@@ -68,7 +68,7 @@ multidict==6.1.0
 multitasking==0.0.11
 myst-parser==4.0.1
 numpy==2.2.3
-openai==1.6.4
+openai>=1.6,<3
 packaging==24.2
 pandas==2.2.3
 parsimonious==0.10.0
