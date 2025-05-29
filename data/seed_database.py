@@ -7,12 +7,10 @@ Run from the project root:
     python -m data.seed_database
 """
 
-import os
-import sys
+
 
 # Allow running this file directly.
-if __name__ == "__main__" and __package__ is None:
-    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 
 from core.core_imports import configure_console_log
 from core.constants import DB_PATH

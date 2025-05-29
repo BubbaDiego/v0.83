@@ -21,15 +21,9 @@ from uuid import uuid4
 from data.models import AlertThreshold
 from data.dl_thresholds import DLThresholdManager
 
-import os
 import sys
 
 from core.constants import DB_PATH as CONST_DB_PATH
-
-
-# Allow running this file directly by ensuring the project root is on sys.path.
-if __name__ == "__main__" and __package__ is None:
-    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
 DB_PATH = str(CONST_DB_PATH)
