@@ -58,8 +58,9 @@ Each handler (`PortfolioTopicHandler`, `PositionsTopicHandler`, `AlertsTopicHand
 - `fetch_portfolio()` → latest portfolio snapshot
 - `fetch_alerts()` → recent alerts
 - `fetch_prices()` → recent prices
-- `fetch_positions()` → recent positions
+- `fetch_positions()` → `{"positions": [...], "avg_heat_index": float}`
 - `fetch_system()` → `{"last_update_times": ..., "death_log": [...], "system_alerts": [...]}`
 - Positions queries automatically apply the `heat_control` strategy if no
   strategy is provided, injecting heat thresholds and instructions into the
-  context.
+  context. This strategy relies on the `avg_heat_index` metric returned with
+  the positions list.
