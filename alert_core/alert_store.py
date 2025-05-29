@@ -167,7 +167,7 @@ class AlertStore:
             log.error(f"❌ Integrity error: {ie}", source="AlertStore")
             return False
         except Exception as e:
-            log.error(f"❌ Failed to create alert", source="AlertStore", payload={"error": str(e)})
+            log.error("❌ Failed to create alert", source="AlertStore", payload={"error": str(e)})
             raise
 
     def delete_alert(self, alert_id: str) -> bool:
@@ -188,7 +188,7 @@ class AlertStore:
             rows = cursor.fetchall()
             return [dict(row) for row in rows]
         except Exception as e:
-            log.error(f"❌ Failed to fetch alerts", source="AlertStore", payload={"error": str(e)})
+            log.error("❌ Failed to fetch alerts", source="AlertStore", payload={"error": str(e)})
             return []
 
     def get_all_alerts(self) -> list:

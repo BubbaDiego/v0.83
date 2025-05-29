@@ -31,10 +31,10 @@ class AlertCore:
         try:
             success = self.repo.create_alert(alert_dict)
             if success:
-                log.success(f"✅ AlertCore created alert", source="AlertCore", payload={"id": alert_dict.get("id")})
+                log.success("✅ AlertCore created alert", source="AlertCore", payload={"id": alert_dict.get("id")})
             return success
         except Exception as e:
-            log.error(f"💥 Failed to create alert", source="AlertCore", payload={"error": str(e)})
+            log.error("💥 Failed to create alert", source="AlertCore", payload={"error": str(e)})
             return False
 
     async def run_alert_evaluation(self):
@@ -50,7 +50,7 @@ class AlertCore:
             self.evaluator.update_alert_evaluated_value(evaluated.id, evaluated.evaluated_value)
 
             log.success(
-                f"🧠 Alert processed",
+                "🧠 Alert processed",
                 source="AlertCore",
                 payload={"id": evaluated.id, "level": evaluated.level, "value": evaluated.evaluated_value}
             )
@@ -67,7 +67,7 @@ class AlertCore:
 
             return evaluated
         except Exception as e:
-            log.error(f"❌ Failed to evaluate alert", source="AlertCore", payload={"id": alert.id, "error": str(e)})
+            log.error("❌ Failed to evaluate alert", source="AlertCore", payload={"id": alert.id, "error": str(e)})
             return alert
 
     async def evaluate_all_alerts(self):
@@ -101,7 +101,7 @@ class AlertCore:
                 if self.repo.delete_alert(alert["id"]):
                     deleted += 1
                     log.info(
-                        f"🗑 Deleted dangling alert",
+                        "🗑 Deleted dangling alert",
                         source="AlertCore",
                         payload={"alert_id": alert["id"], "missing_position": pos_id}
                     )

@@ -95,7 +95,7 @@ class PositionSyncService:
                 report_filename = f"sync_report_{timestamp_str}.html"
                 report_path = os.path.join(reports_dir, report_filename)
 
-                html_content = f"""..."""  # existing HTML generation
+                html_content = """..."""  # existing HTML generation
 
                 with open(report_path, "w", encoding="utf-8") as f:
                     f.write(html_content)
