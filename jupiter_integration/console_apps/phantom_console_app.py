@@ -1,6 +1,7 @@
 """Interactive console application for Phantom wallet testing."""
 
 import os
+from pathlib import Path
 
 try:  # Optional dependency for loading environment variables
     from dotenv import load_dotenv
@@ -17,7 +18,10 @@ def main() -> None:
     """Run the Phantom wallet demo console."""
 
     # Set paths and URL (update these as needed)
-    EXTENSION_PATH = r"C:\v0.7\sonic_labs\phantom_wallet"
+    EXTENSION_PATH = os.getenv(
+        "PHANTOM_PATH",
+        str(Path(__file__).resolve().parents[2] / "wallets" / "phantom_wallet"),
+    )
     DAPP_URL = "https://jup.ag/perps-legacy/short/SOL-SOL"
     phantom_password = os.environ.get("PHANTOM_PASSWORD")
 

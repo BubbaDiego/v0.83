@@ -142,7 +142,7 @@ TWILIO_TO_PHONE=+1234567890
 TWILIO_FLOW_SID=your_flow_sid_here
 JUPITER_API_BASE=https://perps-api.jup.ag
 OPENAI_API_KEY=your_openai_key_here
-# Location of the Phantom browser extension
+# Location of the Phantom browser extension (used by `phantom_console_app`)
 PHANTOM_PATH=wallets/phantom_wallet
 ```
 

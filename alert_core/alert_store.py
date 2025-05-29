@@ -247,6 +247,12 @@ class AlertStore:
         created = 0
 
         config = self.config_loader() or {}
+        if isinstance(config, list):
+            log.warning(
+                "⚠️ alert_thresholds config returned list; ignoring",
+                source="AlertStore",
+            )
+            config = {}
         pos_cfg = config.get("alert_ranges", {}).get("positions_alerts", {})
 
         for pos in positions:
@@ -343,6 +349,12 @@ class AlertStore:
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         config = self.config_loader() or {}
+        if isinstance(config, list):
+            log.warning(
+                "⚠️ alert_thresholds config returned list; ignoring",
+                source="AlertStore",
+            )
+            config = {}
         port_cfg = config.get("alert_ranges", {}).get("portfolio_alerts", {})
 
         metrics = [
