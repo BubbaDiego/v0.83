@@ -118,6 +118,11 @@ def check_balance_flow(core: WalletCore):
     if balance is not None:
         console.print(f"💰 [green]{wallet.name}[/green] has [cyan]{balance:.4f} SOL[/cyan]")
     else:
+        if core.client is None:
+            console.print(
+                "[yellow]Solana packages missing. Install them with:[/yellow]"
+            )
+            console.print("pip install solana==0.36.6 solders==0.26.0")
         console.print(f"🚫 [red]Could not fetch balance for {wallet.name}[/red]")
 
 

@@ -15,8 +15,8 @@ class TwilioSMSSender:
     def __init__(self, account_sid=None, auth_token=None, from_phone=None):
         self.account_sid = account_sid or os.getenv("TWILIO_ACCOUNT_SID")
         self.auth_token = auth_token or os.getenv("TWILIO_AUTH_TOKEN")
-        self.from_number = (
-            from_number
+        self.from_phone = (
+            from_phone
             or os.getenv("TWILIO_FROM_PHONE")
             or os.getenv("TWILIO_FROM_NUMBER")
         )
