@@ -1,7 +1,6 @@
 import logging
 from flask import Blueprint, jsonify, request
 
-from .gpt_core import GPTCore
 from oracle_core.persona_manager import PersonaManager
 from oracle_core import OracleCore
 
@@ -15,6 +14,7 @@ gpt_bp = Blueprint('gpt_bp', __name__)
 def analyze():
     """Endpoint to analyze portfolio data with GPT."""
     instructions = request.json.get('prompt', '') if request.is_json else ''
+    from .gpt_core import GPTCore
     core = GPTCore()
     result = core.analyze(instructions)
     return jsonify({"reply": result})
@@ -23,6 +23,7 @@ def analyze():
 @gpt_bp.route('/gpt/portfolio', methods=['GET'])
 def ask_portfolio():
     """Return GPT analysis using standard context files."""
+    from .gpt_core import GPTCore
     core = GPTCore()
     result = core.ask_gpt_about_portfolio()
     return jsonify({"reply": result})
@@ -32,6 +33,7 @@ def ask_portfolio():
 def oracle(topic: str):
     """Handle oracle queries for various topics."""
     strategy = request.args.get("strategy", "none")
+    from .gpt_core import GPTCore
     core = GPTCore()
     try:
         result = core.ask_oracle(topic, strategy)
@@ -76,6 +78,7 @@ def oracle_query():
     topic = request.args.get('topic', 'portfolio').strip() or 'portfolio'
     user_query = request.args.get('query', '').strip()
 
+    from .gpt_core import GPTCore
     core = GPTCore()
     pm = PersonaManager()
     try:
