@@ -275,6 +275,11 @@ After renaming, Windows users can fetch the branch normally.
 
 The `auto_core` package handles automated browser workflows for Jupiter's perpetuals trading UI. It builds on the ideas in the [automation white paper](sonic_labs/order_automation_white_paper.md), using Playwright to load a Chromium profile with the Phantom wallet extension. `auto_core` exposes helpers for launching a persistent context, navigating the site and approving Phantom pop‑ups so strategies can focus on trading logic.
 
+`auto_core` also provides the `PhantomManager` class for orchestrating these automation tasks:
+```python
+from auto_core import PhantomManager
+```
+
 ### Playwright Setup with Phantom
 Install Playwright and its browsers:
 ```bash
