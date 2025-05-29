@@ -142,9 +142,9 @@ class SystemCore:
     def check_twilio_api(self) -> str:
         """Return 'ok' if Twilio credentials are valid, otherwise error text."""
         try:
-            from xcom.check_twilio_heartbeart_service import CheckTwilioHeartbeartService
+            from xcom.check_twilio_heartbeat_service import CheckTwilioHeartbeatService
 
-            result = CheckTwilioHeartbeartService({}).check(dry_run=True)
+            result = CheckTwilioHeartbeatService({}).check(dry_run=True)
             if result.get("success"):
                 return "ok"
             return result.get("error", "unknown error")

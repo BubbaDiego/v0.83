@@ -193,9 +193,9 @@ def check_api_status():
 
     # --- Twilio ---
     try:
-        from xcom.check_twilio_heartbeart_service import CheckTwilioHeartbeartService
+        from xcom.check_twilio_heartbeat_service import CheckTwilioHeartbeatService
 
-        result = CheckTwilioHeartbeartService({}).check(dry_run=True)
+        result = CheckTwilioHeartbeatService({}).check(dry_run=True)
         if result.get("success"):
             console.print("[green]✅ Twilio credentials valid.[/green]")
         else:

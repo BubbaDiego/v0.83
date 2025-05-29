@@ -15,7 +15,7 @@ xcom/
 ├── sms_service.py                 # 💬 SMS via carrier gateway
 ├── voice_service.py               # 📞 Twilio voice calls
 ├── sound_service.py               # 🔊 Local audio playback
-└── check_twilio_heartbeart_service.py # ❤️ Twilio credential check
+└── check_twilio_heartbeat_service.py  # ❤️ Twilio credential check
 ```
 
 ### 🔧 `XComCore`
@@ -42,7 +42,7 @@ send_notification(level, subject, body, recipient="", initiator="system") -> dic
 - **VoiceService** – wraps Twilio's client to place a voice call that reads the
   supplied message.
 - **SoundService** – plays an MP3 file on the local system as an audible alert.
-- **CheckTwilioHeartbeartService** – validates Twilio credentials and can trigger
+- **CheckTwilioHeartbeatService** – validates Twilio credentials and can trigger
   a test call in non-dry-run mode.
 
 ### 🧰 Configuration
