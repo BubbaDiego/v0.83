@@ -264,7 +264,7 @@ class DataLocker:
         # Ensure a default row exists for system vars so lookups don't fail
         log.debug("Ensuring system_vars default row", source="DataLocker")
         try:
-            cursor.execute("INSERT OR IGNORE INTO system_vars (id) VALUES (1)")
+            cursor.execute("INSERT OR IGNORE INTO system_vars (id) VALUES ('main')")
         except Exception as e:
             log.error(f"❌ Failed initializing system_vars default row: {e}", source="DataLocker")
 
