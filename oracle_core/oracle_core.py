@@ -70,41 +70,16 @@ class OracleCore:
         response = self.client.chat.completions.create(model="gpt-3.5-turbo", messages=messages)
         return response.choices[0].message.content.strip()
 
-    def ask(self, topic: str, strategy_name: Optional[str] = None) -> str:
+    def _get_context_and_instructions(
+        self, topic: str, strategy_name: Optional[str]
+    ) -> tuple[Dict, str]:
+        """Return the context and instructions for a query."""
         if topic not in self.handlers:
             raise ValueError(f"Unsupported topic: {topic}")
         handler = self.handlers[topic]
         context = handler.get_context()
         instructions = self.DEFAULT_INSTRUCTIONS.get(topic, "Assist the user.")
-        if strategy_name:
-            try:
-                strategy = self.strategy_manager.get(strategy_name)
-                context = strategy.apply(context)
-                instructions = strategy.instructions or instructions
-            except KeyError:
-                persona = self.persona_manager.get(strategy_name)
-                weighted = []
-                for sname, weight in persona.strategy_weights.items():
-                    strat = self.strategy_manager.get(sname)
-                    weighted.append((strat.modifiers, weight))
-                merged = Strategy.merge_modifiers(weighted)
-                if merged:
-                    context = dict(context)
-                    context["strategy_modifiers"] = merged
-                inst_parts = [persona.instructions] + [
-                    self.strategy_manager.get(n).instructions
-                    for n in persona.strategy_weights
-                ]
-                instructions = " ".join(i for i in inst_parts if i) or instructions
-        messages = self.build_prompt(topic, context, instructions)
-        return self.query_gpt(messages)
 
-    def to_dict(self, topic: str, strategy_name: Optional[str] = None) -> Dict:
-        if topic not in self.handlers:
-            raise ValueError(f"Unsupported topic: {topic}")
-        handler = self.handlers[topic]
-        context = handler.get_context()
-        instructions = self.DEFAULT_INSTRUCTIONS.get(topic, "Assist the user.")
         if strategy_name:
             try:
                 strategy = self.strategy_manager.get(strategy_name)
@@ -125,5 +100,15 @@ class OracleCore:
                     for n in persona.strategy_weights
                 ]
                 instructions = " ".join(i for i in inst_parts if i) or instructions
+
+        return context, instructions
+
+    def ask(self, topic: str, strategy_name: Optional[str] = None) -> str:
+        context, instructions = self._get_context_and_instructions(topic, strategy_name)
+        messages = self.build_prompt(topic, context, instructions)
+        return self.query_gpt(messages)
+
+    def to_dict(self, topic: str, strategy_name: Optional[str] = None) -> Dict:
+        context, instructions = self._get_context_and_instructions(topic, strategy_name)
         messages = self.build_prompt(topic, context, instructions)
         return {"topic": topic, "messages": messages}
