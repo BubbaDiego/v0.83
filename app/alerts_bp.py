@@ -18,6 +18,7 @@ from flask import (
     redirect,
     url_for,
 )
+from jinja2 import ChoiceLoader, FileSystemLoader
 from config.config_loader import update_config as merge_config
 from utils.alert_helpers import calculate_threshold_progress
 
@@ -35,6 +36,14 @@ alerts_bp = Blueprint(
     static_folder=ALERT_MONITOR_DIR,
     static_url_path='/alerts/static'
 )
+
+# Enable template resolution from the main project's template directory as well
+# so tests creating a minimal Flask app can still locate shared templates.
+ROOT_TEMPLATES = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'templates'))
+alerts_bp.jinja_loader = ChoiceLoader([
+    FileSystemLoader(ALERT_MONITOR_DIR),
+    FileSystemLoader(ROOT_TEMPLATES),
+])
 
 
 
