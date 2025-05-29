@@ -40,8 +40,13 @@ class TestCore:
         files = [
             p
             for p in Path(".").rglob(pattern)
-            # Exclude common virtual environment directories
-            if not any(part in {".venv", "venv", "site-packages"} for part in p.parts)
+            # Exclude common virtual environment directories and caches
+            if not any(
+                part in {".venv", "venv", "site-packages", "__pycache__"}
+                for part in p.parts
+            )
+            # Ignore compiled Python files
+            and p.suffix == ".py"
         ]
         if not files:
             log.warning(f"⚠️ No test files found for pattern: {pattern}", source="TestCore")
@@ -54,10 +59,19 @@ class TestCore:
         json_report = self.report_dir / "last_test_report.json"
         txt_log = self.report_dir / "last_test_log.txt"
 
-        log.banner(f"🧪 Test Run Started ({len(files)} file(s))")
-        log.info(f"⏱ Running: {[str(f) for f in files]}", source="TestCore")
+        # Normalize paths and filter to Python source files only
+        file_paths = [
+            Path(f)
+            for f in files
+            if Path(f).suffix == ".py"
+            and "__pycache__" not in Path(f).parts
+            and not str(f).endswith(".pyc")
+        ]
 
-        args = [*[str(f) for f in files], "-vv", "-s", "--tb=short", "-rA"]
+        log.banner(f"🧪 Test Run Started ({len(file_paths)} file(s))")
+        log.info(f"⏱ Running: {[str(f) for f in file_paths]}", source="TestCore")
+
+        args = [*[str(f) for f in file_paths], "-vv", "-s", "--tb=short", "-rA"]
 
         # Include optional plugins only if they are installed. This avoids
         # ``pytest`` failing when a plugin is referenced but not available in
