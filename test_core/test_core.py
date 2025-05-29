@@ -6,7 +6,6 @@ import os
 import importlib
 import re
 from pathlib import Path
-from typing import List, Optional, Union
 import pytest
 from core.core_imports import log
 
@@ -15,7 +14,7 @@ try:
     from rich.panel import Panel
     from rich.table import Table
     console = Console()
-except Exception:  # pragma: no cover - rich optional
+except Exception:
     Console = None
     Panel = None
     Table = None
@@ -25,28 +24,25 @@ except Exception:  # pragma: no cover - rich optional
 class TestCore:
     """Utility to run pytest with rich reporting."""
 
-    def __init__(self, report_dir: Union[str, Path] = "reports", default_pattern: str = "tests/test_*.py") -> None:
+    def __init__(self, report_dir: str | Path = "reports", default_pattern: str = "tests/test_*.py") -> None:
         self.report_dir = Path(report_dir)
         self.report_dir.mkdir(exist_ok=True)
         self.default_pattern = default_pattern
 
-    # ------------------------------------------------------------------
     def run_all(self) -> None:
-        """Run all tests matching the default pattern."""
         self.run_glob(self.default_pattern)
 
-    def run_glob(self, pattern: Optional[str] = None) -> None:
-        """Discover test files matching *pattern* and run them."""
-        pattern = pattern or self.default_pattern
+    def expand_pattern(self, raw: str) -> str:
+        """Expand user input to a valid test glob pattern. E.g., 'twi' -> 'test_twi*.*'"""
+        if "*" in raw or raw.startswith("test_"):
+            return raw
+        return f"test_{raw}*.*"
+
+    def run_glob(self, pattern: str | None = None) -> None:
+        pattern = self.expand_pattern(pattern or self.default_pattern)
         files = [
-            p
-            for p in Path(".").rglob(pattern)
-            # Exclude common virtual environment directories and caches
-            if not any(
-                part in {".venv", "venv", "site-packages", "__pycache__"}
-                for part in p.parts
-            )
-            # Ignore compiled Python files
+            p for p in Path(".").rglob(pattern)
+            if not any(part in {".venv", "venv", "site-packages", "__pycache__"} for part in p.parts)
             and p.suffix == ".py"
         ]
         if not files:
@@ -54,16 +50,13 @@ class TestCore:
             return
         self.run_files(files)
 
-    def run_files(self, files: List[Union[str, Path]]) -> None:
-        """Execute pytest for the provided *files* with reporting enabled."""
+    def run_files(self, files: list[str | Path]) -> None:
         html_report = self.report_dir / "last_test_report.html"
         json_report = self.report_dir / "last_test_report.json"
         txt_log = self.report_dir / "last_test_log.txt"
 
-        # Normalize paths and filter to Python source files only
         file_paths = [
-            Path(f)
-            for f in files
+            Path(f) for f in files
             if Path(f).suffix == ".py"
             and "__pycache__" not in Path(f).parts
             and not str(f).endswith(".pyc")
@@ -74,46 +67,25 @@ class TestCore:
 
         args = [*[str(f) for f in file_paths], "-vv", "-s", "--tb=short", "-rA"]
 
-        # Include optional plugins only if they are installed. This avoids
-        # ``pytest`` failing when a plugin is referenced but not available in
-        # the environment.
         for plugin in ["pytest_sugar", "pytest_spec", "pytest_console_scripts"]:
             if importlib.util.find_spec(plugin) is not None:
                 args.extend(["-p", plugin])
 
-        # ``pytest-html`` provides ``--html`` and ``--self-contained-html``.
-        # These options must only be passed when the plugin is available.
         if importlib.util.find_spec("pytest_html") is not None:
-            args.extend([
-                f"--html={html_report}",
-                "--self-contained-html",
-            ])
+            args.extend(["--html", str(html_report), "--self-contained-html"])
 
-        # ``pytest-json-report`` exposes the ``--json-report`` options. Avoid
-        # using them when the plugin cannot be imported.
         if importlib.util.find_spec("pytest_jsonreport") is not None:
-            args.extend([
-                "--json-report",
-                f"--json-report-file={json_report}",
-            ])
+            args.extend(["--json-report", f"--json-report-file={json_report}"])
 
-
-
-        # Disable auto-loading of external plugins. Some external pytest
-        # plugins may rely on optional dependencies that are not installed in
-        # the environment, leading to import errors. Only the explicitly
-        # specified plugins should be loaded during the test run.
         os.environ["PYTEST_DISABLE_PLUGIN_AUTOLOAD"] = "1"
 
         with open(txt_log, "w", encoding="utf-8") as f, \
              contextlib.redirect_stdout(f), contextlib.redirect_stderr(f):
             result = pytest.main(args)
 
-        # After test run, parse results for a concise summary
         passed = failed = skipped = 0
         summary_lines = []
         try:
-            import re
             pattern = re.compile(r"(PASSED|FAILED|ERROR|SKIPPED)\s+(\S+::\S+)")
             with open(txt_log, "r", encoding="utf-8") as lf:
                 for line in lf:
@@ -127,7 +99,7 @@ class TestCore:
                             failed += 1
                         elif outcome == "SKIPPED":
                             skipped += 1
-        except Exception as e:  # pragma: no cover - summary best effort
+        except Exception as e:
             log.error(f"Failed to parse log summary: {e}", source="TestCore")
 
         for line in summary_lines:
@@ -138,31 +110,36 @@ class TestCore:
             elif line.endswith("SKIPPED"):
                 log.warning(f"⚠️ {line}", source="TestCore")
 
-        total = passed + failed + skipped
+        log.banner("Test Summary")
+        log.info(f"✅ Passed: {passed}  ❌ Failed: {failed}  ⚠️ Skipped: {skipped}", source="TestCore")
 
-        if console and Panel and Table:
-            table = Table(title="Test Summary", show_lines=True)
-            table.add_column("Result", style="white", justify="left")
-            table.add_column("Count", style="cyan", justify="right")
-            table.add_row("✅ Passed", str(passed))
-            table.add_row("❌ Failed", str(failed))
-            table.add_row("⚠️ Skipped", str(skipped))
-            if total:
-                pct = passed / total * 100
-                table.add_row("🔢 Pass Rate", f"{pct:.1f}% ({passed}/{total})")
-            console.print(table)
-        else:
-            log.banner("Test Summary")
-            log.info(
-                f"✅ Passed: {passed}  ❌ Failed: {failed}  ⚠️ Skipped: {skipped}",
-                source="TestCore",
-            )
-            if total:
-                pct = passed / total * 100
-                log.info(
-                    f"🔢 Pass Rate: {pct:.1f}% ({passed}/{total})",
-                    source="TestCore",
-                )
+        total = passed + failed + skipped
+        final_grade = None
+        if total:
+            pct = passed / total * 100
+            log.info(f"🔢 Pass Rate: {pct:.1f}% ({passed}/{total})", source="TestCore")
+
+            # Add grade
+            if pct == 100:
+                grade = "A+"
+                color = "green"
+            elif pct >= 90:
+                grade = "A"
+                color = "green"
+            elif pct >= 80:
+                grade = "B"
+                color = "orange1"
+            elif pct >= 70:
+                grade = "C"
+                color = "yellow1"
+            elif pct >= 60:
+                grade = "D"
+                color = "red"
+            else:
+                grade = "F"
+                color = "red"
+            final_grade = f"[bold {color}]🎓 FINAL GRADE: {grade} ({pct:.1f}%) [/bold {color}]"
+            log.info(f"🎓 Grade: {grade}", source="TestCore")
 
         if result == 0:
             log.success("✅ All tests completed!", source="TestCore")
@@ -182,17 +159,19 @@ class TestCore:
         log.info(f"🪵 Log File:    {txt_log}", source="TestCore")
         self._open_html_report(html_report)
 
-    # ------------------------------------------------------------------
+        if final_grade and console:
+            console.print("\n\n")
+            console.rule("[bold white]Final Score[/bold white]", style=color)
+            console.print(final_grade, justify="center")
+            console.rule(style=color)
+            console.print("\n\n")
+
     def test_alert_core(self) -> None:
-        """Run all AlertCore test cases."""
         self.run_glob("alert_core/**/test_*.py")
 
-    # ------------------------------------------------------------------
     def pick_and_run_tests(self) -> None:
-        """Allow user to pick specific tests to run."""
         tests = [
-            p
-            for p in Path("tests").rglob("test_*.py")
+            p for p in Path("tests").rglob("test_*.py")
             if not any(part in {".venv", "venv", "site-packages"} for part in p.parts)
         ]
         if not tests:
@@ -204,14 +183,12 @@ class TestCore:
         choice = input("Select tests (e.g., 1,2,7) or 'q' to cancel: ").strip()
         if not choice or choice.lower() == "q":
             return
-        import re
         nums = re.findall(r"\d+", choice)
         selected = []
         for n in nums:
             idx = int(n) - 1
             if 0 <= idx < len(tests):
                 selected.append(tests[idx])
-        # Remove duplicates while preserving order
         selected = list(dict.fromkeys(selected))
         if not selected:
             print("No valid selections.")
@@ -221,9 +198,7 @@ class TestCore:
             print(f"- {s}")
         self.run_files(selected)
 
-    # ------------------------------------------------------------------
     def _open_html_report(self, report_path: Path) -> None:
-        """Open *report_path* in a browser if possible."""
         if not report_path.exists():
             return
         try:
@@ -232,14 +207,11 @@ class TestCore:
         except Exception:
             pass
 
-    # ------------------------------------------------------------------
     def interactive_menu(self) -> None:
-        """Interactive CLI for running tests with optional Rich formatting."""
         while True:
             if console:
                 console.clear()
                 console.print(Panel("[bold magenta]🔍 Test Runner Console[/bold magenta]", border_style="magenta"))
-
                 table = Table(show_header=False, box=None)
                 table.add_column("#", style="cyan", justify="right")
                 table.add_column("Action", style="white")
@@ -283,4 +255,3 @@ class TestCore:
                 console.input("\n[grey]Press ENTER to return...[/grey]")
             else:
                 input("\nPress ENTER to return...")
-
