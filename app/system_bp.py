@@ -30,7 +30,12 @@ from positions.hedge_manager import HedgeManager
 UPLOAD_FOLDER = os.path.join("static", "uploads", "wallets")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-system_bp = Blueprint("system", __name__, url_prefix="/system")
+system_bp = Blueprint(
+    "system",
+    __name__,
+    url_prefix="/system",
+    template_folder="../templates",
+)
 
 # Allow this blueprint to find templates in the project's main templates
 # directory when used within standalone test applications.
