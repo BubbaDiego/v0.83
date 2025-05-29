@@ -1,8 +1,9 @@
-"""Solflare wallet automation helpers using Playwright."""
+"""Re-export :class:`SolflareManager` from :mod:`auto_core.playwright`."""
 
+try:  # SolflareManager depends on Playwright, which may be optional
+    from auto_core.playwright import SolflareManager
+except Exception:  # pragma: no cover - optional dependency may be missing
+    SolflareManager = None
 
-class SolflareManager:
-    """Placeholder manager for Solflare wallet workflows."""
-
-    pass
+__all__ = ["SolflareManager"]
 

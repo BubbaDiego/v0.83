@@ -1,6 +1,5 @@
 import os
-from sonic_labs.solflare_manager import SolflareManager
-from sonic_labs.jupiter_perps_flow import JupiterPerpsFlow
+from auto_core.playwright import SolflareManager, JupiterPerpsFlow
 from dotenv import load_dotenv
 
 load_dotenv()
