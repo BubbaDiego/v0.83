@@ -169,7 +169,7 @@ PHANTOM_PATH=wallets/phantom_wallet
 ## Twilio Monitor
 
 The `twilio_monitor` runs as part of the background monitor suite. It uses
-`CheckTwilioHeartbeartService` in dry‑run mode to verify that credentials are
+`CheckTwilioHeartbeatService` in dry‑run mode to verify that credentials are
 valid without placing an actual call.
 
 ## Hedge Calculator

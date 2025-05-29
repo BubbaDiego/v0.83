@@ -21,7 +21,7 @@ from core.constants import (
 from utils.schema_validation_service import SchemaValidationService
 from data.data_locker import DataLocker
 from monitor.operations_monitor import OperationsMonitor
-from xcom.check_twilio_heartbeart_service import CheckTwilioHeartbeartService
+from xcom.check_twilio_heartbeat_service import CheckTwilioHeartbeatService
 from utils.path_audit import run_audit
 from xcom.sound_service import SoundService
 from scripts.verify_all_tables_exist import verify_all_tables_exist
@@ -270,7 +270,7 @@ class StartUpService:
     @staticmethod
     def run_twilio_heartbeat():
         try:
-            result = CheckTwilioHeartbeartService({}).check(dry_run=True)
+            result = CheckTwilioHeartbeatService({}).check(dry_run=True)
             if not result.get("success"):
                 log.error(
                     f"Twilio heartbeat check failed: {result.get('error')}",

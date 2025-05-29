@@ -110,7 +110,7 @@ def test_check_api_status_logs_to_xcom(monkeypatch):
 
     # Stub Twilio heartbeat
     import importlib
-    cts = importlib.import_module("xcom.check_twilio_heartbeart_service")
+    cts = importlib.import_module("xcom.check_twilio_heartbeat_service")
 
     class DummyService:
         def __init__(self, *a, **k):
@@ -119,7 +119,7 @@ def test_check_api_status_logs_to_xcom(monkeypatch):
         def check(self, dry_run=True):
             return {"success": True}
 
-    monkeypatch.setattr(cts, "CheckTwilioHeartbeartService", DummyService)
+    monkeypatch.setattr(cts, "CheckTwilioHeartbeatService", DummyService)
 
     monkeypatch.setenv("OPENAI_API_KEY", "test")
 

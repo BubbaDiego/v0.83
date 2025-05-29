@@ -25,8 +25,11 @@ def test_check_twilio_api_success(monkeypatch):
         def check(self, dry_run=True):
             return {"success": True}
 
-    monkeypatch.setitem(sys.modules, "xcom.check_twilio_heartbeart_service",
-                        types.SimpleNamespace(CheckTwilioHeartbeartService=DummyService))
+    monkeypatch.setitem(
+        sys.modules,
+        "xcom.check_twilio_heartbeat_service",
+        types.SimpleNamespace(CheckTwilioHeartbeatService=DummyService),
+    )
     sc = load_core(monkeypatch)
     core = make_core(sc)
     assert core.check_twilio_api() == "ok"
@@ -39,8 +42,11 @@ def test_check_twilio_api_failure(monkeypatch):
         def check(self, dry_run=True):
             return {"success": False, "error": "fail"}
 
-    monkeypatch.setitem(sys.modules, "xcom.check_twilio_heartbeart_service",
-                        types.SimpleNamespace(CheckTwilioHeartbeartService=DummyService))
+    monkeypatch.setitem(
+        sys.modules,
+        "xcom.check_twilio_heartbeat_service",
+        types.SimpleNamespace(CheckTwilioHeartbeatService=DummyService),
+    )
     sc = load_core(monkeypatch)
     core = make_core(sc)
     assert core.check_twilio_api() == "fail"

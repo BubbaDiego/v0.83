@@ -66,10 +66,10 @@ def test_xcom():
         elif mode == "email":
             xcom.send_notification("LOW", "Test Email", msg)
         elif mode == "voice":
-            from xcom.check_twilio_heartbeart_service import CheckTwilioHeartbeartService
+            from xcom.check_twilio_heartbeat_service import CheckTwilioHeartbeatService
 
             api_cfg = xcom.config_service.get_provider("api") or {}
-            CheckTwilioHeartbeartService(api_cfg).check(dry_run=False)
+            CheckTwilioHeartbeatService(api_cfg).check(dry_run=False)
         elif mode == "system":
             SoundService().play()
 

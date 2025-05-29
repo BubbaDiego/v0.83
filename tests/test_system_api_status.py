@@ -62,7 +62,7 @@ def test_xcom_api_status_ok(monkeypatch):
 
     monkeypatch.setitem(sys.modules, "openai", types.SimpleNamespace(OpenAI=DummyClient))
 
-    cts = importlib.import_module("xcom.check_twilio_heartbeart_service")
+    cts = importlib.import_module("xcom.check_twilio_heartbeat_service")
 
     class DummyService:
         def __init__(self, *a, **k):
@@ -71,7 +71,7 @@ def test_xcom_api_status_ok(monkeypatch):
         def check(self, dry_run=True):
             return {"success": True}
 
-    monkeypatch.setattr(cts, "CheckTwilioHeartbeartService", DummyService)
+    monkeypatch.setattr(cts, "CheckTwilioHeartbeatService", DummyService)
     monkeypatch.setenv("OPENAI_API_KEY", "test")
 
     class DummyResp:
