@@ -22,7 +22,7 @@ def run_test_call():
     # 🧪 Send test HIGH-level notification (Voice + SMS + Sound)
     level = "HIGH"
     subject = "Test Voice Notification"
-    body = "📞 This is a test voice call via Sonic XComCore. Suck Me Bubba"
+    body = "📞 This is a test voice call via Sonic XComCore."
 
     log.info("🔁 Dispatching XCom test via send_notification()", source="TestScript")
     result = xcom.send_notification(level, subject, body)
