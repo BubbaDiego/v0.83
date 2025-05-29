@@ -177,7 +177,7 @@ class StartUpService:
             log.info("✅ alert_thresholds.json found.", source="StartUpService")
             valid = SchemaValidationService.validate_schema(
                 str(ALERT_THRESHOLDS_PATH),
-                SchemaValidationService.ALERT_LIMITS_SCHEMA,
+                SchemaValidationService.ALERT_THRESHOLDS_SCHEMA,
                 name="Alert Ranges",
             )
             if not valid:
