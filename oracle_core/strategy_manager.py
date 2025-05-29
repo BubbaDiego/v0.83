@@ -58,7 +58,12 @@ class Strategy:
             if isinstance(value, tuple):
                 val, w = value
                 if isinstance(val, (int, float)):
-                    return val / w if w else val
+                    if w:
+                        result = val / w
+                        if isinstance(val, int) and result.is_integer():
+                            return int(result)
+                        return result
+                    return val
                 return val
             return value
 
