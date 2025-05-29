@@ -53,3 +53,36 @@ def test_oracle_core_build_prompt(monkeypatch):
     messages = oc.ask("portfolio", "test")
     assert messages[0]["role"] == "system"
     assert messages[-1]["content"] == "do"
+
+
+def test_oracle_core_to_dict(monkeypatch):
+    mod = load_module()
+
+    class DummyAlerts:
+        def get_all_alerts(self):
+            return ["a1"]
+
+    class DummyPrices:
+        def get_all_prices(self):
+            return [1]
+
+    class DummyPortfolio:
+        def get_latest_snapshot(self):
+            return {"id": "snap"}
+
+    class DummyLocker:
+        def __init__(self):
+            self.alerts = DummyAlerts()
+            self.prices = DummyPrices()
+            self.portfolio = DummyPortfolio()
+
+        def get_last_update_times(self):
+            return {"x": 1}
+
+    oc = mod.OracleCore(DummyLocker())
+    assert "test" in oc.strategy_manager.list_strategies()
+    data = oc.to_dict("portfolio", "test")
+    messages = data["messages"]
+    assert data["topic"] == "portfolio"
+    assert messages[0]["role"] == "system"
+    assert messages[-1]["content"] == "do"
