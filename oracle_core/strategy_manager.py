@@ -1,12 +1,8 @@
 import json
 
-from pathlib import Path
 from typing import Dict, Iterable, List, Tuple
 
 import importlib.resources as resources
-from typing import Dict, Iterable
-
-
 
 class Strategy:
     """Simple strategy container."""
@@ -69,7 +65,6 @@ class Strategy:
 
         return {k: _finalize(v) for k, v in merged.items()}
 
-
 class StrategyManager:
     """Manage loading and retrieval of strategies."""
 
@@ -93,7 +88,6 @@ class StrategyManager:
                     self.load_from_file(path)
             except Exception:
                 continue
-
 
     def load(self, strategies: Iterable[Dict]):
         for data in strategies:

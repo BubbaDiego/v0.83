@@ -17,7 +17,6 @@ from dashboard.dashboard_service import get_dashboard_context
 from utils.fuzzy_wuzzy import fuzzy_match_key
 from core.constants import THEME_CONFIG_PATH
 from core.logging import log
-from dashboard.dashboard_service import get_dashboard_context
 from utils.route_decorators import route_log_alert
 from dashboard.dashboard_logger import log_dashboard_full, list_positions_verbose
 
