@@ -60,8 +60,17 @@ class DataLocker:
             self._seed_thresholds_if_empty()
         except Exception as e:
             log.error(f"❌ DataLocker setup failed: {e}", source="DataLocker")
-
-        log.debug("All DL managers bootstrapped successfully.", source="DataLocker")
+        else:
+            if self.db.conn:
+                log.debug(
+                    "All DL managers bootstrapped successfully.",
+                    source="DataLocker",
+                )
+            else:
+                log.warning(
+                    "⚠️ DataLocker initialization failed: no DB connection", 
+                    source="DataLocker",
+                )
 
     @classmethod
     def get_instance(cls, db_path: str = str(DB_PATH)):
