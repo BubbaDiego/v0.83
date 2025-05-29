@@ -35,7 +35,7 @@ class CheckWalletBalanceService:
         self._eth = Web3(Web3.HTTPProvider(self.eth_rpc_url)) if Web3 else None
         self._sol = Client(self.sol_rpc_url) if Client else None
         log.debug(
-            f"CheckWalletBalanceService initialized", source="WalletBalanceSvc"
+            "CheckWalletBalanceService initialized", source="WalletBalanceSvc"
         )
 
     def get_balance(self, address: str) -> Optional[float]:

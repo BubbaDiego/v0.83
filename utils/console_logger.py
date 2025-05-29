@@ -98,7 +98,7 @@ class ConsoleLogger:
             not cls.trace_modules or effective_source in cls.trace_modules
         ):
             print(f"[🧠 LOGGING DEBUG] caller='{caller_module}' source='{source}' → effective='{effective_source}'")
-            print(f"                └─ FINAL DECISION: ✅ allowed")
+            print("                └─ FINAL DECISION: ✅ allowed")
 
         icon = cls.ICONS.get(level, cls.ICONS.get("info", ""))
         start_reset = cls.COLORS["endc"]
@@ -241,7 +241,7 @@ class ConsoleLogger:
         if enabled:
             msg += f"    🔊 Enabled Modules:    {', '.join(enabled)}\n"
         if cls.group_map:
-            msg += f"    🧠 Groups:\n"
+            msg += "    🧠 Groups:\n"
             for group, modules in cls.group_map.items():
                 msg += f"        {group:<10} ➜ {', '.join(modules)}\n"
 
