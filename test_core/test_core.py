@@ -5,6 +5,7 @@ import contextlib
 import os
 import importlib
 import re
+import subprocess
 from pathlib import Path
 from typing import List, Optional, Union
 import pytest
@@ -222,6 +223,20 @@ class TestCore:
         self.run_files(selected)
 
     # ------------------------------------------------------------------
+    def setup_environment(self) -> None:
+        """Install project dependencies for the test suite."""
+        req_file = Path("requirements.txt")
+        if not req_file.exists():
+            log.error("requirements.txt not found", source="TestCore")
+            return
+        log.banner("Installing test dependencies")
+        try:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", str(req_file)])
+            log.success("Dependencies installed", source="TestCore")
+        except Exception as e:  # pragma: no cover - network issues may occur
+            log.error(f"Dependency installation failed: {e}", source="TestCore")
+
+    # ------------------------------------------------------------------
     def _open_html_report(self, report_path: Path) -> None:
         """Open *report_path* in a browser if possible."""
         if not report_path.exists():
@@ -247,7 +262,8 @@ class TestCore:
                 table.add_row("2", "🗂️ Run test file pattern")
                 table.add_row("3", "🧪 Run Alert Core tests")
                 table.add_row("4", "🎯 Pick tests to run")
-                table.add_row("5", "❌ Exit")
+                table.add_row("5", "⚙️ Install test dependencies")
+                table.add_row("6", "❌ Exit")
                 console.print(table)
                 choice = console.input("Choose > ").strip()
             else:
@@ -257,7 +273,8 @@ class TestCore:
                 print("2) 🗂️ Run test file pattern")
                 print("3) 🧪 Run Alert Core tests")
                 print("4) 🎯 Pick tests to run")
-                print("5) ❌ Exit")
+                print("5) ⚙️ Install test dependencies")
+                print("6) ❌ Exit")
                 choice = input("Choose > ").strip()
 
             if choice == "1":
@@ -271,6 +288,8 @@ class TestCore:
             elif choice == "4":
                 self.pick_and_run_tests()
             elif choice == "5":
+                self.setup_environment()
+            elif choice == "6":
                 break
             else:
                 if console:
