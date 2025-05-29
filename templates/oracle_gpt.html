@@ -153,10 +153,11 @@
     <input type="text" id="oracle-query" placeholder="Speak your query...">
     <button class="send-button" id="sendBtn">📨 Send</button>
     <div class="quick-questions">
-      <button class="quick-button" onclick="presetQuery('portfolio')">📁 Portfolio Status</button>
-      <button class="quick-button" onclick="presetQuery('alerts')">🚨 Alert Status</button>
-      <button class="quick-button" onclick="presetQuery('prices')">💰 Market Prices</button>
-      <button class="quick-button" onclick="presetQuery('system')">🖥️ System Health</button>
+      <button class="quick-button" onclick="quickAsk('portfolio')">📁 Portfolio Status</button>
+      <button class="quick-button" onclick="quickAsk('alerts')">🚨 Alert Status</button>
+      <button class="quick-button" onclick="quickAsk('prices')">💰 Market Prices</button>
+      <button class="quick-button" onclick="quickAsk('system')">🖥️ System Health</button>
+      <button class="quick-button" onclick="quickAsk('positions')">📊 Position Status</button>
     </div>
     <div class="oracle-output" id="oracle-output">Ask a question to receive wisdom from the stars.</div>
     <div class="debug-panel" id="debug-panel">
@@ -211,20 +212,18 @@
     document.getElementById('debug-voice').textContent = voice;
   }
 
-  function presetQuery(topic) {
-    const canned = {
-      portfolio: 'Give current status on the portfolio',
-      alerts: 'Give current status of alerts',
-      prices: 'Give current status of prices',
-      system: 'Give current system health status'
-    };
+  function quickAsk(topic) {
     currentTopic = topic;
-    document.getElementById('oracle-query').value = canned[topic];
+    document.getElementById('oracle-query').value = '';
+    askOracle('');
   }
 
-  function askOracle() {
+  function askOracle(queryOverride) {
     const persona = personaSelect.value;
-    const query = document.getElementById('oracle-query').value.trim();
+    const query =
+      queryOverride !== undefined
+        ? queryOverride
+        : document.getElementById('oracle-query').value.trim();
     const url = `/gpt/oracle/query?persona=${encodeURIComponent(persona)}&topic=${encodeURIComponent(currentTopic)}&query=${encodeURIComponent(query)}`;
     fetch(url)
       .then(res => res.json())
