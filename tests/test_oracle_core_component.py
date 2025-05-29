@@ -1,11 +1,21 @@
 import importlib.util
+import importlib.machinery
 from pathlib import Path
 import sys
+import types
 
 
 def load_module():
     base = Path(__file__).resolve().parents[1]
     oc_base = base / "oracle_core"
+
+    loader = importlib.machinery.SourceFileLoader("oracle_core", str(oc_base / "__init__.py"))
+    spec = importlib.machinery.ModuleSpec("oracle_core", loader, is_package=True)
+    spec.submodule_search_locations = [str(oc_base)]
+    pkg = types.ModuleType("oracle_core")
+    pkg.__spec__ = spec
+    pkg.__path__ = [str(oc_base)]
+    sys.modules.setdefault("oracle_core", pkg)
 
     ods_path = oc_base / "oracle_data_service.py"
     ods_spec = importlib.util.spec_from_file_location("oracle_core.oracle_data_service", ods_path)
