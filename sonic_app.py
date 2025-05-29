@@ -56,6 +56,10 @@ configure_console_log(debug=True)
 app = Flask(__name__)
 app.debug = False
 app.secret_key = "i-like-lamp"
+app.config["PHANTOM_PATH"] = os.getenv(
+    "PHANTOM_PATH",
+    str(BASE_DIR / "wallets" / "phantom_wallet"),
+)
 socketio = SocketIO(app)
 
 # --- SINGLETON BACKEND ---
