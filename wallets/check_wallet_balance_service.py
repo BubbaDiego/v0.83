@@ -28,8 +28,8 @@ class CheckWalletBalanceService:
     """Simple blockchain balance checker supporting Ethereum and Solana."""
 
     def __init__(self,
-                 eth_rpc_url: str | None = None,
-                 sol_rpc_url: str | None = None) -> None:
+                 eth_rpc_url: Optional[str] = None,
+                 sol_rpc_url: Optional[str] = None) -> None:
         self.eth_rpc_url = eth_rpc_url or "https://cloudflare-eth.com"
         self.sol_rpc_url = sol_rpc_url or "https://api.mainnet-beta.solana.com"
         self._eth = Web3(Web3.HTTPProvider(self.eth_rpc_url)) if Web3 else None

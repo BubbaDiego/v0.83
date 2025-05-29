@@ -1,5 +1,6 @@
 import sys
 import os
+from typing import Optional
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from core.logging import log
 
@@ -16,7 +17,7 @@ from monitor.monitor_registry import MonitorRegistry
 class MonitorCore:
     """Central controller for all registered monitors."""
 
-    def __init__(self, registry: MonitorRegistry | None = None):
+    def __init__(self, registry: Optional[MonitorRegistry] = None):
         """Create the core controller.
 
         If ``registry`` is not supplied a new :class:`MonitorRegistry` instance

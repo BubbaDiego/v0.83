@@ -32,7 +32,7 @@ LAMPORTS_PER_SOL = 1_000_000_000
 class BlockchainBalanceService:
     """Retrieve balances for public addresses on supported chains."""
 
-    def __init__(self, eth_rpc_url: str | None = None, sol_rpc_url: str | None = None) -> None:
+    def __init__(self, eth_rpc_url: Optional[str] = None, sol_rpc_url: Optional[str] = None) -> None:
         self.eth_rpc_url = eth_rpc_url or "https://cloudflare-eth.com"
         self.sol_rpc_url = sol_rpc_url or "https://api.mainnet-beta.solana.com"
         self._eth = Web3(Web3.HTTPProvider(self.eth_rpc_url)) if Web3 else None

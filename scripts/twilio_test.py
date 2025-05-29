@@ -5,7 +5,7 @@ import argparse
 __test__ = False
 import os
 import sys
-from typing import Optional
+from typing import Optional, List
 
 import requests
 try:
@@ -29,7 +29,7 @@ def trigger_flow(client: Client, flow_sid: str, from_phone: str, to_phone: str) 
     client.studio.v2.flows(flow_sid).executions.create(from_=from_phone, to=to_phone)
 
 
-def main(argv: Optional[list[str]] = None) -> int:
+def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(description="Test Twilio credentials and optionally trigger a flow")
     parser.add_argument("--sid", help="Twilio Account SID")
     parser.add_argument("--token", help="Twilio Auth Token")

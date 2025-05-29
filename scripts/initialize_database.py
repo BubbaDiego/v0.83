@@ -25,6 +25,7 @@ from core.core_imports import configure_console_log
 from data.data_locker import DataLocker
 from data.reset_database import reset_database
 from data.threshold_seeder import AlertThresholdSeeder
+from typing import List, Optional
 
 
 def seed_wallets(locker: DataLocker) -> None:
@@ -53,7 +54,7 @@ def seed_thresholds(locker: DataLocker) -> None:
     print(f"✅ Thresholds seeded → {created} created, {updated} updated")
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Database initialization helper")
     parser.add_argument("--reset", action="store_true", help="Delete the existing database before creating tables")
     parser.add_argument("--seed-wallets", action="store_true", help="Seed wallets from wallets.json")
@@ -63,7 +64,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def main(argv: list[str] | None = None) -> int:
+def main(argv: Optional[List[str]] = None) -> int:
     args = parse_args(argv)
     configure_console_log()
 

@@ -20,6 +20,7 @@ import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
+from typing import List
 
 # Make sure we can import scripts.twilio_test when executed from repo root
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -29,9 +30,9 @@ if str(SCRIPT_DIR) not in sys.path:
 from twilio_test import main as twilio_test_main
 
 
-def build_argv() -> list[str]:
+def build_argv() -> List[str]:
     """Construct argument list for ``twilio_test.main`` from environment."""
-    argv: list[str] = []
+    argv: List[str] = []
     sid = os.getenv("TWILIO_ACCOUNT_SID")
     token = os.getenv("TWILIO_AUTH_TOKEN")
     flow_sid = os.getenv("TWILIO_FLOW_SID")

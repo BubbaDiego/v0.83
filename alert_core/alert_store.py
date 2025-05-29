@@ -2,6 +2,7 @@
 
 import sys
 import os
+from typing import List
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from alert_core.alert_utils import normalize_alert_type, normalize_condition, normalize_notification_type
 from data.alert import AlertType, Condition
@@ -191,10 +192,10 @@ class AlertStore:
             log.error("❌ Failed to fetch alerts", source="AlertStore", payload={"error": str(e)})
             return []
 
-    def get_all_alerts(self) -> list:
+    def get_all_alerts(self) -> List:
         return self.get_alerts()
 
-    def get_active_alerts(self) -> list[Alert]:
+    def get_active_alerts(self) -> List[Alert]:
         alerts_raw = self.get_alerts()
 
         if not alerts_raw:

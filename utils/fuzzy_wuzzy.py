@@ -25,7 +25,7 @@ except Exception:  # pragma: no cover - fallback for minimal env
 
     class _Process:
         @staticmethod
-        def extractOne(query: str, choices: list[str], scorer=_Fuzz.partial_token_ratio):
+        def extractOne(query: str, choices: List[str], scorer=_Fuzz.partial_token_ratio):
             best_choice = None
             best_score = -1
             for choice in choices:

@@ -1,6 +1,11 @@
 import json
+
+from pathlib import Path
+from typing import Dict, Iterable, List, Tuple
+
 import importlib.resources as resources
 from typing import Dict, Iterable
+
 
 
 class Strategy:
@@ -22,7 +27,7 @@ class Strategy:
         return new_ctx
 
     @staticmethod
-    def merge_modifiers(weighted_mods: Iterable[tuple[Dict, float]]) -> Dict:
+    def merge_modifiers(weighted_mods: Iterable[Tuple[Dict, float]]) -> Dict:
         """Merge multiple modifier dicts given (modifiers, weight) pairs."""
 
         def _merge(target: Dict, source: Dict, weight: float):

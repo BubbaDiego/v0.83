@@ -3,6 +3,7 @@ import json
 import time
 import inspect
 from datetime import datetime
+from typing import Dict, List, Optional
 try:
     from rich.logging import RichHandler  # type: ignore
 except Exception:  # pragma: no cover - fallback for minimal env
@@ -42,10 +43,10 @@ class RichLogger:
     }
 
     logging_enabled = True
-    module_log_control: dict[str, bool] = {}
-    group_map: dict[str, list[str]] = {}
-    group_log_control: dict[str, bool] = {}
-    timers: dict[str, float] = {}
+    module_log_control: Dict[str, bool] = {}
+    group_map: Dict[str, List[str]] = {}
+    group_log_control: Dict[str, bool] = {}
+    timers: Dict[str, float] = {}
 
     def __init__(self, name: str = "cyclone") -> None:
         self.logger = logging.getLogger(name)
@@ -96,7 +97,7 @@ class RichLogger:
         return True
 
     # ------------------------------------------------------
-    def _log(self, level: int, icon_key: str, message: str, source: str | None = None, payload: dict | None = None):
+    def _log(self, level: int, icon_key: str, message: str, source: Optional[str] = None, payload: Optional[Dict] = None):
         module = source or self._get_caller_module()
         timestamp = self._timestamp()
         icon = self.ICONS.get(icon_key, "")
@@ -120,29 +121,29 @@ class RichLogger:
         self.logger.log(level, label + inline_payload, extra={"source_module": module}, stacklevel=2)
 
     # Public API ------------------------------------------------------
-    def info(self, message: str, source: str | None = None, payload: dict | None = None):
+    def info(self, message: str, source: Optional[str] = None, payload: Optional[Dict] = None):
         self._log(logging.INFO, "info", message, source, payload)
 
-    def success(self, message: str, source: str | None = None, payload: dict | None = None):
+    def success(self, message: str, source: Optional[str] = None, payload: Optional[Dict] = None):
         self._log(logging.INFO, "success", message, source, payload)
 
-    def warning(self, message: str, source: str | None = None, payload: dict | None = None):
+    def warning(self, message: str, source: Optional[str] = None, payload: Optional[Dict] = None):
         self._log(logging.WARNING, "warning", message, source, payload)
 
-    def error(self, message: str, source: str | None = None, payload: dict | None = None):
+    def error(self, message: str, source: Optional[str] = None, payload: Optional[Dict] = None):
         self._log(logging.ERROR, "error", message, source, payload)
 
-    def debug(self, message: str, source: str | None = None, payload: dict | None = None):
+    def debug(self, message: str, source: Optional[str] = None, payload: Optional[Dict] = None):
         self._log(logging.DEBUG, "debug", message, source, payload)
 
-    def critical(self, message: str, source: str | None = None, payload: dict | None = None):
+    def critical(self, message: str, source: Optional[str] = None, payload: Optional[Dict] = None):
         """Log a critical message. Uses the error icon with CRITICAL level."""
         self._log(logging.CRITICAL, "error", message, source, payload)
 
-    def death(self, message: str, source: str | None = None, payload: dict | None = None):
+    def death(self, message: str, source: Optional[str] = None, payload: Optional[Dict] = None):
         self._log(logging.CRITICAL, "death", message, source, payload)
 
-    def route(self, message: str, source: str | None = None, payload: dict | None = None):
+    def route(self, message: str, source: Optional[str] = None, payload: Optional[Dict] = None):
         self._log(logging.INFO, "route", message, source, payload)
 
     def banner(self, message: str):
@@ -154,7 +155,7 @@ class RichLogger:
     def start_timer(self, label: str):
         self.timers[label] = time.time()
 
-    def end_timer(self, label: str, source: str | None = None):
+    def end_timer(self, label: str, source: Optional[str] = None):
         if label not in self.timers:
             self.warning(f"No timer started for label '{label}'", source)
             return
@@ -171,7 +172,7 @@ class RichLogger:
         cls.module_log_control[module] = True
 
     @classmethod
-    def assign_group(cls, group: str, modules: list[str]):
+    def assign_group(cls, group: str, modules: List[str]):
         cls.group_map[group] = modules
 
     @classmethod

@@ -1,7 +1,7 @@
 import json
 import os
 
-from typing import Dict, Iterable
+from typing import Dict, Iterable, Optional
 
 
 
@@ -22,7 +22,7 @@ class Persona:
 class PersonaManager:
     """Load and manage personas."""
 
-    def __init__(self, base_dir: str | None = None):
+    def __init__(self, base_dir: Optional[str] = None):
         self.base_dir = base_dir or os.path.join(os.path.dirname(__file__), "personas")
         self._personas: Dict[str, Persona] = {}
         self._load_all()
