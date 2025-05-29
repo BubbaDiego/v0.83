@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import Optional
 
+from core.logging import log
+
 try:
     from web3 import Web3
 except Exception:  # pragma: no cover - optional dependency
@@ -13,14 +15,11 @@ try:
     from solana.rpc.api import Client
     from solana.rpc.commitment import Confirmed
     from solders.pubkey import Pubkey
-except Exception as e:  # pragma: no cover - optional dependency
-    import sys
-    print("❌ Failed to import solana/solders:", e, file=sys.stderr)
+except ImportError as e:  # pragma: no cover - optional dependency
+    log.warning("Failed to import solana/solders: %s", e)
     Client = None  # type: ignore
     Confirmed = None  # type: ignore
     Pubkey = object  # type: ignore
-
-from core.logging import log
 
 LAMPORTS_PER_SOL = 1_000_000_000
 
