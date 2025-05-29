@@ -105,6 +105,16 @@ def test_gptcore_ask_oracle_applies_strategy(monkeypatch):
     assert messages[-1]["content"] == "Answer briefly and focus on risk mitigation."
 
 
+def test_gptcore_positions_default_heat_strategy(monkeypatch):
+    GPTCore = setup_core(monkeypatch)
+    core = GPTCore()
+    messages = core.ask_oracle("positions")
+    ctx = json.loads(messages[1]["content"])
+    mods = ctx.get("strategy_modifiers", {})
+    assert mods.get("heat_thresholds", {}).get("warning") == 30
+    assert "Monitor the heat index" in messages[-1]["content"]
+
+
 @pytest.fixture
 def client(monkeypatch):
     flask = importlib.import_module("flask")
