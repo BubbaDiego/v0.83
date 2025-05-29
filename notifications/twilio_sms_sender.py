@@ -12,10 +12,10 @@ except Exception as e:  # pragma: no cover - import may fail
 class TwilioSMSSender:
     """Simple wrapper around the Twilio REST client for SMS."""
 
-    def __init__(self, account_sid=None, auth_token=None, from_number=None):
+    def __init__(self, account_sid=None, auth_token=None, from_phone=None):
         self.account_sid = account_sid or os.getenv("TWILIO_ACCOUNT_SID")
         self.auth_token = auth_token or os.getenv("TWILIO_AUTH_TOKEN")
-        self.from_number = from_number or os.getenv("TWILIO_FROM_NUMBER")
+        self.from_phone = from_phone or os.getenv("TWILIO_FROM_PHONE")
         if Client:
             self.client = Client(self.account_sid, self.auth_token)
         else:  # pragma: no cover - if optional dependency missing
@@ -27,11 +27,11 @@ class TwilioSMSSender:
             log.error("Twilio Client not initialized", source="TwilioSMSSender")
             return False
         try:
-            if not all([self.account_sid, self.auth_token, self.from_number, to_number]):
+            if not all([self.account_sid, self.auth_token, self.from_phone, to_number]):
                 log.error("Missing Twilio SMS configuration", source="TwilioSMSSender")
                 return False
 
-            msg = self.client.messages.create(body=message, from_=self.from_number, to=to_number)
+            msg = self.client.messages.create(body=message, from_=self.from_phone, to=to_number)
             log.info(
                 "✅ SMS sent",
                 source="TwilioSMSSender",
