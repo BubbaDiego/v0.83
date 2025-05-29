@@ -1,7 +1,5 @@
 # dl_thresholds.py
-import sys
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from core.core_imports import log
 from core.constants import CONFIG_DIR
 from datetime import datetime, timezone

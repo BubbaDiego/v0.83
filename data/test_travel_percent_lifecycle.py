@@ -1,8 +1,4 @@
 __test__ = False
-import sys
-import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 
 import asyncio
 from datetime import datetime

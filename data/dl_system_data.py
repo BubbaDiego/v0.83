@@ -7,14 +7,11 @@ Description:
     total balances, and strategy performance metadata.
 """
 
-import sys
-import os
 import json
 from datetime import datetime
 from core.core_imports import log
 from data.models import SystemVariables
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 
 class DLSystemDataManager:
