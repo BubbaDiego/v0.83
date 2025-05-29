@@ -3,6 +3,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import asyncio
 from flask import Blueprint, render_template, jsonify, request, current_app
+from jinja2 import ChoiceLoader, FileSystemLoader
 from typing import Optional
 from data.models import AlertThreshold
 from data.data_locker import DataLocker
@@ -27,6 +28,15 @@ dashboard_bp = Blueprint(
     static_folder='dashboard',
     static_url_path='/dashboard_static'
 )
+
+# Ensure templates in the project root are also discovered when this blueprint
+# is used in isolated test apps where the Flask application's template folder
+# may not point to the repository root.
+ROOT_TEMPLATES = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'templates'))
+dashboard_bp.jinja_loader = ChoiceLoader([
+    FileSystemLoader(os.path.join(os.path.dirname(__file__), 'dashboard')),
+    FileSystemLoader(ROOT_TEMPLATES),
+])
 
 @dashboard_bp.route("/new_dashboard")
 def new_dashboard():

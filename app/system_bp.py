@@ -15,6 +15,7 @@ from flask import (
     jsonify,
     current_app,
 )
+from jinja2 import ChoiceLoader, FileSystemLoader
 from werkzeug.utils import secure_filename
 
 # from config.alert_thresholds_json import legacy_alert_thresholds  # Simulating legacy load
@@ -30,6 +31,13 @@ UPLOAD_FOLDER = os.path.join("static", "uploads", "wallets")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 system_bp = Blueprint("system", __name__, url_prefix="/system")
+
+# Allow this blueprint to find templates in the project's main templates
+# directory when used within standalone test applications.
+ROOT_TEMPLATES = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'templates'))
+system_bp.jinja_loader = ChoiceLoader([
+    FileSystemLoader(ROOT_TEMPLATES),
+])
 
 
 def get_core():
