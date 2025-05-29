@@ -25,6 +25,7 @@ from xcom.check_twilio_heartbeat_service import CheckTwilioHeartbeatService
 from utils.path_audit import run_audit
 from xcom.sound_service import SoundService
 from scripts.verify_all_tables_exist import verify_all_tables_exist
+from typing import Optional
 try:
     from dotenv import load_dotenv
 except Exception:  # pragma: no cover - optional dependency
@@ -36,7 +37,7 @@ import threading
 
 # Automatically load environment variables
 dotenv_file = BASE_DIR / ".env"
-_loaded_env: str | None = None
+_loaded_env: Optional[str] = None
 if load_dotenv(dotenv_file):
     _loaded_env = ".env"
 else:

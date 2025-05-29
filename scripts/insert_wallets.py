@@ -10,7 +10,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, List, Tuple, Optional
 
 # Ensure repository root is on the import path
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -24,7 +24,7 @@ from wallets.wallet_service import WalletService
 from wallets.wallet_schema import WalletIn
 
 
-def load_wallets(json_path: Path) -> list[dict]:
+def load_wallets(json_path: Path) -> List[dict]:
     """Load wallet definitions from ``json_path``."""
     with json_path.open("r", encoding="utf-8") as fh:
         data = json.load(fh)
@@ -33,7 +33,7 @@ def load_wallets(json_path: Path) -> list[dict]:
     return list(data)
 
 
-def upsert_wallets(wallets: list[dict], service: WalletService) -> tuple[int, int]:
+def upsert_wallets(wallets: List[dict], service: WalletService) -> Tuple[int, int]:
     """Create or update wallets via ``service``.
 
     Returns a tuple ``(created, updated)``.
@@ -61,14 +61,14 @@ def upsert_wallets(wallets: list[dict], service: WalletService) -> tuple[int, in
     return created, updated
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Insert or update wallets")
     default_json = REPO_ROOT / "data" / "wallet_backup.json"
     parser.add_argument("--json", default=default_json, type=Path, help="Path to wallet JSON file")
     return parser.parse_args(argv)
 
 
-def main(argv: list[str] | None = None) -> int:
+def main(argv: Optional[List[str]] = None) -> int:
     args = parse_args(argv)
     configure_console_log()
 

@@ -95,7 +95,7 @@ class GPTCore:
             self.logger.exception(f"GPT analysis failed: {e}")
             return f"Error: {e}"
 
-    def ask_oracle(self, topic: str, strategy_name: str | None = None) -> str:
+    def ask_oracle(self, topic: str, strategy_name: Optional[str] = None) -> str:
         """Query GPT for a specific topic using :class:`OracleCore`."""
         if strategy_name in (None, "", "none"):
             strategy_name = None

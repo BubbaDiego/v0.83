@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 from core.core_imports import ALERT_THRESHOLDS_PATH, log
 from core.locker_factory import get_locker
+from typing import Optional
 
 
 def _deep_merge(base: dict, overrides: dict) -> dict:
@@ -53,7 +54,7 @@ def load_config(filename=None):
     return config
 
 
-def update_config(new_config: dict, filename: str | None = None) -> dict:
+def update_config(new_config: dict, filename: Optional[str] = None) -> dict:
     """Merge ``new_config`` into the existing config and persist the result."""
 
     if filename:

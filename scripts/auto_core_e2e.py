@@ -10,7 +10,7 @@ from __future__ import annotations
 import argparse
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
 
 # Ensure repository root is on the import path
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -20,7 +20,7 @@ if str(REPO_ROOT) not in sys.path:
 
 
 
-def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
+def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Run AutoCore E2E workflow with Playwright and Phantom"
     )
@@ -48,7 +48,7 @@ def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def main(argv: Optional[list[str]] = None) -> int:
+def main(argv: Optional[List[str]] = None) -> int:
     args = parse_args(argv)
 
     try:

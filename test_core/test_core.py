@@ -6,6 +6,7 @@ import os
 import importlib
 import re
 from pathlib import Path
+from typing import List, Optional, Union
 import pytest
 from core.core_imports import log
 
@@ -24,7 +25,7 @@ except Exception:  # pragma: no cover - rich optional
 class TestCore:
     """Utility to run pytest with rich reporting."""
 
-    def __init__(self, report_dir: str | Path = "reports", default_pattern: str = "tests/test_*.py") -> None:
+    def __init__(self, report_dir: Union[str, Path] = "reports", default_pattern: str = "tests/test_*.py") -> None:
         self.report_dir = Path(report_dir)
         self.report_dir.mkdir(exist_ok=True)
         self.default_pattern = default_pattern
@@ -34,7 +35,7 @@ class TestCore:
         """Run all tests matching the default pattern."""
         self.run_glob(self.default_pattern)
 
-    def run_glob(self, pattern: str | None = None) -> None:
+    def run_glob(self, pattern: Optional[str] = None) -> None:
         """Discover test files matching *pattern* and run them."""
         pattern = pattern or self.default_pattern
         files = [
@@ -53,7 +54,7 @@ class TestCore:
             return
         self.run_files(files)
 
-    def run_files(self, files: list[str | Path]) -> None:
+    def run_files(self, files: List[Union[str, Path]]) -> None:
         """Execute pytest for the provided *files* with reporting enabled."""
         html_report = self.report_dir / "last_test_report.html"
         json_report = self.report_dir / "last_test_report.json"

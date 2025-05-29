@@ -1,5 +1,6 @@
 import logging
 import os
+from typing import List, Optional
 from playwright.sync_api import sync_playwright, Error
 from dotenv import load_dotenv
 
@@ -125,7 +126,7 @@ class PhantomManager:
     def approve_transaction(
         self,
         transaction_trigger_selector: str,
-        confirm_selectors: list | None = None,
+        confirm_selectors: Optional[List[str]] = None,
         trigger_timeout: int = 10000,
         confirm_timeout: int = 5000,
     ) -> None:
@@ -202,7 +203,7 @@ class PhantomManager:
         popup_connect_selector: str = "text=Connect",
         wallet_selection_selector: str = "text=Use this wallet",
         dapp_connected_selector: str = "text=Connected",
-        phantom_password: str | None = None,
+        phantom_password: Optional[str] = None,
     ) -> None:
         logger.debug("Navigating to dApp: %s", dapp_url)
         try:

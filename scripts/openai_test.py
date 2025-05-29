@@ -12,7 +12,7 @@ import argparse
 import os
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
 
 try:
     from dotenv import load_dotenv
@@ -49,7 +49,7 @@ def call_chatgpt(api_key: str, prompt: str) -> int:
         return 1
 
 
-def main(argv: Optional[list[str]] = None) -> int:
+def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(description="Test ChatGPT API access")
     parser.add_argument(
         "--key",

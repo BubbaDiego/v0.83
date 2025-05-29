@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List
 import pytest
 from test_core.test_core import TestCore
 
@@ -12,7 +13,7 @@ def test_run_glob_filters_virtual_envs(tmp_path, monkeypatch):
         (tmp_path / d).mkdir()
         (tmp_path / d / "test_ignore.py").write_text("")
 
-    captured: list[Path] = []
+    captured: List[Path] = []
 
     def fake_run_files(self, files):
         captured.extend(files)
@@ -32,7 +33,7 @@ def test_run_glob_skips_pycache_and_pyc(tmp_path, monkeypatch):
     (tmp_path / "test_ok.py").write_text("")
     (tmp_path / "test_skip.pyc").write_text("")
 
-    captured: list[Path] = []
+    captured: List[Path] = []
 
     def fake_run_files(self, files):
         captured.extend(files)
