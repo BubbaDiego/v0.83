@@ -1,6 +1,9 @@
 import sys
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# Ensure the project root is on the path so data/* imports work when this
+# test is run directly rather than through ``pytest``'s configured testpaths.
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 import random
 from uuid import uuid4
 from datetime import datetime
