@@ -138,19 +138,31 @@ class TestCore:
             elif line.endswith("SKIPPED"):
                 log.warning(f"⚠️ {line}", source="TestCore")
 
-        log.banner("Test Summary")
-        log.info(
-            f"✅ Passed: {passed}  ❌ Failed: {failed}  ⚠️ Skipped: {skipped}",
-            source="TestCore",
-        )
-
         total = passed + failed + skipped
-        if total:
-            pct = passed / total * 100
+
+        if console and Panel and Table:
+            table = Table(title="Test Summary", show_lines=True)
+            table.add_column("Result", style="white", justify="left")
+            table.add_column("Count", style="cyan", justify="right")
+            table.add_row("✅ Passed", str(passed))
+            table.add_row("❌ Failed", str(failed))
+            table.add_row("⚠️ Skipped", str(skipped))
+            if total:
+                pct = passed / total * 100
+                table.add_row("🔢 Pass Rate", f"{pct:.1f}% ({passed}/{total})")
+            console.print(table)
+        else:
+            log.banner("Test Summary")
             log.info(
-                f"🔢 Pass Rate: {pct:.1f}% ({passed}/{total})",
+                f"✅ Passed: {passed}  ❌ Failed: {failed}  ⚠️ Skipped: {skipped}",
                 source="TestCore",
             )
+            if total:
+                pct = passed / total * 100
+                log.info(
+                    f"🔢 Pass Rate: {pct:.1f}% ({passed}/{total})",
+                    source="TestCore",
+                )
 
         if result == 0:
             log.success("✅ All tests completed!", source="TestCore")
