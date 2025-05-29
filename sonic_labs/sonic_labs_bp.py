@@ -2,6 +2,8 @@
 # sonic_labs_bp.py
 
 from flask import Blueprint, jsonify, current_app, request, render_template
+import os
+from jinja2 import ChoiceLoader, FileSystemLoader
 import json
 from positions.position_sync_service import PositionSyncService  # noqa: F401
 from positions.position_core_service import PositionCoreService  # noqa: F401
@@ -27,6 +29,12 @@ WALLET_IMAGE_MAP = {
 DEFAULT_WALLET_IMAGE = "unknown_wallet.jpg"
 
 sonic_labs_bp = Blueprint("sonic_labs", __name__, template_folder="templates")
+
+# Allow this blueprint to locate templates when used in isolation
+ROOT_TEMPLATES = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'templates'))
+sonic_labs_bp.jinja_loader = ChoiceLoader([
+    FileSystemLoader(ROOT_TEMPLATES),
+])
 
 @sonic_labs_bp.route("/hedge_calculator", methods=["GET"])
 @retry_on_locked()
