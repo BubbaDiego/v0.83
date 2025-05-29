@@ -56,10 +56,10 @@ DEFAULT_WALLET_IMAGE = "unknown_wallet.jpg"
 # ---------------------------------
 def format_monitor_time(iso_str):
     if not iso_str:
-        print("DEBUG: iso_str is None or empty")
+        log.debug("iso_str is None or empty")
         return "N/A"
     try:
-        print(f"DEBUG: Raw iso_str received: {iso_str}")
+        log.debug(f"Raw iso_str received: {iso_str}")
         dt = datetime.fromisoformat(iso_str.replace("Z", "+00:00"))
         pacific = dt.astimezone(ZoneInfo("America/Los_Angeles"))
 
@@ -71,10 +71,10 @@ def format_monitor_time(iso_str):
         day = str(pacific.day)
 
         formatted = f"{hour}:{minute} {ampm}\n{month}/{day}"
-        print(f"DEBUG: Parsed and formatted time: {formatted}")
+        log.debug(f"Parsed and formatted time: {formatted}")
         return formatted
     except Exception as e:
-        print(f"DEBUG: Exception occurred in format_monitor_time: {e}")
+        log.debug(f"Exception occurred in format_monitor_time: {e}")
         return "N/A"
 
 def apply_color(metric_name: str, value: float, thresholds: dict) -> str:
