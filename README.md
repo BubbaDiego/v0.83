@@ -17,6 +17,24 @@ pip install -r requirements.txt
 The requirements list includes the `solana` and `solders` packages used for
 wallet balance lookups.
 
+### Troubleshooting
+
+If the console reports `❌ Failed to import solana/solders`, the optional wallet
+packages are not installed. Add them with:
+
+```bash
+pip install solana==0.36.6 solders==0.26.0
+```
+
+or simply reinstall all requirements:
+
+```bash
+pip install -r requirements.txt
+```
+
+Wallet features are disabled when these dependencies are missing, but all other
+functionality remains available.
+
 This installs `pytest` and all other required packages. Run the app with:
 
 ```bash
