@@ -11,7 +11,7 @@ def main():
     DAPP_URL = "https://jup.ag/perps-legacy/short/SOL-SOL"
     solflare_password = os.environ.get("SOLFLARE_PASSWORD")
 
-    # Initialize SolflareManager and launch the browser.
+    # Initialize SolflareManager and launch the browser.as
     sm = SolflareManager(extension_path=EXTENSION_PATH, headless=False)
     sm.launch_browser()
 
