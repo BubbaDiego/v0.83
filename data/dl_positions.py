@@ -13,6 +13,7 @@ Dependencies:
 import os
 from uuid import uuid4
 from datetime import datetime
+import sqlite3
 from core.core_imports import log
 
 
@@ -106,15 +107,32 @@ class DLPositionManager:
     def get_all_positions(self) -> list:
         try:
             cursor = self.db.get_cursor()
-            cursor.execute("SELECT * FROM positions")
+            try:
+                cursor.execute("SELECT * FROM positions")
+            except sqlite3.DatabaseError as e:
+                err_msg = str(e)
+                if "malformed" in err_msg or "file is not a database" in err_msg:
+                    log.error(f"Error fetching positions: {e}", source="DLPositionManager")
+                    log.warning(
+                        "Database appears corrupt. Attempting recovery...",
+                        source="DLPositionManager",
+                    )
+                    self.db.recover_database()
+                    return []
+                raise
             rows = cursor.fetchall()
-            log.debug(f"Fetched {len(rows)} positions", source="DLPositionManager")
+            log.debug(
+                f"Fetched {len(rows)} positions", source="DLPositionManager"
+            )
             return [dict(row) for row in rows]
         except Exception as e:
             err_msg = str(e)
-            if "database disk image is malformed" in err_msg or "file is not a database" in err_msg:
+            if "malformed" in err_msg or "file is not a database" in err_msg:
                 log.error(f"Error fetching positions: {e}", source="DLPositionManager")
-                log.warning("Database appears corrupt. Attempting recovery...", source="DLPositionManager")
+                log.warning(
+                    "Database appears corrupt. Attempting recovery...",
+                    source="DLPositionManager",
+                )
                 self.db.recover_database()
                 return []
             log.error(f"Error fetching positions: {e}", source="DLPositionManager")
