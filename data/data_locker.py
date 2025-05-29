@@ -298,7 +298,8 @@ class DataLocker:
         return self.positions.get_all_positions()
 
     def close(self):
-        self.db.close()  # Hey
+        self.db.close()
+        DataLocker._instance = None
         log.debug("DataLocker shutdown complete.", source="DataLocker")
 
     def get_latest_price(self, asset_type: str) -> dict:
