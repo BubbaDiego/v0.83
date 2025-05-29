@@ -101,4 +101,4 @@ def test_xcom_config_template_contains_status_button():
     assert resp.status_code == 200
     html = resp.data.decode()
     assert "checkAllApis" in html
-    assert "apiStatusList" in html
+    assert "id=\"apiStatusList\"" in html
