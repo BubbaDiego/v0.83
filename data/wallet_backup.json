@@ -14,17 +14,10 @@
     "balance": 0.0
   },
   {
-    "name": "LandoVaultz",
+    "name": "LandoVault",
     "public_address": "6vMjsGU63evYuwwGsDHBRnKs1stALR7SYN5V57VZLXca\t",
     "private_address": "",
     "image_path": "/static/uploads/wallets/landovault.jpg",
     "balance": 0.0
-  },
-  {
-    "name": "LandoVault",
-    "public_address": "DjsRU...VALID2",
-    "private_address": "privatekey2",
-    "image_path": "",
-    "balance": 2500.0
   }
 ]
