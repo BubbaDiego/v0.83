@@ -1,5 +1,6 @@
 from typing import Dict
 
+from calc_core.calc_services import CalcServices
 from .oracle_data_service import OracleDataService
 
 
@@ -14,4 +15,8 @@ class PositionsTopicHandler:
 
     def get_context(self) -> Dict:
         positions = self.data_service.fetch_positions()
-        return {self.output_key: positions}
+        totals = CalcServices().calculate_totals(positions)
+        return {
+            self.output_key: positions,
+            "avg_heat_index": totals.get("avg_heat_index", 0.0),
+        }
