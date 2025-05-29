@@ -285,7 +285,7 @@ To load Phantom, specify the extension path and a profile directory when launchi
 ```python
 from playwright.sync_api import sync_playwright
 
-phantom_path = "/path/to/phantom"
+phantom_path = "wallets/phantom_wallet"  # override this path if Phantom lives elsewhere
 profile_dir = "/tmp/playwright/phantom-profile"
 
 with sync_playwright() as pw:
