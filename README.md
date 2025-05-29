@@ -5,6 +5,8 @@ For an overview of the key modules and architecture, see
 
 [Monitor Core specification](monitor/monitor_module_spec.md).
 
+This project requires **Python 3.10+** because it uses the `|` union type syntax.
+
 ## Quick Start
 
 Create a virtual environment and install all dependencies:
@@ -14,6 +16,7 @@ python -m venv .venv
 source .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
+Python 3.10 or later is required because the codebase uses the `|` union syntax.
 The requirements list includes the `solana` and `solders` packages used for
 wallet balance lookups.
 
