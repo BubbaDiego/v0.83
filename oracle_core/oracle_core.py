@@ -9,6 +9,7 @@ except Exception:  # pragma: no cover - optional dependency
 
 from .strategy_manager import StrategyManager, Strategy
 from .persona_manager import PersonaManager
+from trader.trader_loader import TraderLoader
 from .portfolio_topic_handler import PortfolioTopicHandler
 from .alerts_topic_handler import AlertsTopicHandler
 from .prices_topic_handler import PricesTopicHandler
@@ -120,3 +121,22 @@ class OracleCore:
         context, instructions = self._get_context_and_instructions(topic, strategy_name)
         messages = self.build_prompt(topic, context, instructions)
         return {"topic": topic, "messages": messages}
+
+    def ask_trader(self, topic: str, trader_name: str) -> str:
+        """Query GPT for a trader persona."""
+        loader = TraderLoader(self.persona_manager, self.strategy_manager, self.data_locker)
+        trader = loader.load_trader(trader_name)
+        weighted = [
+            (self.strategy_manager.get(n).modifiers, w)
+            for n, w in trader.strategies.items()
+        ]
+        merged = Strategy.merge_modifiers(weighted)
+        context = {
+            "portfolio": trader.portfolio,
+            "positions": trader.positions,
+            "strategy_modifiers": merged,
+            "mood": trader.mood,
+        }
+        instructions = self.persona_manager.get(trader_name).instructions or self.DEFAULT_INSTRUCTIONS.get(topic, "Assist the user.")
+        messages = self.build_prompt(topic, context, instructions)
+        return self.query_gpt(messages)
