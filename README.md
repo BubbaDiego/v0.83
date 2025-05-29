@@ -72,9 +72,6 @@ install the requirements first:
 python scripts/setup_test_env.py
 ```
 This step is optional and not part of the default test run.
-The interactive test runner also exposes an "Install test dependencies"
-option so you can prepare the environment without leaving the menu.
-
 ### Debug Logging
 
 To see verbose output from the console logger, pass `debug=True` when
