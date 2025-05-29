@@ -60,3 +60,6 @@ Each handler (`PortfolioTopicHandler`, `PositionsTopicHandler`, `AlertsTopicHand
 - `fetch_prices()` → recent prices
 - `fetch_positions()` → recent positions
 - `fetch_system()` → `{"last_update_times": ..., "death_log": [...], "system_alerts": [...]}`
+- Positions queries automatically apply the `heat_control` strategy if no
+  strategy is provided, injecting heat thresholds and instructions into the
+  context.

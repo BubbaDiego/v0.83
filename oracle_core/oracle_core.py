@@ -80,6 +80,14 @@ class OracleCore:
         context = handler.get_context()
         instructions = self.DEFAULT_INSTRUCTIONS.get(topic, "Assist the user.")
 
+        if topic == "positions" and not strategy_name:
+            try:
+                default_strat = self.strategy_manager.get("heat_control")
+                context = default_strat.apply(context)
+                instructions = default_strat.instructions or instructions
+            except KeyError:  # pragma: no cover - defensive
+                pass
+
         if strategy_name:
             try:
                 strategy = self.strategy_manager.get(strategy_name)
