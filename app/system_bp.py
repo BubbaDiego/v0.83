@@ -455,46 +455,76 @@ def update_modifiers(group):
 def hedge_calculator_page():
     """Render the hedge calculator page."""
     try:
-        core = PositionCore(current_app.data_locker)
-        positions = [
-            p
-            for p in (core.get_active_positions() or [])
-            if str(p.get("status", "")).upper() == "ACTIVE"
-        ]
-
-        long_positions = [
-            p for p in positions if str(p.get("position_type", "")).upper() == "LONG"
-        ]
-        short_positions = [
-            p for p in positions if str(p.get("position_type", "")).upper() == "SHORT"
-        ]
-
-        hedges = HedgeManager(positions).get_hedges()
-        default_long_id = None
-        default_short_id = None
-        if hedges:
-            first = hedges[0]
-            pos_map = {p.get("id"): p for p in positions}
-            for pid in first.positions:
-                pos = pos_map.get(pid)
-                if not pos:
-                    continue
-                ptype = str(pos.get("position_type", "")).upper()
-                if ptype == "LONG" and default_long_id is None:
-                    default_long_id = pid
-                elif ptype == "SHORT" and default_short_id is None:
-                    default_short_id = pid
-                if default_long_id and default_short_id:
-                    break
-
         dl = current_app.data_locker
 
+        positions = []
+        long_positions = []
+        short_positions = []
+        default_long_id = None
+        default_short_id = None
+
+        # Attempt to load active positions. Fallback to empty lists on failure.
+        try:
+            core = PositionCore(dl)
+            positions = [
+                p
+                for p in (core.get_active_positions() or [])
+                if str(p.get("status", "")).upper() == "ACTIVE"
+            ]
+
+            long_positions = [
+                p
+                for p in positions
+                if str(p.get("position_type", "")).upper() == "LONG"
+            ]
+            short_positions = [
+                p
+                for p in positions
+                if str(p.get("position_type", "")).upper() == "SHORT"
+            ]
+
+            hedges = HedgeManager(positions).get_hedges()
+            if hedges:
+                first = hedges[0]
+                pos_map = {p.get("id"): p for p in positions}
+                for pid in first.positions:
+                    pos = pos_map.get(pid)
+                    if not pos:
+                        continue
+                    ptype = str(pos.get("position_type", "")).upper()
+                    if ptype == "LONG" and default_long_id is None:
+                        default_long_id = pid
+                    elif ptype == "SHORT" and default_short_id is None:
+                        default_short_id = pid
+                    if default_long_id and default_short_id:
+                        break
+        except Exception as e:
+            current_app.logger.error(
+                f"Failed to load positions for hedge calculator: {e}",
+                exc_info=True,
+            )
+
         # Load the active theme profile from the DB instead of a JSON file
-        theme_config = dl.system.get_active_theme_profile() or {}
+        theme_config = {}
+        if getattr(dl, "system", None) and hasattr(dl.system, "get_active_theme_profile"):
+            try:
+                theme_config = dl.system.get_active_theme_profile() or {}
+            except Exception as e:
+                current_app.logger.error(
+                    f"Failed to load theme profile: {e}", exc_info=True
+                )
 
         # Retrieve hedge and heat modifiers from the modifiers table
-        hedge_mods = dl.modifiers.get_all_modifiers("hedge_modifiers")
-        heat_mods = dl.modifiers.get_all_modifiers("heat_modifiers")
+        hedge_mods = {}
+        heat_mods = {}
+        if getattr(dl, "modifiers", None) and hasattr(dl.modifiers, "get_all_modifiers"):
+            try:
+                hedge_mods = dl.modifiers.get_all_modifiers("hedge_modifiers")
+                heat_mods = dl.modifiers.get_all_modifiers("heat_modifiers")
+            except Exception as e:
+                current_app.logger.error(
+                    f"Failed to load modifiers: {e}", exc_info=True
+                )
         modifiers = {"hedge_modifiers": hedge_mods, "heat_modifiers": heat_mods}
 
         return render_template(
