@@ -26,7 +26,7 @@ class DLSystemDataManager:
     def get_theme_mode(self) -> str:
         try:
             cursor = self.db.get_cursor()
-            cursor.execute("SELECT theme_mode FROM system_vars WHERE id = 1")
+            cursor.execute("SELECT theme_mode FROM system_vars WHERE id = 'main'")
             row = cursor.fetchone()
             theme = row["theme_mode"] if row and row["theme_mode"] else "light"
             log.debug(f"Theme mode retrieved: {theme}", source="DLSystemDataManager")
@@ -38,7 +38,7 @@ class DLSystemDataManager:
     def set_theme_mode(self, mode: str):
         try:
             cursor = self.db.get_cursor()
-            cursor.execute("UPDATE system_vars SET theme_mode = ? WHERE id = 1", (mode,))
+            cursor.execute("UPDATE system_vars SET theme_mode = ? WHERE id = 'main'", (mode,))
             self.db.commit()
             log.success(f"Theme mode updated to: {mode}", source="DLSystemDataManager")
         except Exception as e:
@@ -53,7 +53,7 @@ class DLSystemDataManager:
                    last_update_time_jupiter, theme_mode,
                    strategy_start_value, strategy_description
             FROM system_vars
-            WHERE id = 1
+            WHERE id = 'main'
             LIMIT 1
         """)
         row = cursor.fetchone()
@@ -73,7 +73,7 @@ class DLSystemDataManager:
                    last_update_prices_source = :last_update_prices_source,
                    last_update_time_jupiter = :last_update_time_jupiter,
                    last_update_jupiter_source = :last_update_jupiter_source
-             WHERE id = 1
+               WHERE id = 'main'
         """, updates)
         self.db.commit()
         cursor.close()
@@ -119,7 +119,7 @@ class DLSystemDataManager:
     def set_active_theme_profile(self, name: str):
         try:
             cursor = self.db.get_cursor()
-            cursor.execute("UPDATE system_vars SET theme_active_profile = ? WHERE id = 1", (name,))
+            cursor.execute("UPDATE system_vars SET theme_active_profile = ? WHERE id = 'main'", (name,))
             self.db.commit()
         except Exception as e:
             log.error(f"❌ Failed to set active theme profile '{name}': {e}", source="DLSystemDataManager")
@@ -127,7 +127,7 @@ class DLSystemDataManager:
     def get_active_theme_profile(self) -> dict:
         try:
             cursor = self.db.get_cursor()
-            row = cursor.execute("SELECT theme_active_profile FROM system_vars WHERE id = 1").fetchone()
+            row = cursor.execute("SELECT theme_active_profile FROM system_vars WHERE id = 'main'").fetchone()
             if not row or not row["theme_active_profile"]:
                 return {}
             active_name = row["theme_active_profile"]
