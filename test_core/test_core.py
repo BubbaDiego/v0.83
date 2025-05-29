@@ -5,6 +5,7 @@ import contextlib
 import os
 import importlib
 import re
+import subprocess
 from pathlib import Path
 import pytest
 from core.core_imports import log
@@ -29,9 +30,12 @@ class TestCore:
         self.report_dir.mkdir(exist_ok=True)
         self.default_pattern = default_pattern
 
+
     def run_all(self) -> None:
         self.run_glob(self.default_pattern)
 
+
+    
     def expand_pattern(self, raw: str) -> str:
         """Expand user input to a valid test glob pattern. E.g., 'twi' -> 'test_twi*.*'"""
         if "*" in raw or raw.startswith("test_"):
@@ -39,6 +43,7 @@ class TestCore:
         return f"test_{raw}*.*"
 
     def run_glob(self, pattern: str | None = None) -> None:
+
         pattern = self.expand_pattern(pattern or self.default_pattern)
         files = [
             p for p in Path(".").rglob(pattern)
@@ -110,8 +115,14 @@ class TestCore:
             elif line.endswith("SKIPPED"):
                 log.warning(f"⚠️ {line}", source="TestCore")
 
+
+        total = passed + failed + skipped
+        final_grade: Optional[str] = None
+        grade_color = "white"
+
         log.banner("Test Summary")
         log.info(f"✅ Passed: {passed}  ❌ Failed: {failed}  ⚠️ Skipped: {skipped}", source="TestCore")
+
 
         total = passed + failed + skipped
         final_grade = None
@@ -141,6 +152,29 @@ class TestCore:
             final_grade = f"[bold {color}]🎓 FINAL GRADE: {grade} ({pct:.1f}%) [/bold {color}]"
             log.info(f"🎓 Grade: {grade}", source="TestCore")
 
+        if total:
+            pct = passed / total * 100
+            if pct == 100:
+                grade = "A+"
+                grade_color = "green"
+            elif pct >= 90:
+                grade = "A"
+                grade_color = "green"
+            elif pct >= 80:
+                grade = "B"
+                grade_color = "orange1"
+            elif pct >= 70:
+                grade = "C"
+                grade_color = "yellow1"
+            elif pct >= 60:
+                grade = "D"
+                grade_color = "red"
+            else:
+                grade = "F"
+                grade_color = "red"
+            final_grade = f"[bold {grade_color}]🎓 FINAL GRADE: {grade} ({pct:.1f}%) [/bold {grade_color}]"
+            log.info(f"🎓 Grade: {grade}", source="TestCore")
+
         if result == 0:
             log.success("✅ All tests completed!", source="TestCore")
         else:
@@ -161,6 +195,12 @@ class TestCore:
 
         if final_grade and console:
             console.print("\n\n")
+
+            console.rule("[bold white]Final Score[/bold white]", style=grade_color)
+            console.print(final_grade, justify="center")
+            console.rule(style=grade_color)
+            console.print("\n\n")
+
             console.rule("[bold white]Final Score[/bold white]", style=color)
             console.print(final_grade, justify="center")
             console.rule(style=color)
@@ -198,6 +238,20 @@ class TestCore:
             print(f"- {s}")
         self.run_files(selected)
 
+    def setup_environment(self) -> None:
+        """Install project dependencies for the test suite."""
+        req_file = Path("requirements.txt")
+        if not req_file.exists():
+            log.error("requirements.txt not found", source="TestCore")
+            return
+        log.banner("Installing test dependencies")
+        try:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", str(req_file)])
+            log.success("Dependencies installed", source="TestCore")
+        except Exception as e:  # pragma: no cover - network issues may occur
+            log.error(f"Dependency installation failed: {e}", source="TestCore")
+
+
     def _open_html_report(self, report_path: Path) -> None:
         if not report_path.exists():
             return
@@ -219,7 +273,8 @@ class TestCore:
                 table.add_row("2", "🗂️ Run test file pattern")
                 table.add_row("3", "🧪 Run Alert Core tests")
                 table.add_row("4", "🎯 Pick tests to run")
-                table.add_row("5", "❌ Exit")
+                table.add_row("5", "⚙️ Install test dependencies")
+                table.add_row("6", "❌ Exit")
                 console.print(table)
                 choice = console.input("Choose > ").strip()
             else:
@@ -229,7 +284,8 @@ class TestCore:
                 print("2) 🗂️ Run test file pattern")
                 print("3) 🧪 Run Alert Core tests")
                 print("4) 🎯 Pick tests to run")
-                print("5) ❌ Exit")
+                print("5) ⚙️ Install test dependencies")
+                print("6) ❌ Exit")
                 choice = input("Choose > ").strip()
 
             if choice == "1":
@@ -243,6 +299,8 @@ class TestCore:
             elif choice == "4":
                 self.pick_and_run_tests()
             elif choice == "5":
+                self.setup_environment()
+            elif choice == "6":
                 break
             else:
                 if console:
