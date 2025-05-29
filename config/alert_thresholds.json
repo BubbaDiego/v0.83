@@ -1,6 +1,6 @@
 [
   {
-    "id": "7d24f4ea-c98d-4fa3-ac2a-1ffa3332a9f1",
+    "id": "d87c8a67-6b7e-40b8-9d4d-777e12cc49fd",
     "alert_type": "HeatIndex",
     "alert_class": "Position",
     "metric_key": "heatindex",
@@ -9,13 +9,13 @@
     "medium": 25.0,
     "high": 45.0,
     "enabled": 0,
-    "last_modified": "2025-05-28T23:58:21.441351+00:00",
+    "last_modified": "2025-05-29T01:42:12.555112+00:00",
     "low_notify": "Email",
     "medium_notify": "Email",
     "high_notify": "Email"
   },
   {
-    "id": "2bf2eac2-14e8-49cc-bb34-b1f3df68c5a4",
+    "id": "1f1e80c2-89a3-44c8-887d-be1fd9d945f0",
     "alert_type": "PriceThreshold",
     "alert_class": "Market",
     "metric_key": "price",
@@ -24,13 +24,13 @@
     "medium": 30010.0,
     "high": 40020.0,
     "enabled": 1,
-    "last_modified": "2025-05-28T23:58:21.442243+00:00",
+    "last_modified": "2025-05-29T01:42:12.555964+00:00",
     "low_notify": "",
     "medium_notify": "",
     "high_notify": ""
   },
   {
-    "id": "6085fdad-da56-4910-b3db-82011ddb466a",
+    "id": "793f3d9d-275c-4485-a28d-389098bd60eb",
     "alert_type": "Profit",
     "alert_class": "Position",
     "metric_key": "profit",
@@ -39,13 +39,13 @@
     "medium": 60.0,
     "high": 120.0,
     "enabled": 0,
-    "last_modified": "2025-05-28T23:58:21.440620+00:00",
+    "last_modified": "2025-05-29T01:42:12.554539+00:00",
     "low_notify": "SMS,Email,Voice",
     "medium_notify": "SMS,Email,Voice",
     "high_notify": "SMS,Email,Voice"
   },
   {
-    "id": "ae7dcfa3-46aa-4ce5-897a-2eb9067953ea",
+    "id": "eca0298b-5931-4d1d-9a24-d630ba84574f",
     "alert_type": "TotalValue",
     "alert_class": "Portfolio",
     "metric_key": "total_value",
@@ -54,7 +54,7 @@
     "medium": 25010.0,
     "high": 50020.0,
     "enabled": 0,
-    "last_modified": "2025-05-28T23:58:21.441827+00:00",
+    "last_modified": "2025-05-29T01:42:12.555555+00:00",
     "low_notify": "",
     "medium_notify": "",
     "high_notify": "SMS"

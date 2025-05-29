@@ -15,6 +15,7 @@ from flask import (
     jsonify,
     current_app,
 )
+from jinja2 import ChoiceLoader, FileSystemLoader
 from werkzeug.utils import secure_filename
 
 # from config.alert_thresholds_json import legacy_alert_thresholds  # Simulating legacy load
@@ -30,6 +31,13 @@ UPLOAD_FOLDER = os.path.join("static", "uploads", "wallets")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 system_bp = Blueprint("system", __name__, url_prefix="/system")
+
+# Allow this blueprint to find templates in the project's main templates
+# directory when used within standalone test applications.
+ROOT_TEMPLATES = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'templates'))
+system_bp.jinja_loader = ChoiceLoader([
+    FileSystemLoader(ROOT_TEMPLATES),
+])
 
 
 def get_core():
@@ -58,10 +66,10 @@ def test_xcom():
         elif mode == "email":
             xcom.send_notification("LOW", "Test Email", msg)
         elif mode == "voice":
-            from xcom.check_twilio_heartbeart_service import CheckTwilioHeartbeartService
+            from xcom.check_twilio_heartbeat_service import CheckTwilioHeartbeatService
 
             api_cfg = xcom.config_service.get_provider("api") or {}
-            CheckTwilioHeartbeartService(api_cfg).check(dry_run=False)
+            CheckTwilioHeartbeatService(api_cfg).check(dry_run=False)
         elif mode == "system":
             SoundService().play()
 

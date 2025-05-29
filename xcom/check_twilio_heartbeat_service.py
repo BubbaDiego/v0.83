@@ -8,7 +8,7 @@ from core.logging import log
 from .voice_service import VoiceService
 
 
-class CheckTwilioHeartbeartService:
+class CheckTwilioHeartbeatService:
     """Verify Twilio credentials and optionally place a test voice call."""
 
     def __init__(self, config: Dict):

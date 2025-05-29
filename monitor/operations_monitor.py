@@ -185,9 +185,9 @@ class OperationsMonitor(BaseMonitor):
         api_success = False
         api_error = None
         try:
-            from xcom.check_twilio_heartbeart_service import CheckTwilioHeartbeartService
+            from xcom.check_twilio_heartbeat_service import CheckTwilioHeartbeatService
 
-            result = CheckTwilioHeartbeartService({}).check(dry_run=True)
+            result = CheckTwilioHeartbeatService({}).check(dry_run=True)
             api_success = bool(result.get("success"))
             if api_success:
                 log.success("Twilio credentials valid", source=self.name)

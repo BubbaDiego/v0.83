@@ -20,9 +20,15 @@ def test_twilio_sms_sender(monkeypatch):
     monkeypatch.setenv("TWILIO_ACCOUNT_SID", "sid")
     monkeypatch.setenv("TWILIO_AUTH_TOKEN", "token")
     monkeypatch.setenv("TWILIO_FROM_PHONE", "+10000000000")
+
     monkeypatch.setattr("notifications.twilio_sms_sender.Client", DummyClient)
 
     sender = TwilioSMSSender()
     assert sender.send_sms("+15555555555", "test") is True
     assert isinstance(sender.client, DummyClient)
     assert sender.client.called is True
+
+
+    sender = TwilioSMSSender()
+    assert sender.send_sms("+15555555555", "test") is True
+

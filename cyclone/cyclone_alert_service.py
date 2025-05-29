@@ -94,7 +94,7 @@ class CycloneAlertService:
                     except Exception as e:
                         logger.error(f"❌ Failed to create alert for {pos['id']}: {e}", source="AlertDebug")
 
-            logger.success(f"📊 Position Alert Summary", source="AlertDebug", payload={
+            logger.success("📊 Position Alert Summary", source="AlertDebug", payload={
                 "alerts_created": created,
                 "positions": len(positions)
             })
