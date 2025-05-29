@@ -14,9 +14,10 @@ oracle_core/
 ├── strategy_manager.py      # Load strategy definitions
 ├── persona_manager.py       # Load persona definitions
 ├── alerts_topic_handler.py  # Build alerts context
-├── portfolio_topic_handler.py # Build portfolio context
-├── prices_topic_handler.py  # Build price context
-├── system_topic_handler.py  # Build system status context
+├── portfolio_topic_handler.py   # Build portfolio context
+├── positions_topic_handler.py   # Build positions context
+├── prices_topic_handler.py      # Build price context
+├── system_topic_handler.py      # Build system status context
 ├── personas/                # Default persona JSON files
 └── strategies/              # Strategy modifier JSON files
 ```
@@ -40,6 +41,7 @@ class OracleCore:
         self.register_topic_handler("alerts", AlertsTopicHandler(data_locker))
         self.register_topic_handler("prices", PricesTopicHandler(data_locker))
         self.register_topic_handler("system", SystemTopicHandler(data_locker))
+        self.register_topic_handler("positions", PositionsTopicHandler(data_locker))
 ```
 【F:oracle_core/oracle_core.py†L16-L38】
 
@@ -49,11 +51,12 @@ class OracleCore:
 `PersonaManager` loads persona JSON files that provide instructions and strategy weights. `StrategyManager` loads strategy JSON files defining modifier dictionaries. Persona weights are merged so multiple strategies can influence the final prompt.
 
 ### 🗂️ Topic Handlers
-Each handler (`PortfolioTopicHandler`, `AlertsTopicHandler`, `PricesTopicHandler`, `SystemTopicHandler`) returns a small context dictionary via `OracleDataService`.
+Each handler (`PortfolioTopicHandler`, `PositionsTopicHandler`, `AlertsTopicHandler`, `PricesTopicHandler`, `SystemTopicHandler`) returns a small context dictionary via `OracleDataService`.
 
 ### 🛰️ Data Service
 `OracleDataService` wraps `DataLocker` managers and exposes helpers:
 - `fetch_portfolio()` → latest portfolio snapshot
 - `fetch_alerts()` → recent alerts
 - `fetch_prices()` → recent prices
+- `fetch_positions()` → recent positions
 - `fetch_system()` → `{"last_update_times": ..., "death_log": [...], "system_alerts": [...]}`

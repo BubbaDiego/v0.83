@@ -110,7 +110,7 @@ with status code `0` on success and `1` on failure.
 ## GPT Oracle
 
 Run `python sonic_app.py` and navigate to `/GPT/chat` to open the oracle front end.
-The page shows four buttons—`portfolio`, `alerts`, `prices`, and `system`—that
+The page shows five buttons—`portfolio`, `positions`, `alerts`, `prices`, and `system`—that
 query the `/gpt/oracle/<topic>` API and display the reply using **OracleCore**.
 OracleCore aggregates context, applies optional strategies, and sends the prompt
 to GPT.
@@ -121,7 +121,7 @@ The API can be called directly as well:
 curl "http://localhost:5000/gpt/oracle/portfolio?strategy=none"
 ```
 
-Replace `portfolio` with any other topic to receive a short summary. Use the
+Replace `portfolio` with any other topic (like `positions`, `alerts`, `prices`, or `system`) to receive a short summary. Use the
 `strategy` query parameter to apply a named strategy (defaults to `none`).
 
 System queries now include the latest update timestamps along with recent

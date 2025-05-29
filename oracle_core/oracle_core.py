@@ -13,6 +13,7 @@ from .portfolio_topic_handler import PortfolioTopicHandler
 from .alerts_topic_handler import AlertsTopicHandler
 from .prices_topic_handler import PricesTopicHandler
 from .system_topic_handler import SystemTopicHandler
+from .positions_topic_handler import PositionsTopicHandler
 
 
 class OracleCore:
@@ -23,6 +24,7 @@ class OracleCore:
         "alerts": "You summarize alert information.",
         "prices": "You summarize price information.",
         "system": "You report system status.",
+        "positions": "You summarize position information.",
     }
 
     DEFAULT_INSTRUCTIONS = {
@@ -30,6 +32,7 @@ class OracleCore:
         "alerts": "Summarize the current alert state.",
         "prices": "Summarize the market trends.",
         "system": "Summarize the system health status.",
+        "positions": "Provide a summary of open positions.",
     }
 
     def __init__(self, data_locker):
@@ -47,6 +50,7 @@ class OracleCore:
         self.register_topic_handler("alerts", AlertsTopicHandler(data_locker))
         self.register_topic_handler("prices", PricesTopicHandler(data_locker))
         self.register_topic_handler("system", SystemTopicHandler(data_locker))
+        self.register_topic_handler("positions", PositionsTopicHandler(data_locker))
 
     # public API
     def register_topic_handler(self, name: str, handler: object):

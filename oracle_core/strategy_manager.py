@@ -1,6 +1,11 @@
 import json
+
 from pathlib import Path
 from typing import Dict, Iterable, List, Tuple
+
+import importlib.resources as resources
+from typing import Dict, Iterable
+
 
 
 class Strategy:
@@ -73,22 +78,16 @@ class StrategyManager:
 
     def _load_builtin(self):
         """Load strategies bundled with the package."""
-        import os
-
-        base = os.path.join(os.path.dirname(__file__), "strategies")
-        if not os.path.isdir(base):  # pragma: no cover - defensive
+        strategies_dir = resources.files("oracle_core").joinpath("strategies")
+        if not strategies_dir.is_dir():  # pragma: no cover - defensive
             return
-        for name in os.listdir(base):
-            if name.endswith(".json"):
-                try:
-                    self.load_from_file(os.path.join(base, name))
-                except Exception:
-                    continue
 
-        strategies_dir = Path(__file__).with_name("strategies")
-        if strategies_dir.is_dir():
-            for path in strategies_dir.glob("*.json"):
-                self.load_from_file(path)
+        for entry in strategies_dir.glob("*.json"):
+            try:
+                with resources.as_file(entry) as path:
+                    self.load_from_file(path)
+            except Exception:
+                continue
 
 
     def load(self, strategies: Iterable[Dict]):

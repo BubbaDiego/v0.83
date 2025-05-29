@@ -32,10 +32,10 @@ def load_blueprint():
             return "portfolio"
 
         def ask_oracle(self, topic: str, strategy_name: str = "none") -> str:
-            if topic != "portfolio":
+            if topic not in ("portfolio", "positions"):
                 raise ValueError("Unknown topic")
             assert strategy_name == self.expected_strategy
-            return "portfolio result"
+            return f"{topic} result"
 
     core_mod.GPTCore = DummyCore
     sys.modules["gpt.gpt_core"] = core_mod
@@ -64,12 +64,13 @@ def load_blueprint():
     oracle_mod = types.ModuleType("oracle_core")
 
     class DummyOracle:
-        DEFAULT_INSTRUCTIONS = {"portfolio": "inst"}
-        DEFAULT_SYSTEM_MESSAGES = {"portfolio": "sys"}
+        DEFAULT_INSTRUCTIONS = {"portfolio": "inst", "positions": "inst"}
+        DEFAULT_SYSTEM_MESSAGES = {"portfolio": "sys", "positions": "sys"}
 
         def __init__(self, *a, **k):
             self.handlers = {
-                "portfolio": types.SimpleNamespace(get_context=lambda: {})
+                "portfolio": types.SimpleNamespace(get_context=lambda: {}),
+                "positions": types.SimpleNamespace(get_context=lambda: {})
             }
             self.client = None
 
@@ -113,6 +114,15 @@ def test_oracle_portfolio_reply(client):
     assert "reply" in data
 
 
+def test_oracle_positions_reply(client):
+    from gpt.gpt_core import GPTCore as DummyCore
+    DummyCore.expected_strategy = "none"
+    resp = client.get("/gpt/oracle/positions")
+    assert resp.status_code == 200
+    data = resp.get_json()
+    assert "reply" in data
+
+
 def test_oracle_invalid_topic(client):
     resp = client.get("/gpt/oracle/unknown")
     assert resp.status_code == 400
@@ -124,6 +134,15 @@ def test_oracle_with_strategy(client):
     from gpt.gpt_core import GPTCore as DummyCore
     DummyCore.expected_strategy = "test"
     resp = client.get("/gpt/oracle/portfolio?strategy=test")
+    assert resp.status_code == 200
+    data = resp.get_json()
+    assert "reply" in data
+
+
+def test_oracle_positions_with_strategy(client):
+    from gpt.gpt_core import GPTCore as DummyCore
+    DummyCore.expected_strategy = "test"
+    resp = client.get("/gpt/oracle/positions?strategy=test")
     assert resp.status_code == 200
     data = resp.get_json()
     assert "reply" in data

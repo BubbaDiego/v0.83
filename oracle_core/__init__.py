@@ -8,6 +8,7 @@ from .portfolio_topic_handler import PortfolioTopicHandler
 from .alerts_topic_handler import AlertsTopicHandler
 from .prices_topic_handler import PricesTopicHandler
 from .system_topic_handler import SystemTopicHandler
+from .positions_topic_handler import PositionsTopicHandler
 
 __all__ = [
     "OracleCore",
@@ -20,4 +21,5 @@ __all__ = [
     "AlertsTopicHandler",
     "PricesTopicHandler",
     "SystemTopicHandler",
+    "PositionsTopicHandler",
 ]

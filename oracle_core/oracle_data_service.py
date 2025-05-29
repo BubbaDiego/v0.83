@@ -13,6 +13,10 @@ class OracleDataService:
     def fetch_prices(self):
         return self.dl.prices.get_all_prices()[:20]
 
+    def fetch_positions(self):
+        """Return recent positions for context."""
+        return self.dl.positions.get_all_positions()[:20]
+
     def fetch_death_log(self):
         return self.dl.get_death_log_entries()
 
@@ -33,6 +37,8 @@ class OracleDataService:
             return self.fetch_alerts()
         if topic == "prices":
             return self.fetch_prices()
+        if topic == "positions":
+            return self.fetch_positions()
         if topic == "system":
             return self.fetch_system()
         raise ValueError(f"Unsupported topic: {topic}")
