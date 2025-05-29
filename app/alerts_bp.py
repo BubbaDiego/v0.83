@@ -5,6 +5,7 @@ import asyncio
 import os
 from types import SimpleNamespace
 from flask import current_app
+from datetime import datetime
 from alert_core.alert_utils import resolve_wallet_metadata
 from dashboard.dashboard_service import WALLET_IMAGE_MAP, DEFAULT_WALLET_IMAGE
 
@@ -105,6 +106,7 @@ def create_all_alerts():
         sample_alerts = [
             {
                 "id": "alert-sample-1",
+                "created_at": datetime.now().isoformat(),
                 "alert_type": "PriceThreshold",
                 "alert_class": "Market",
                 "asset_type": "BTC",
