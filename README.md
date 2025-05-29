@@ -6,6 +6,7 @@ For an overview of the key modules and architecture, see
 [Monitor Core specification](monitor/monitor_module_spec.md).
 
 This project requires **Python 3.10+** because it uses the `|` union type syntax.
+The requirements now support **Python 3.13** as well.
 
 ## Quick Start
 
@@ -19,6 +20,7 @@ pip install -r requirements.txt
 Python 3.10 or later is required because the codebase uses the `|` union syntax.
 The requirements list includes the `solana` and `solders` packages used for
 wallet balance lookups.
+The project relies on the `openai` package with version range `>=1.6,<3`.
 
 ### Troubleshooting
 
