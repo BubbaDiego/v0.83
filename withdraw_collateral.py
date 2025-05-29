@@ -1,7 +1,9 @@
 from auto_core import AutoCore
+from pathlib import Path
 
 if __name__ == "__main__":
-    PHANTOM_PATH = "/absolute/path/to/phantom/extension"
+    # Default Phantom extension path bundled with this repo. Override if needed.
+    PHANTOM_PATH = str(Path(__file__).resolve().parent / "wallets" / "phantom_wallet")
     PROFILE_DIR = "/absolute/path/to/persistent/profile"
 
     core = AutoCore(

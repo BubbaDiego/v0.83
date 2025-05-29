@@ -142,6 +142,8 @@ TWILIO_TO_PHONE=+1234567890
 TWILIO_FLOW_SID=your_flow_sid_here
 JUPITER_API_BASE=https://perps-api.jup.ag
 OPENAI_API_KEY=your_openai_key_here
+# Location of the Phantom browser extension
+PHANTOM_PATH=wallets/phantom_wallet
 ```
 
 `JUPITER_API_BASE` lets you override the default Jupiter endpoint if it changes.
@@ -275,6 +277,11 @@ After renaming, Windows users can fetch the branch normally.
 
 The `auto_core` package handles automated browser workflows for Jupiter's perpetuals trading UI. It builds on the ideas in the [automation white paper](sonic_labs/order_automation_white_paper.md), using Playwright to load a Chromium profile with the Phantom wallet extension. `auto_core` exposes helpers for launching a persistent context, navigating the site and approving Phantom pop‑ups so strategies can focus on trading logic.
 
+`auto_core` also provides the `PhantomManager` class for orchestrating these automation tasks:
+```python
+from auto_core import PhantomManager
+```
+
 ### Playwright Setup with Phantom
 Install Playwright and its browsers:
 ```bash
@@ -285,7 +292,7 @@ To load Phantom, specify the extension path and a profile directory when launchi
 ```python
 from playwright.sync_api import sync_playwright
 
-phantom_path = "/path/to/phantom"
+phantom_path = "wallets/phantom_wallet"  # override this path if Phantom lives elsewhere
 profile_dir = "/tmp/playwright/phantom-profile"
 
 with sync_playwright() as pw:
