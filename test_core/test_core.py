@@ -5,8 +5,9 @@ import contextlib
 import os
 import importlib
 import re
+import subprocess
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Optional
 import pytest
 from core.core_imports import log
 
@@ -25,7 +26,7 @@ except Exception:  # pragma: no cover - rich optional
 class TestCore:
     """Utility to run pytest with rich reporting."""
 
-    def __init__(self, report_dir: Union[str, Path] = "reports", default_pattern: str = "tests/test_*.py") -> None:
+    def __init__(self, report_dir: str | Path = "reports", default_pattern: str = "tests/test_*.py") -> None:
         self.report_dir = Path(report_dir)
         self.report_dir.mkdir(exist_ok=True)
         self.default_pattern = default_pattern
@@ -35,9 +36,15 @@ class TestCore:
         """Run all tests matching the default pattern."""
         self.run_glob(self.default_pattern)
 
+    def expand_pattern(self, raw: str) -> str:
+        """Expand a partial test name to a glob pattern."""
+        if "*" in raw or raw.startswith("test_"):
+            return raw
+        return f"test_{raw}*.*"
+
     def run_glob(self, pattern: Optional[str] = None) -> None:
         """Discover test files matching *pattern* and run them."""
-        pattern = pattern or self.default_pattern
+        pattern = self.expand_pattern(pattern or self.default_pattern)
         files = [
             p
             for p in Path(".").rglob(pattern)
@@ -54,7 +61,7 @@ class TestCore:
             return
         self.run_files(files)
 
-    def run_files(self, files: List[Union[str, Path]]) -> None:
+    def run_files(self, files: list[str | Path]) -> None:
         """Execute pytest for the provided *files* with reporting enabled."""
         html_report = self.report_dir / "last_test_report.html"
         json_report = self.report_dir / "last_test_report.json"
@@ -139,6 +146,8 @@ class TestCore:
                 log.warning(f"⚠️ {line}", source="TestCore")
 
         total = passed + failed + skipped
+        pct = None
+        final_grade = None
 
         if console and Panel and Table:
             table = Table(title="Test Summary", show_lines=True)
@@ -164,6 +173,22 @@ class TestCore:
                     source="TestCore",
                 )
 
+        if pct is not None:
+            if pct == 100:
+                grade, color = "A+", "green"
+            elif pct >= 90:
+                grade, color = "A", "green"
+            elif pct >= 80:
+                grade, color = "B", "orange1"
+            elif pct >= 70:
+                grade, color = "C", "yellow1"
+            elif pct >= 60:
+                grade, color = "D", "red"
+            else:
+                grade, color = "F", "red"
+            final_grade = f"[bold {color}]🎓 FINAL GRADE: {grade} ({pct:.1f}%) [/bold {color}]"
+            log.info(f"🎓 Grade: {grade}", source="TestCore")
+
         if result == 0:
             log.success("✅ All tests completed!", source="TestCore")
         else:
@@ -181,6 +206,13 @@ class TestCore:
         log.info(f"📄 HTML Report: {html_report}", source="TestCore")
         log.info(f"🪵 Log File:    {txt_log}", source="TestCore")
         self._open_html_report(html_report)
+
+        if final_grade and console:
+            console.print("\n\n")
+            console.rule("[bold white]Final Score[/bold white]", style=color)
+            console.print(final_grade, justify="center")
+            console.rule(style=color)
+            console.print("\n\n")
 
     # ------------------------------------------------------------------
     def test_alert_core(self) -> None:
@@ -222,6 +254,20 @@ class TestCore:
         self.run_files(selected)
 
     # ------------------------------------------------------------------
+    def setup_environment(self) -> None:
+        """Install project dependencies for the test suite."""
+        req_file = Path("requirements.txt")
+        if not req_file.exists():
+            log.error("requirements.txt not found", source="TestCore")
+            return
+        log.banner("Installing test dependencies")
+        try:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", str(req_file)])
+            log.success("Dependencies installed", source="TestCore")
+        except Exception as e:  # pragma: no cover - network issues may occur
+            log.error(f"Dependency installation failed: {e}", source="TestCore")
+
+    # ------------------------------------------------------------------
     def _open_html_report(self, report_path: Path) -> None:
         """Open *report_path* in a browser if possible."""
         if not report_path.exists():
@@ -247,7 +293,8 @@ class TestCore:
                 table.add_row("2", "🗂️ Run test file pattern")
                 table.add_row("3", "🧪 Run Alert Core tests")
                 table.add_row("4", "🎯 Pick tests to run")
-                table.add_row("5", "❌ Exit")
+                table.add_row("5", "⚙️ Install test dependencies")
+                table.add_row("6", "❌ Exit")
                 console.print(table)
                 choice = console.input("Choose > ").strip()
             else:
@@ -257,7 +304,8 @@ class TestCore:
                 print("2) 🗂️ Run test file pattern")
                 print("3) 🧪 Run Alert Core tests")
                 print("4) 🎯 Pick tests to run")
-                print("5) ❌ Exit")
+                print("5) ⚙️ Install test dependencies")
+                print("6) ❌ Exit")
                 choice = input("Choose > ").strip()
 
             if choice == "1":
@@ -271,6 +319,8 @@ class TestCore:
             elif choice == "4":
                 self.pick_and_run_tests()
             elif choice == "5":
+                self.setup_environment()
+            elif choice == "6":
                 break
             else:
                 if console:

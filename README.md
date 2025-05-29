@@ -65,6 +65,14 @@ Or execute the full test suite using:
 pytest
 ```
 
+When running tests in a fresh Codex environment you may need to
+install the requirements first:
+
+```bash
+python scripts/setup_test_env.py
+```
+This step is optional and not part of the default test run.
+
 ### Debug Logging
 
 To see verbose output from the console logger, pass `debug=True` when
