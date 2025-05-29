@@ -39,8 +39,10 @@
   <script src="{{ url_for('static', filename='js/dashboard_middle.js') }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script>
-    window.graphData = {{ graph_data | tojson }};
-    window.sizeData = {{ size_composition | tojson }};
+    {# Default to empty structures when context data is missing to avoid
+       template errors during lightweight tests. #}
+    window.graphData = {{ graph_data | default({}) | tojson }};
+    window.sizeData = {{ size_composition | default({}) | tojson }};
   </script>
   <script src="{{ url_for('static', filename='js/dashboard_bottom.js') }}"></script>
   <script src="{{ url_for('static', filename='js/dashboard_oracle.js') }}"></script>
