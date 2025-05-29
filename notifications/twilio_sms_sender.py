@@ -15,7 +15,11 @@ class TwilioSMSSender:
     def __init__(self, account_sid=None, auth_token=None, from_number=None):
         self.account_sid = account_sid or os.getenv("TWILIO_ACCOUNT_SID")
         self.auth_token = auth_token or os.getenv("TWILIO_AUTH_TOKEN")
-        self.from_number = from_number or os.getenv("TWILIO_FROM_NUMBER")
+        self.from_number = (
+            from_number
+            or os.getenv("TWILIO_FROM_PHONE")
+            or os.getenv("TWILIO_FROM_NUMBER")
+        )
         if Client:
             self.client = Client(self.account_sid, self.auth_token)
         else:  # pragma: no cover - if optional dependency missing
