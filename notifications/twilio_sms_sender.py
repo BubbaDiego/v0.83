@@ -1,6 +1,13 @@
-from twilio.rest import Client
 import os
 from core.logging import log
+
+try:  # pragma: no cover - optional dependency
+    from twilio.rest import Client  # type: ignore
+except Exception as e:  # pragma: no cover - import may fail
+    Client = None  # type: ignore
+    log.warning(
+        f"Twilio client unavailable: {e}", source="TwilioSMSSender"
+    )
 
 class TwilioSMSSender:
     """Simple wrapper around the Twilio REST client for SMS."""
@@ -9,10 +16,16 @@ class TwilioSMSSender:
         self.account_sid = account_sid or os.getenv("TWILIO_ACCOUNT_SID")
         self.auth_token = auth_token or os.getenv("TWILIO_AUTH_TOKEN")
         self.from_number = from_number or os.getenv("TWILIO_FROM_NUMBER")
-        self.client = Client(self.account_sid, self.auth_token)
+        if Client:
+            self.client = Client(self.account_sid, self.auth_token)
+        else:  # pragma: no cover - if optional dependency missing
+            self.client = None
 
     def send_sms(self, to_number: str, message: str) -> bool:
         """Send an SMS message via Twilio."""
+        if not self.client:
+            log.error("Twilio Client not initialized", source="TwilioSMSSender")
+            return False
         try:
             if not all([self.account_sid, self.auth_token, self.from_number, to_number]):
                 log.error("Missing Twilio SMS configuration", source="TwilioSMSSender")
