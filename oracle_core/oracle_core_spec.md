@@ -52,6 +52,7 @@ class OracleCore:
 
 ### 🗂️ Topic Handlers
 Each handler (`PortfolioTopicHandler`, `PositionsTopicHandler`, `AlertsTopicHandler`, `PricesTopicHandler`, `SystemTopicHandler`) returns a small context dictionary via `OracleDataService`.
+The positions context now returns both the list of positions and an `avg_heat_index` field used by the `heat_control` strategy.
 
 ### 🛰️ Data Service
 `OracleDataService` wraps `DataLocker` managers and exposes helpers:
