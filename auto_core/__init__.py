@@ -1,6 +1,6 @@
 try:  # AutoCore requires Playwright
     from .auto_core import AutoCore
-    from . import phantom_workflow
+    from .console_apps import phantom_workflow
 except Exception:  # pragma: no cover - optional dependency may be missing
     AutoCore = None
     phantom_workflow = None
