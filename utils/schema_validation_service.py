@@ -19,6 +19,7 @@ class SchemaValidationService:
     ALERT_THRESHOLDS_SCHEMA = {
         "type": "object",
         "properties": {
+            "source": {"type": "string"},
             "alert_ranges": {
                 "type": "object",
                 "properties": {

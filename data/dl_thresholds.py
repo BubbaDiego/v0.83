@@ -103,10 +103,11 @@ class DLThresholdManager:
         return AlertThreshold(**dict(row)) if row else None
 
     def export_to_json(self, path: str = ALERT_THRESHOLDS_JSON_PATH) -> None:
-        """Write all thresholds to a JSON file."""
+        """Write all thresholds to a JSON file with a source tag."""
         thresholds = self.get_all()
+        data = {"source": "db", "thresholds": [t.to_dict() for t in thresholds]}
         with open(path, "w", encoding="utf-8") as f:
-            json.dump([t.to_dict() for t in thresholds], f, indent=2)
+            json.dump(data, f, indent=2)
 
     def import_from_json(self, path: str = ALERT_THRESHOLDS_JSON_PATH) -> int:
         """Import thresholds from JSON file, replacing existing ones."""
@@ -116,10 +117,15 @@ class DLThresholdManager:
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        if not isinstance(data, list):
+        if isinstance(data, dict):
+            thresholds = data.get("thresholds", [])
+        else:
+            thresholds = data
+
+        if not isinstance(thresholds, list):
             return 0
 
-        incoming_ids = {item.get("id") for item in data if item.get("id")}
+        incoming_ids = {item.get("id") for item in thresholds if item.get("id")}
         existing_ids = {t.id for t in self.get_all()}
 
         # Remove thresholds that are no longer present
@@ -127,7 +133,7 @@ class DLThresholdManager:
             self.delete(obsolete)
 
         count = 0
-        for item in data:
+        for item in thresholds:
             tid = item.get("id")
             if not tid:
                 continue
