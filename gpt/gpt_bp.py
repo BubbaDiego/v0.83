@@ -93,11 +93,17 @@ def oracle_query():
     if topic not in oracle.handlers:
         return jsonify({"error": "Unknown topic"}), 400
 
-    handler = oracle.handlers[topic]
-    context = handler.get_context()
+    # Build context with persona strategies.
+    context, instructions = oracle._get_context_and_instructions(topic, persona_name)
 
-    instructions = user_query or persona.instructions or OracleCore.DEFAULT_INSTRUCTIONS.get(topic, "Assist the user.")
-    system_msg = persona.system_message or OracleCore.DEFAULT_SYSTEM_MESSAGES.get(topic, "You assist the user.")
+    # If the user provided a query, override instructions.
+    if user_query:
+        instructions = user_query
+
+    system_msg = (
+        persona.system_message
+        or OracleCore.DEFAULT_SYSTEM_MESSAGES.get(topic, "You assist the user.")
+    )
 
     messages = oracle.build_prompt(topic, context, instructions)
     if messages:
