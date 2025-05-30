@@ -71,15 +71,16 @@ def test_changes_export_to_json(tmp_path, monkeypatch):
 
     with open(json_path, "r", encoding="utf-8") as f:
         data = json.load(f)
-    assert len(data) == 1
-    assert data[0]["id"] == "t1"
+    assert data["source"] == "db"
+    assert len(data["thresholds"]) == 1
+    assert data["thresholds"][0]["id"] == "t1"
 
     mgr.update("t1", {"low": 5})
     with open(json_path, "r", encoding="utf-8") as f:
         data = json.load(f)
-    assert data[0]["low"] == 5
+    assert data["thresholds"][0]["low"] == 5
 
     mgr.delete("t1")
     with open(json_path, "r", encoding="utf-8") as f:
         data = json.load(f)
-    assert data == []
+    assert data["thresholds"] == []

@@ -164,6 +164,7 @@ class StartUpService:
         if not os.path.exists(ALERT_THRESHOLDS_PATH):
             log.warning("⚠️ alert_thresholds.json not found. Creating default template...")
             default = {
+                "source": "fallback",
                 "alert_ranges": {},
                 "global_alert_config": {
                     "enabled": True,

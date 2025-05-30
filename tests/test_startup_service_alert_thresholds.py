@@ -36,3 +36,20 @@ def test_ensure_alert_thresholds_valid(tmp_path, monkeypatch):
 
     ss.StartUpService.ensure_alert_thresholds()
 
+
+def test_ensure_alert_thresholds_creates_default_with_source(tmp_path, monkeypatch):
+    default_file = tmp_path / "alert_thresholds.json"
+
+    importlib.reload(ss)
+    monkeypatch.setattr(ss, "ALERT_THRESHOLDS_PATH", default_file)
+    import utils.config_loader as cfg
+    monkeypatch.setattr(cfg, "ALERT_THRESHOLDS_PATH", default_file)
+    monkeypatch.setattr(SchemaValidationService, "ALERT_THRESHOLDS_FILE", str(default_file))
+
+    ss.StartUpService.ensure_alert_thresholds()
+
+    with open(default_file, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    assert data.get("source") == "fallback"
+

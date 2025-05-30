@@ -205,7 +205,10 @@ Use the **Export** button on the Alert Thresholds page (or the
 `/system/alert_thresholds/export` API endpoint) to save a JSON snapshot of the
 current threshold limits to the `/config/alert_thresholds.json` file on the
 server. These exported values are the limits the system uses when evaluating
-alerts—they do **not** represent the current alerts themselves.
+alerts—they do **not** represent the current alerts themselves. The exported
+file now includes a top-level `source` field set to `"db"` when generated from
+the database. A file created by `StartUpService.ensure_alert_thresholds()` will
+set `"source": "fallback"`.
 
 ## Running `sonic_app.py`
 
