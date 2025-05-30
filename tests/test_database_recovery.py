@@ -8,6 +8,7 @@ from data.data_locker import DataLocker
 def test_recover_malformed_db(tmp_path, monkeypatch):
     monkeypatch.setattr(DataLocker, "_seed_modifiers_if_empty", lambda self: None)
     monkeypatch.setattr(DataLocker, "_seed_wallets_if_empty", lambda self: None)
+    monkeypatch.setattr(DataLocker, "_seed_alerts_if_empty", lambda self: None, raising=False)
 
     db_path = tmp_path / "test.db"
     dl = DataLocker(str(db_path))

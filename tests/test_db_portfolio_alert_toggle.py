@@ -53,6 +53,7 @@ def test_db_portfolio_alert_toggle(tmp_path, monkeypatch):
     monkeypatch.setattr(DataLocker, "_seed_modifiers_if_empty", lambda self: None)
     monkeypatch.setattr(DataLocker, "_seed_wallets_if_empty", lambda self: None)
     monkeypatch.setattr(DataLocker, "_seed_thresholds_if_empty", lambda self: None)
+    monkeypatch.setattr(DataLocker, "_seed_alerts_if_empty", lambda self: None, raising=False)
 
     db_path = tmp_path / "alerts.db"
     dl = DataLocker(str(db_path))

@@ -7,6 +7,7 @@ from hedge_core.hedge_core import HedgeCore
 @pytest.fixture
 def dl(monkeypatch):
     monkeypatch.setattr(DataLocker, "_seed_modifiers_if_empty", lambda self: None)
+    monkeypatch.setattr(DataLocker, "_seed_alerts_if_empty", lambda self: None, raising=False)
     locker = DataLocker(":memory:")
     yield locker
     locker.db.close()

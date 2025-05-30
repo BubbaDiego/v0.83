@@ -19,7 +19,8 @@ def _insert_position(dl):
     dl.positions.insert_position(pos)
 
 
-def test_position_alert_respects_disabled(tmp_path):
+def test_position_alert_respects_disabled(tmp_path, monkeypatch):
+    monkeypatch.setattr(DataLocker, "_seed_alerts_if_empty", lambda self: None, raising=False)
     db_path = tmp_path / "alerts.db"
     dl = DataLocker(str(db_path))
     _insert_position(dl)
@@ -43,7 +44,8 @@ def test_position_alert_respects_disabled(tmp_path):
     assert types == {"TravelPercentLiquid"}
 
 
-def test_portfolio_alert_respects_disabled(tmp_path):
+def test_portfolio_alert_respects_disabled(tmp_path, monkeypatch):
+    monkeypatch.setattr(DataLocker, "_seed_alerts_if_empty", lambda self: None, raising=False)
     db_path = tmp_path / "alerts2.db"
     dl = DataLocker(str(db_path))
 
@@ -65,7 +67,8 @@ def test_portfolio_alert_respects_disabled(tmp_path):
     assert types == {"TotalSize"}
 
 
-def test_disabled_string_values(tmp_path):
+def test_disabled_string_values(tmp_path, monkeypatch):
+    monkeypatch.setattr(DataLocker, "_seed_alerts_if_empty", lambda self: None, raising=False)
     db_path = tmp_path / "alerts3.db"
     dl = DataLocker(str(db_path))
     _insert_position(dl)

@@ -9,6 +9,7 @@ def setup_dl(tmp_path, monkeypatch):
     monkeypatch.setattr(DataLocker, "_seed_modifiers_if_empty", lambda self: None)
     monkeypatch.setattr(DataLocker, "_seed_wallets_if_empty", lambda self: None)
     monkeypatch.setattr(DataLocker, "_seed_thresholds_if_empty", lambda self: None)
+    monkeypatch.setattr(DataLocker, "_seed_alerts_if_empty", lambda self: None, raising=False)
     dl = DataLocker(str(tmp_path / "thr.db"))
     return dl
 
