@@ -177,10 +177,8 @@ class Cyclone:
             "update_hedges": self.run_update_hedges,
         }
 
-        default_steps = [
-            step for step in available_steps.keys()
-            if step not in ("link_hedges", "update_hedges")
-        ]
+        # Maintain the declared order as the standard run sequence
+        default_steps = list(available_steps.keys())
 
         steps = steps or default_steps
 
