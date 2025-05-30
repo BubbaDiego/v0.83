@@ -25,7 +25,6 @@ def _select_wallet(core: WalletCore):
         console.print("🚫 [red]No wallets found.[/red]")
         return None
     while True:
-<
         console.print("\n👛 [bold]Available Wallets[/bold]")
         for idx, w in enumerate(wallets, start=1):
             console.print(f"{idx}) {w.name} ({w.public_address})")

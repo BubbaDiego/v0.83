@@ -1,30 +1,24 @@
 import os
-from auto_core.playwright import PhantomManager, JupiterPerpsFlow
+from phantom_manager import PhantomManager
+from auto_core.playwright import JupiterPerpsFlow
 from dotenv import load_dotenv
 load_dotenv()
 
-
 def main():
-    # Set paths and URL (update these as needed)
-    EXTENSION_PATH = r"C:\v0.7\sonic_labs\phantom_wallet"
+    EXTENSION_PATH = r"C:\v0.83\wallets\phantom_wallet"
     DAPP_URL = "https://jup.ag/perps-legacy/short/SOL-SOL"
     phantom_password = os.environ.get("PHANTOM_PASSWORD")
 
-    # Initialize PhantomManager and launch the browser.
     pm = PhantomManager(extension_path=EXTENSION_PATH, headless=False)
     pm.launch_browser()
-
-    # Create the JupiterPerpsFlow instance.
     jp = JupiterPerpsFlow(phantom_manager=pm)
 
-    # Try to connect the wallet.
     try:
         pm.connect_wallet(dapp_url=DAPP_URL, phantom_password=phantom_password)
         print("✅ Wallet connected!")
     except Exception as e:
         print("Error connecting wallet:", e)
 
-    # Main interactive menu with Unicode icons in the menu display.
     while True:
         print("\nAvailable commands:")
         print("1: Connect Wallet 🔗")
@@ -38,6 +32,9 @@ def main():
         print("9: Open Position 🚀")
         print("10: Capture Order Payload 📦")
         print("11: Exit ❌")
+        print("12: Dump Visible Buttons 🧹")
+        print("13: Dump All Text Nodes 📄")
+        print("14: Dump All <div> With Text 🔍")
         cmd = input("Enter command number: ").strip()
 
         if cmd == "1":
@@ -110,6 +107,41 @@ def main():
                 print(payload)
             except Exception as e:
                 print("Error capturing order payload:", e)
+        elif cmd == "12":
+            try:
+                print("🕵️ Dumping visible buttons to button_dump.txt...")
+                from phantom_debug_mode_patch import dump_visible_buttons
+                dump_visible_buttons(pm.page)
+                print("✅ Dump complete. Check button_dump.txt")
+            except Exception as e:
+                print(f"Error during DOM sweep: {e}")
+        elif cmd == "13":
+            try:
+                all_text = pm.page.locator("*").all_inner_texts()
+                with open("all_text_dump.txt", "w", encoding="utf-8") as f:
+                    for text in all_text:
+                        cleaned = text.strip()
+                        if cleaned:
+                            f.write(cleaned + "\n")
+                print("✅ Dumped all visible inner text to all_text_dump.txt")
+            except Exception as e:
+                print(f"Error dumping text nodes: {e}")
+        elif cmd == "14":
+            try:
+                divs = pm.page.locator("div")
+                with open("div_text_dump.txt", "w", encoding="utf-8") as f:
+                    for i in range(divs.count()):
+                        try:
+                            div = divs.nth(i)
+                            if div.is_visible():
+                                text = div.inner_text().strip()
+                                if text:
+                                    f.write(f"[{i}] {text}\n")
+                        except Exception:
+                            pass
+                print("✅ Dumped visible <div> elements to div_text_dump.txt")
+            except Exception as e:
+                print(f"Error dumping <div> content: {e}")
         elif cmd == "11":
             print("❌ Exiting...")
             break

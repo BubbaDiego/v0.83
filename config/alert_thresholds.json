@@ -1,5 +1,4 @@
 {
-  "source": "default",
   "alert_ranges": {
     "liquidation_distance_ranges": {},
     "travel_percent_liquid_ranges": {},
@@ -22,7 +21,6 @@
     "call_refractory_period": 900,
     "snooze_countdown": 300
   },
-  "global_alert_config": {},
   "notifications": {
     "heat_index": {
       "low": ["Email"],

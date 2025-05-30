@@ -99,6 +99,6 @@ Dynamic hedging and gamma scalping are powerful techniques for managing and prof
 - Y.-C. Chang, H.-W. Teng, W. Härdle. *Stochastic volatility dynamic hedging for Deribit BTC options.* J. of Futures and Options 16(2), 2023.
 - QuestDB. *Gamma Scalping Strategies – Glossary Entry.* QuestDB Blog, 2023.
 - Rich Excell. *Delta Hedging and Gamma Scalping using Micro Bitcoin Options.* CME Group – Excell with Options (Newsletter), Apr 5, 2022.
-- Arthur Hayes. *How to Market Make Bitcoin Derivatives – Lesson 1: Dynamic Hedging.* BitMEX Blog, 2016.
+- Arthur Hayes. *How to Mark[dynamic_hedging.json](oracle_core/strategies/dynamic_hedging.json)et Make Bitcoin Derivatives – Lesson 1: Dynamic Hedging.* BitMEX Blog, 2016.
 - ZtraderAI. *Gamma Scalping & Reverse Scalping: Strategies for Volatility Traders.* Medium, Dec 28, 2024.
 - Alpaca Engineering. *Gamma Scalping: Building an Options Strategy with Python.* Alpaca Markets Blog, Nov 29, 2024.
