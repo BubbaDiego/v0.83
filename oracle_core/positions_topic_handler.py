@@ -5,7 +5,12 @@ from .oracle_data_service import OracleDataService
 
 
 class PositionsTopicHandler:
-    """Provide positions context for GPT."""
+    """Provide positions context for GPT.
+
+    ``get_context`` fetches recent positions and calculates aggregate metrics
+    via :class:`CalcServices`. The resulting average heat index is returned
+    alongside the raw positions list.
+    """
 
     output_key = "positions"
     system_message = "You summarize position information."
