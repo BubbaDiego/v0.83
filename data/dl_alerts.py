@@ -22,21 +22,26 @@ class DLAlertManager:
     def create_alert(self, alert: dict) -> bool:
         try:
             cursor = self.db.get_cursor()
-            cursor.execute("""
+            cursor.execute(
+                """
                 INSERT INTO alerts (
-                    id, created_at, alert_type, alert_class,
-                    trigger_value, notification_type, status, frequency,
-                    counter, liquidation_distance, travel_percent,
-                    liquidation_price, notes, position_reference_id,
-                    level, evaluated_value
+                    id, created_at, alert_type, alert_class, asset_type,
+                    trigger_value, condition, notification_type, level,
+                    last_triggered, status, frequency, counter,
+                    liquidation_distance, travel_percent, liquidation_price,
+                    notes, description, position_reference_id, evaluated_value,
+                    position_type
                 ) VALUES (
-                    :id, :created_at, :alert_type, :alert_class,
-                    :trigger_value, :notification_type, :status, :frequency,
-                    :counter, :liquidation_distance, :travel_percent,
-                    :liquidation_price, :notes, :position_reference_id,
-                    :level, :evaluated_value
+                    :id, :created_at, :alert_type, :alert_class, :asset_type,
+                    :trigger_value, :condition, :notification_type, :level,
+                    :last_triggered, :status, :frequency, :counter,
+                    :liquidation_distance, :travel_percent, :liquidation_price,
+                    :notes, :description, :position_reference_id, :evaluated_value,
+                    :position_type
                 )
-            """, alert)
+                """,
+                alert,
+            )
             self.db.commit()
             log.success(f"Alert created: {alert['id']}", source="DLAlertManager")
             return True
