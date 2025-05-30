@@ -1,3 +1,11 @@
+# =============================================================================
+# 🦄 PhantomManager
+# -----------------------------------------------------------------------------
+# Playwright-based automation helper for the Phantom browser extension.  This
+# module launches a Chromium browser with Phantom loaded, provides utilities for
+# unlocking the wallet, approving transactions and handling onboarding flows.
+# =============================================================================
+
 import logging
 import os
 from typing import List, Optional
