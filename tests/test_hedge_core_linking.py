@@ -8,6 +8,7 @@ from hedge_core.hedge_core import HedgeCore
 def dl(monkeypatch):
     # Skip default modifier seeding to keep tests self-contained
     monkeypatch.setattr(DataLocker, "_seed_modifiers_if_empty", lambda self: None)
+    monkeypatch.setattr(DataLocker, "_seed_alerts_if_empty", lambda self: None)
     locker = DataLocker(":memory:")
     yield locker
     locker.db.close()

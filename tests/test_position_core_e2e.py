@@ -38,6 +38,7 @@ def dl(tmp_path, monkeypatch):
         "_seed_modifiers_if_empty",
         "_seed_wallets_if_empty",
         "_seed_thresholds_if_empty",
+        "_seed_alerts_if_empty",
     ]:
         monkeypatch.setattr(DataLocker, name, lambda self: None)
     db_file = tmp_path / "test.db"

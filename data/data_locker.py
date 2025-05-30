@@ -26,7 +26,7 @@ from data.dl_system_data import DLSystemDataManager
 from data.dl_monitor_ledger import DLMonitorLedgerManager
 from data.dl_modifiers import DLModifierManager
 from data.dl_hedges import DLHedgeManager
-from core.constants import SONIC_SAUCE_PATH, BASE_DIR, DB_PATH
+from core.constants import SONIC_SAUCE_PATH, BASE_DIR, DB_PATH, CONFIG_DIR
 from core.core_imports import log
 from system.death_nail_service import DeathNailService
 from datetime import datetime
@@ -56,6 +56,7 @@ class DataLocker:
             self._seed_modifiers_if_empty()
             self._seed_wallets_if_empty()
             self._seed_thresholds_if_empty()
+            self._seed_alerts_if_empty()
         except Exception as e:
             log.error(f"❌ DataLocker setup failed: {e}", source="DataLocker")
         else:
@@ -477,6 +478,46 @@ class DataLocker:
                         f"❌ Death nail trigger failed: {death_e}",
                         source="DataLocker",
                     )
+
+    def _seed_alerts_if_empty(self):
+        """Seed the alerts table from sample_alerts.json if no alerts exist."""
+        cursor = self.db.get_cursor()
+        if not cursor:
+            log.error("❌ DB unavailable, skipping alert seed", source="DataLocker")
+            return
+
+        count = cursor.execute("SELECT COUNT(*) FROM alerts").fetchone()[0]
+        if count != 0:
+            return
+
+        json_path = os.path.join(CONFIG_DIR, "sample_alerts.json")
+        if not os.path.exists(json_path):
+            log.warning(
+                f"⚠️ sample_alerts.json not found at {json_path}; no alerts seeded",
+                source="DataLocker",
+            )
+            return
+
+        try:
+            with open(json_path, "r", encoding="utf-8") as f:
+                alerts = json.load(f)
+
+            for alert in alerts:
+                try:
+                    self.alerts.create_alert(alert)
+                except Exception as e:
+                    log.warning(
+                        f"Alert seed failed for {alert.get('id')}: {e}",
+                        source="DataLocker",
+                    )
+
+            log.debug(
+                f"Alerts seeded from {json_path}",
+                source="DataLocker",
+            )
+        except Exception as e:
+            log.error(f"❌ Failed seeding alerts: {e}", source="DataLocker")
+
 
 
 

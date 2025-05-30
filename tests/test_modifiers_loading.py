@@ -7,6 +7,7 @@ from calc_core.calculation_core import CalculationCore
 @pytest.fixture
 def dl(monkeypatch):
     monkeypatch.setattr(DataLocker, "_seed_modifiers_if_empty", lambda self: None)
+    monkeypatch.setattr(DataLocker, "_seed_alerts_if_empty", lambda self: None)
     locker = DataLocker(":memory:")
     yield locker
     locker.db.close()
