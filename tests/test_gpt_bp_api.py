@@ -84,6 +84,9 @@ def load_blueprint():
         def query_gpt(self, messages):
             return "oracle_reply"
 
+        def _get_context_and_instructions(self, topic, strategy_name):
+            return {}, "inst"
+
     oracle_mod.OracleCore = DummyOracle
     sys.modules["oracle_core"] = oracle_mod
 
