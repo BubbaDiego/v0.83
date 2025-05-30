@@ -1,7 +1,10 @@
 import os
 import logging
 from flask import Blueprint, render_template, request, jsonify
-from openai import OpenAI
+try:  # pragma: no cover - optional dependency
+    from openai import OpenAI
+except ImportError:  # pragma: no cover - optional dependency
+    OpenAI = None  # type: ignore
 from dotenv import load_dotenv
 
 from .context_loader import get_context_messages
@@ -16,8 +19,10 @@ logger.setLevel(logging.DEBUG)
 # Prefer the new ``OPENAI_API_KEY`` variable but fall back to ``OPEN_AI_KEY``
 # for backward compatibility.
 api_key = (os.getenv("OPENAI_API_KEY") or os.getenv("OPEN_AI_KEY") or "").strip()
-if not api_key:
-    logger.warning("OPENAI_API_KEY not configured; ChatGPT features disabled")
+if not api_key or OpenAI is None:
+    logger.warning(
+        "OpenAI client disabled: package missing or API key not configured"
+    )
     client = None
 else:
     client = OpenAI(api_key=api_key)
@@ -36,6 +41,9 @@ chat_gpt_bp = Blueprint(
 def chat():
     """Render the ChatGPT interface."""
     logger.debug("GET /chat - Rendering chat interface.")
+    if client is None:
+        logger.debug("OpenAI client not configured; service unavailable.")
+        return jsonify({"error": "OpenAI API key not configured"}), 503
     return render_template("chat_gpt.html", model_name=MODEL_NAME)
 
 
