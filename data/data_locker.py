@@ -26,7 +26,12 @@ from data.dl_system_data import DLSystemDataManager
 from data.dl_monitor_ledger import DLMonitorLedgerManager
 from data.dl_modifiers import DLModifierManager
 from data.dl_hedges import DLHedgeManager
-from core.constants import SONIC_SAUCE_PATH, BASE_DIR, DB_PATH
+from core.constants import (
+    SONIC_SAUCE_PATH,
+    BASE_DIR,
+    DB_PATH,
+    ALERT_THRESHOLDS_PATH,
+)
 from core.core_imports import log
 from system.death_nail_service import DeathNailService
 from datetime import datetime
@@ -56,6 +61,7 @@ class DataLocker:
             self._seed_modifiers_if_empty()
             self._seed_wallets_if_empty()
             self._seed_thresholds_if_empty()
+            self._seed_alert_config_if_empty()
         except Exception as e:
             log.error(f"❌ DataLocker setup failed: {e}", source="DataLocker")
         else:
@@ -477,6 +483,21 @@ class DataLocker:
                         f"❌ Death nail trigger failed: {death_e}",
                         source="DataLocker",
                     )
+
+    def _seed_alert_config_if_empty(self):
+        """Seed ``alert_thresholds`` config in global_config if missing."""
+        config = self.system.get_var("alert_thresholds") or {}
+        if not config:
+            try:
+                with open(ALERT_THRESHOLDS_PATH, "r", encoding="utf-8") as f:
+                    config = json.load(f)
+                self.system.set_var("alert_thresholds", config)
+                log.debug(
+                    f"alert_thresholds config seeded from {ALERT_THRESHOLDS_PATH}",
+                    source="DataLocker",
+                )
+            except Exception as e:
+                log.error(f"❌ Failed seeding alert config: {e}", source="DataLocker")
 
 
 
