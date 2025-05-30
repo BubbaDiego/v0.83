@@ -40,6 +40,14 @@ Cyclone(monitor_core, poll_interval=60)
 - `async run_alert_evaluation()` – evaluates alert levels after enrichment.
 - `async run_link_hedges()` – detects hedge pairs using `CycloneHedgeService`.
 - `async run_cleanse_ids()` – clears stale alerts from the datastore.
+- `async run_update_hedges()` – refreshes hedge groups after linking.
+
+The default cycle executes steps in order:
+`update_operations`, `market_updates`, `check_jupiter_for_updates`,
+`enrich_positions`, `enrich_alerts`, `update_evaluated_value`,
+`create_market_alerts`, `create_portfolio_alerts`, `create_position_alerts`,
+`create_global_alerts`, `evaluate_alerts`, `cleanse_ids`, `link_hedges`,
+`update_hedges`.
 
 Each method logs progress with emojis and delegates to the appropriate service or core module.
 
