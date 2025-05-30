@@ -558,6 +558,31 @@ class DataLocker:
         except Exception as e:
             log.error(f"❌ Failed seeding alerts: {e}", source="DataLocker")
 
+    def _seed_alert_config_if_empty(self):
+        """Seed global alert configuration from alert_thresholds.json if missing."""
+        try:
+            current = self.system.get_var("alert_thresholds")
+            if current:
+                return
+
+            if not os.path.exists(ALERT_THRESHOLDS_PATH):
+                log.warning(
+                    f"⚠️ alert_thresholds.json not found at {ALERT_THRESHOLDS_PATH}; skipping seed",
+                    source="DataLocker",
+                )
+                return
+
+            with open(ALERT_THRESHOLDS_PATH, "r", encoding="utf-8") as f:
+                config = json.load(f)
+
+            self.system.set_var("alert_thresholds", config)
+            log.debug(
+                "Alert config seeded from alert_thresholds.json",
+                source="DataLocker",
+            )
+        except Exception as e:
+            log.error(f"❌ Failed seeding alert config: {e}", source="DataLocker")
+
 
 
     def get_all_tables_as_dict(self) -> dict:
