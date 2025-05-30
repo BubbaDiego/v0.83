@@ -26,7 +26,14 @@ from data.dl_system_data import DLSystemDataManager
 from data.dl_monitor_ledger import DLMonitorLedgerManager
 from data.dl_modifiers import DLModifierManager
 from data.dl_hedges import DLHedgeManager
-from core.constants import SONIC_SAUCE_PATH, BASE_DIR, DB_PATH, CONFIG_DIR
+
+from core.constants import (
+    SONIC_SAUCE_PATH,
+    BASE_DIR,
+    DB_PATH,
+    ALERT_THRESHOLDS_PATH,
+)
+
 from core.core_imports import log
 from system.death_nail_service import DeathNailService
 from datetime import datetime
@@ -57,6 +64,8 @@ class DataLocker:
             self._seed_wallets_if_empty()
             self._seed_thresholds_if_empty()
             self._seed_alerts_if_empty()
+            self._seed_alert_config_if_empty()
+
         except Exception as e:
             log.error(f"❌ DataLocker setup failed: {e}", source="DataLocker")
         else:
@@ -479,6 +488,7 @@ class DataLocker:
                         source="DataLocker",
                     )
 
+
     def _seed_alerts_if_empty(self):
         """Seed the alerts table from sample_alerts.json if no alerts exist."""
         cursor = self.db.get_cursor()
@@ -517,7 +527,6 @@ class DataLocker:
             )
         except Exception as e:
             log.error(f"❌ Failed seeding alerts: {e}", source="DataLocker")
-
 
 
 
