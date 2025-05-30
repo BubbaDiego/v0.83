@@ -458,32 +458,6 @@ class DataLocker:
                 except Exception as e:
                     log.error(f"❌ Failed seeding wallets: {e}", source="DataLocker")
 
-    def _seed_alerts_if_empty(self):
-        """Seed alerts table from ``sample_alerts.json`` if empty."""
-        cursor = self.db.get_cursor()
-        if not cursor:
-            log.error("❌ DB unavailable, skipping alerts seed", source="DataLocker")
-            return
-        count = cursor.execute("SELECT COUNT(*) FROM alerts").fetchone()[0]
-        if count == 0:
-            json_path = CONFIG_DIR / "sample_alerts.json"
-            if json_path.exists():
-                try:
-                    with open(str(json_path), "r", encoding="utf-8") as f:
-                        alerts = json.load(f)
-                    for alert in alerts:
-                        try:
-                            self.alerts.create_alert(alert)
-                        except Exception as e:
-                            log.warning(
-                                f"Alert seed failed for {alert.get('id')}: {e}",
-                                source="DataLocker",
-                            )
-                    log.debug(
-                        f"Alerts seeded from {json_path}", source="DataLocker"
-                    )
-                except Exception as e:
-                    log.error(f"❌ Failed seeding alerts: {e}", source="DataLocker")
 
     def _seed_thresholds_if_empty(self):
         """Seed alert_thresholds table with defaults if empty."""
