@@ -59,7 +59,9 @@ def _disabled_config():
     }
 
 
-def test_alert_creation_configurebility(tmp_path):
+def test_alert_creation_configurebility(tmp_path, monkeypatch):
+    monkeypatch.setattr(DataLocker, "_seed_alerts_if_empty", lambda self: None)
+
     db_path = tmp_path / "enabled.db"
     dl = DataLocker(str(db_path))
     _insert_position(dl)

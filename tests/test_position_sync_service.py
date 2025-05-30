@@ -34,6 +34,7 @@ def setup_datalocker(tmp_path, monkeypatch):
     monkeypatch.setattr(DataLocker, "_seed_modifiers_if_empty", lambda self: None)
     monkeypatch.setattr(DataLocker, "_seed_wallets_if_empty", lambda self: None)
     monkeypatch.setattr(DataLocker, "_seed_thresholds_if_empty", lambda self: None)
+    monkeypatch.setattr(DataLocker, "_seed_alerts_if_empty", lambda self: None)
 
     dl = DataLocker(str(tmp_path / "sync.db"))
     wallet = {"name": "TestWallet", "public_address": "ADDR1", "private_address": "priv"}

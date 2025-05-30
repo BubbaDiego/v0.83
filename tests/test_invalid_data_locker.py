@@ -7,6 +7,7 @@ def test_data_locker_handles_invalid_path(monkeypatch):
     monkeypatch.setattr(DataLocker, "_seed_modifiers_if_empty", lambda self: None)
     monkeypatch.setattr(DataLocker, "_seed_wallets_if_empty", lambda self: None)
     monkeypatch.setattr(DataLocker, "_seed_thresholds_if_empty", lambda self: None)
+    monkeypatch.setattr(DataLocker, "_seed_alerts_if_empty", lambda self: None)
 
     path = "/dev/null/test.db"  # invalid directory
     try:

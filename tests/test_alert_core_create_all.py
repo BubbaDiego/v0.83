@@ -8,6 +8,7 @@ def test_create_all_alerts_runs(tmp_path, monkeypatch):
     monkeypatch.setattr(DataLocker, "_seed_modifiers_if_empty", lambda self: None)
     monkeypatch.setattr(DataLocker, "_seed_wallets_if_empty", lambda self: None)
     monkeypatch.setattr(DataLocker, "_seed_thresholds_if_empty", lambda self: None)
+    monkeypatch.setattr(DataLocker, "_seed_alerts_if_empty", lambda self: None)
 
     dl = DataLocker(str(tmp_path / "core.db"))
     core = AlertCore(dl)

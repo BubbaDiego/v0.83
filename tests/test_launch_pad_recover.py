@@ -49,6 +49,9 @@ def test_operations_menu_recover(monkeypatch):
         def _seed_thresholds_if_empty(self):
             pass
 
+        def _seed_alerts_if_empty(self):
+            pass
+
         def close(self):
             pass
 

@@ -240,6 +240,10 @@ python scripts/initialize_database.py --reset --seed-thresholds --seed-wallets
 python scripts/initialize_database.py --all
 ```
 
+If the `alerts` table is empty and `config/sample_alerts.json` is present, the
+`DataLocker` will automatically load these sample alerts on first run. This
+prevents the dashboard from showing "No alerts available" after a fresh setup.
+
 If you encounter SQLite errors such as `file is not a database`, the
 database file is likely corrupted. Rebuild it by running:
 
